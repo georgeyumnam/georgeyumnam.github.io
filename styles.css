@@ -248,6 +248,109 @@ section {
     background: var(--secondary-color);
 }
 
+/* Publications Section */
+.publications {
+    background: var(--white);
+}
+
+.publications-list {
+    display: flex;
+    flex-direction: column;
+    gap: 2.5rem;
+}
+
+.publication-item {
+    background: var(--secondary-color);
+    padding: 2rem;
+    border-radius: 10px;
+    border-left: 4px solid var(--primary-color);
+    transition: var(--transition);
+}
+
+.publication-item:hover {
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+    transform: translateX(5px);
+}
+
+.publication-item h3 {
+    font-size: 1.2rem;
+    margin-bottom: 0.8rem;
+    color: var(--dark);
+}
+
+.pub-authors {
+    color: var(--light-text);
+    font-size: 0.95rem;
+    margin-bottom: 0.5rem;
+    line-height: 1.6;
+}
+
+.pub-journal {
+    color: var(--primary-color);
+    font-size: 0.9rem;
+    margin-bottom: 1rem;
+    font-weight: 500;
+}
+
+.pub-link {
+    color: var(--primary-color);
+    text-decoration: none;
+    font-weight: 600;
+    display: inline-block;
+    transition: var(--transition);
+}
+
+.pub-link:hover {
+    transform: translateX(3px);
+}
+
+/* Teaching Section */
+.teaching {
+    background: var(--secondary-color);
+}
+
+.opportunities-cards {
+    margin-top: 2rem;
+}
+
+.opportunities-cards h3 {
+    font-size: 1.5rem;
+    margin-bottom: 1.5rem;
+    color: var(--dark);
+}
+
+.cards-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    gap: 1.5rem;
+}
+
+.opp-card {
+    background: var(--white);
+    padding: 1.5rem;
+    border-radius: 8px;
+    border: 2px solid var(--border-color);
+    transition: var(--transition);
+}
+
+.opp-card:hover {
+    border-color: var(--primary-color);
+    box-shadow: 0 8px 20px rgba(0, 102, 204, 0.15);
+    transform: translateY(-5px);
+}
+
+.opp-card h4 {
+    color: var(--dark);
+    margin-bottom: 0.8rem;
+    font-size: 1.1rem;
+}
+
+.opp-card p {
+    color: var(--light-text);
+    line-height: 1.6;
+    font-size: 0.95rem;
+}
+
 .about-content {
     display: grid;
     grid-template-columns: 1fr 1fr;
@@ -536,6 +639,10 @@ section {
 
     .section-title {
         font-size: 2rem;
+    }
+
+    .cards-grid {
+        grid-template-columns: 1fr;
     }
 
     .footer .container {
