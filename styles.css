@@ -541,7 +541,7 @@ section {
     box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
     display: flex;
     flex-direction: column;
-    max-width: 760px;
+    max-width: 1060px;
     margin: 0 auto;
 }
 
@@ -553,23 +553,15 @@ section {
 
 .project-image {
     margin-bottom: 1.5rem;
-    height: 220px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    background: transparent;
     border-radius: 12px;
     overflow: hidden;
     position: relative;
-    padding: 12px;
 }
 
 .project-image img {
-    max-width: 100%;
-    max-height: 100%;
-    width: auto;
+    width: 100%;
     height: auto;
-    object-fit: contain;
+    object-fit: cover;
     transition: transform 0.25s ease, filter 0.25s ease;
     display: block;
 }
