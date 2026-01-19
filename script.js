@@ -74,26 +74,36 @@ if (contactForm) {
     });
 }
 
-// Intersection Observer for animation on scroll
-const revealObserverOptions = {
-    threshold: 0.15,
-    rootMargin: '0px 0px -80px 0px'
-};
+// Intersection Observer for animation on scroll (with fallback)
+const revealSelector = '.about-content, .projects-grid, .publications-list, .teaching .about-content, .contact-content, .project-card';
 
-const revealObserver = new IntersectionObserver(entries => {
-    entries.forEach(entry => {
-        if (entry.isIntersecting) {
-            entry.target.classList.add('reveal-visible');
-            revealObserver.unobserve(entry.target);
-        }
+if ('IntersectionObserver' in window) {
+    const revealObserverOptions = {
+        threshold: 0.15,
+        rootMargin: '0px 0px -80px 0px'
+    };
+
+    const revealObserver = new IntersectionObserver(entries => {
+        entries.forEach(entry => {
+            if (entry.isIntersecting) {
+                entry.target.classList.add('reveal-visible');
+                revealObserver.unobserve(entry.target);
+            }
+        });
+    }, revealObserverOptions);
+
+    // Attach reveal animations to key sections and cards
+    document.querySelectorAll(revealSelector).forEach(el => {
+        el.classList.add('reveal');
+        revealObserver.observe(el);
     });
-}, revealObserverOptions);
-
-// Attach reveal animations to key sections and cards
-document.querySelectorAll('.about-content, .projects-grid, .publications-list, .teaching .about-content, .contact-content, .project-card').forEach(el => {
-    el.classList.add('reveal');
-    revealObserver.observe(el);
-});
+} else {
+    // Fallback: ensure content is always visible if IntersectionObserver is not supported
+    document.querySelectorAll(revealSelector).forEach(el => {
+        el.classList.remove('reveal');
+        el.classList.add('reveal-visible');
+    });
+}
 
 // Add active class to nav link on page load and scroll
 function updateActiveLink() {
