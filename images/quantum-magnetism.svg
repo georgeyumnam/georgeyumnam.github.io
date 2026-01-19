@@ -1,0 +1,60 @@
+<svg viewBox="0 0 400 300" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <linearGradient id="grad4" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#667eea;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#764ba2;stop-opacity:1" />
+    </linearGradient>
+    <radialGradient id="radialGrad4" cx="50%" cy="50%" r="50%">
+      <stop offset="0%" style="stop-color:url(#grad4);stop-opacity:0.8" />
+      <stop offset="100%" style="stop-color:#764ba2;stop-opacity:0.3" />
+    </radialGradient>
+    <filter id="shadow4">
+      <feDropShadow dx="2" dy="2" stdDeviation="3" flood-opacity="0.3"/>
+    </filter>
+    <filter id="glow">
+      <feGaussianBlur stdDeviation="3" result="coloredBlur"/>
+      <feMerge>
+        <feMergeNode in="coloredBlur"/>
+        <feMergeNode in="SourceGraphic"/>
+      </feMerge>
+    </filter>
+  </defs>
+  
+  <!-- Background -->
+  <rect width="400" height="300" fill="#f8f9fa"/>
+  
+  <!-- Quantum state representation - Bloch sphere concept -->
+  <circle cx="200" cy="140" r="70" fill="url(#radialGrad4)" opacity="0.3" filter="url(#shadow4)"/>
+  
+  <!-- Outer sphere outline -->
+  <circle cx="200" cy="140" r="70" stroke="url(#grad4)" stroke-width="2" fill="none" filter="url(#shadow4)"/>
+  
+  <!-- Quantum states as orbitals -->
+  <g stroke="url(#grad4)" stroke-width="2" fill="none" opacity="0.6" filter="url(#glow)">
+    <ellipse cx="200" cy="140" rx="60" ry="30"/>
+    <ellipse cx="200" cy="140" rx="40" ry="60"/>
+    <ellipse cx="200" cy="140" rx="50" ry="45" transform="rotate(45 200 140)"/>
+  </g>
+  
+  <!-- Quantum particles -->
+  <g fill="url(#grad4)" filter="url(#shadow4)">
+    <circle cx="200" cy="85" r="4" opacity="0.9"/>
+    <circle cx="240" cy="120" r="4" opacity="0.8"/>
+    <circle cx="160" cy="120" r="4" opacity="0.8"/>
+    <circle cx="200" cy="195" r="4" opacity="0.7"/>
+    <circle cx="250" cy="160" r="3" opacity="0.6"/>
+    <circle cx="150" cy="160" r="3" opacity="0.6"/>
+  </g>
+  
+  <!-- Energy levels -->
+  <g stroke="url(#grad4)" stroke-width="1.5" stroke-dasharray="3,3" fill="none" opacity="0.4">
+    <line x1="85" y1="80" x2="315" y2="80"/>
+    <line x1="85" y1="140" x2="315" y2="140"/>
+    <line x1="85" y1="200" x2="315" y2="200"/>
+  </g>
+  
+  <!-- Labels -->
+  <text x="200" y="270" font-size="18" font-weight="bold" text-anchor="middle" fill="#1a1a2e">
+    Quantum Magnetism
+  </text>
+</svg>
