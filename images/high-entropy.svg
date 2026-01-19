@@ -1,58 +1,58 @@
-<svg viewBox="0 0 400 300" xmlns="http://www.w3.org/2000/svg">
+<svg viewBox="0 0 400 300" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Schematic: High-Entropy Oxide lattice">
   <defs>
-    <linearGradient id="grad2" x1="0%" y1="0%" x2="100%" y2="100%">
-      <stop offset="0%" style="stop-color:#667eea;stop-opacity:1" />
-      <stop offset="100%" style="stop-color:#764ba2;stop-opacity:1" />
+    <linearGradient id="hG" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#ff8a65"/>
+      <stop offset="0.5" stop-color="#63b3ed"/>
+      <stop offset="1" stop-color="#9ae6b4"/>
     </linearGradient>
-    <filter id="shadow2">
-      <feDropShadow dx="2" dy="2" stdDeviation="3" flood-opacity="0.3"/>
-    </filter>
   </defs>
-  
-  <!-- Background -->
-  <rect width="400" height="300" fill="#f8f9fa"/>
-  
-  <!-- Crystal structure - cubic lattice -->
-  <g stroke="url(#grad2)" stroke-width="2" fill="none" filter="url(#shadow2)">
-    <!-- Back edges -->
-    <line x1="100" y1="80" x2="150" y2="60"/>
-    <line x1="150" y1="60" x2="200" y2="80"/>
-    <line x1="200" y1="80" x2="150" y2="100"/>
-    <line x1="150" y1="100" x2="100" y2="80"/>
-    
-    <!-- Front edges -->
-    <line x1="150" y1="150" x2="200" y2="130"/>
-    <line x1="200" y1="130" x2="250" y2="150"/>
-    <line x1="250" y1="150" x2="200" y2="170"/>
-    <line x1="200" y1="170" x2="150" y2="150"/>
-    
-    <!-- Connecting edges -->
-    <line x1="100" y1="80" x2="150" y2="150"/>
-    <line x1="200" y1="80" x2="250" y2="150"/>
-    <line x1="150" y1="100" x2="200" y2="170"/>
+
+  <rect width="400" height="300" fill="#ffffff"/>
+
+  <g transform="translate(30,30)">
+    <text x="170" y="0" font-size="14" text-anchor="middle" fill="#1a1a2e" font-weight="600">High‑Entropy Oxide — Multi‑element Lattice (Schematic)</text>
+
+    <rect x="0" y="30" width="340" height="220" rx="8" fill="#fbfcff" stroke="#eef4ff"/>
+
+    <!-- grid of colored atoms to indicate mixed occupancy -->
+    <g transform="translate(20,60)">
+      <!-- row patterns -->
+      <g>
+        <g transform="translate(0,0)">
+          <circle cx="0" cy="0" r="10" fill="#ff8a65"/>
+          <circle cx="50" cy="0" r="10" fill="#f6ad55"/>
+          <circle cx="100" cy="0" r="10" fill="#63b3ed"/>
+          <circle cx="150" cy="0" r="10" fill="#9ae6b4"/>
+          <circle cx="200" cy="0" r="10" fill="#c084fc"/>
+          <circle cx="250" cy="0" r="10" fill="#f56565"/>
+        </g>
+        <g transform="translate(0,40)">
+          <circle cx="25" cy="0" r="10" fill="#cbd5e1"/>
+          <circle cx="75" cy="0" r="10" fill="#7f9cf5"/>
+          <circle cx="125" cy="0" r="10" fill="#f6ad55"/>
+          <circle cx="175" cy="0" r="10" fill="#63b3ed"/>
+          <circle cx="225" cy="0" r="10" fill="#9ae6b4"/>
+          <circle cx="275" cy="0" r="10" fill="#ffb86b"/>
+        </g>
+        <g transform="translate(0,80)">
+          <circle cx="0" cy="0" r="10" fill="#f56565"/>
+          <circle cx="50" cy="0" r="10" fill="#c084fc"/>
+          <circle cx="100" cy="0" r="10" fill="#9ae6b4"/>
+          <circle cx="150" cy="0" r="10" fill="#63b3ed"/>
+          <circle cx="200" cy="0" r="10" fill="#f6ad55"/>
+          <circle cx="250" cy="0" r="10" fill="#ff8a65"/>
+        </g>
+        <g transform="translate(0,120)">
+          <circle cx="25" cy="0" r="10" fill="#7f9cf5"/>
+          <circle cx="75" cy="0" r="10" fill="#cbd5e1"/>
+          <circle cx="125" cy="0" r="10" fill="#ffb86b"/>
+          <circle cx="175" cy="0" r="10" fill="#ff8a65"/>
+          <circle cx="225" cy="0" r="10" fill="#f56565"/>
+          <circle cx="275" cy="0" r="10" fill="#63b3ed"/>
+        </g>
+      </g>
+    </g>
+
+    <text x="170" y="265" font-size="12" text-anchor="middle" fill="#444">Schematic showing mixed-site occupancy and disorder</text>
   </g>
-  
-  <!-- Atoms at vertices -->
-  <g fill="url(#grad2)" filter="url(#shadow2)">
-    <circle cx="100" cy="80" r="5" opacity="0.9"/>
-    <circle cx="150" cy="60" r="5" opacity="0.8"/>
-    <circle cx="200" cy="80" r="5" opacity="0.9"/>
-    <circle cx="150" cy="100" r="5" opacity="0.7"/>
-    <circle cx="150" cy="150" r="6" opacity="0.9"/>
-    <circle cx="200" cy="130" r="6" opacity="0.8"/>
-    <circle cx="250" cy="150" r="6" opacity="0.9"/>
-    <circle cx="200" cy="170" r="6" opacity="0.7"/>
-  </g>
-  
-  <!-- Disorder representation -->
-  <g opacity="0.4">
-    <circle cx="120" cy="110" r="8" fill="url(#grad2)"/>
-    <circle cx="180" cy="95" r="7" fill="url(#grad2)"/>
-    <circle cx="220" cy="140" r="8" fill="url(#grad2)"/>
-  </g>
-  
-  <!-- Labels -->
-  <text x="200" y="270" font-size="18" font-weight="bold" text-anchor="middle" fill="#1a1a2e">
-    High-Entropy Structure
-  </text>
 </svg>
