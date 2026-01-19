@@ -75,27 +75,24 @@ if (contactForm) {
 }
 
 // Intersection Observer for animation on scroll
-const observerOptions = {
-    threshold: 0.1,
-    rootMargin: '0px 0px -100px 0px'
+const revealObserverOptions = {
+    threshold: 0.15,
+    rootMargin: '0px 0px -80px 0px'
 };
 
-const observer = new IntersectionObserver(entries => {
+const revealObserver = new IntersectionObserver(entries => {
     entries.forEach(entry => {
         if (entry.isIntersecting) {
-            entry.target.style.opacity = '1';
-            entry.target.style.transform = 'translateY(0)';
-            observer.unobserve(entry.target);
+            entry.target.classList.add('reveal-visible');
+            revealObserver.unobserve(entry.target);
         }
     });
-}, observerOptions);
+}, revealObserverOptions);
 
-// Observe project cards and other elements
-document.querySelectorAll('.project-card').forEach(card => {
-    card.style.opacity = '0';
-    card.style.transform = 'translateY(20px)';
-    card.style.transition = 'opacity 0.6s ease, transform 0.6s ease';
-    observer.observe(card);
+// Attach reveal animations to key sections and cards
+document.querySelectorAll('.about-content, .projects-grid, .publications-list, .teaching .about-content, .contact-content, .project-card').forEach(el => {
+    el.classList.add('reveal');
+    revealObserver.observe(el);
 });
 
 // Add active class to nav link on page load and scroll

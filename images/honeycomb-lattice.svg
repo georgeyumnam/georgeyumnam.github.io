@@ -1,68 +1,62 @@
-<svg viewBox="0 0 400 300" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Schematic: Honeycomb lattice with spins">
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 900" role="img" aria-label="Honeycomb lattice magnetism schematic">
   <defs>
-    <linearGradient id="hcG" x1="0" y1="0" x2="1" y2="1">
-      <stop offset="0" stop-color="#667eea"/>
-      <stop offset="1" stop-color="#764ba2"/>
-    </linearGradient>
-    <filter id="hcS" x="-20%" y="-20%" width="140%" height="140%">
-      <feDropShadow dx="1" dy="1" stdDeviation="2" flood-opacity="0.12"/>
-    </filter>
+    <style>
+      .label{font-family:'Segoe UI',sans-serif;font-size:26px;fill:#1a1a2e;}
+      .small{font-size:22px;fill:#444;}
+    </style>
   </defs>
 
-  <rect width="400" height="300" fill="#ffffff"/>
+  <rect width="1200" height="900" fill="#ffffff"/>
 
-  <g transform="translate(30,40)">
-    <text x="170" y="0" font-size="14" text-anchor="middle" fill="#1a1a2e" font-weight="600">Honeycomb Lattice — Spin Texture (Schematic)</text>
+  <text x="600" y="80" text-anchor="middle" class="label" font-weight="600">Field tunable honeycomb lattice magnetism</text>
 
-    <!-- honeycomb pattern -->
-    <g transform="translate(0,20)" stroke="url(#hcG)" stroke-width="2" fill="none" filter="url(#hcS)">
+  <g transform="translate(200,180)">
+    <!-- honeycomb cells -->
+    <g stroke="#4c6fff" stroke-width="3" fill="none">
       <!-- first row -->
-      <g transform="translate(40,40)">
-        <g>
-          <polygon points="0,-20 26,-10 26,10 0,20 -26,10 -26,-10"/>
-          <g transform="translate(52,0)">
-            <polygon points="0,-20 26,-10 26,10 0,20 -26,10 -26,-10"/>
-          </g>
-          <g transform="translate(104,0)">
-            <polygon points="0,-20 26,-10 26,10 0,20 -26,10 -26,-10"/>
-          </g>
-        </g>
-        <!-- second row offset -->
-        <g transform="translate(26,34)">
-          <polygon points="0,-20 26,-10 26,10 0,20 -26,10 -26,-10"/>
-          <g transform="translate(52,0)">
-            <polygon points="0,-20 26,-10 26,10 0,20 -26,10 -26,-10"/>
-          </g>
-        </g>
+      <g transform="translate(0,0)">
+        <polygon points="60,0 120,35 120,105 60,140 0,105 0,35"/>
+        <polygon points="180,0 240,35 240,105 180,140 120,105 120,35"/>
+        <polygon points="300,0 360,35 360,105 300,140 240,105 240,35"/>
+        <polygon points="420,0 480,35 480,105 420,140 360,105 360,35"/>
+      </g>
+      <!-- second row -->
+      <g transform="translate(90,150)">
+        <polygon points="60,0 120,35 120,105 60,140 0,105 0,35"/>
+        <polygon points="180,0 240,35 240,105 180,140 120,105 120,35"/>
+        <polygon points="300,0 360,35 360,105 300,140 240,105 240,35"/>
       </g>
     </g>
 
-    <!-- atoms and spin arrows -->
-    <g transform="translate(60,80)">
-      <g fill="#7f9cf5">
-        <circle cx="0" cy="0" r="6"/>
-        <circle cx="52" cy="0" r="6"/>
-        <circle cx="104" cy="0" r="6"/>
-        <circle cx="26" cy="34" r="6"/>
-        <circle cx="78" cy="34" r="6"/>
-      </g>
+    <!-- sites with spins -->
+    <g fill="#4c6fff" stroke="#4c6fff" stroke-width="3">
+      <!-- some selected sites -->
+      <g>
+        <circle cx="60" cy="35" r="9"/>
+        <line x1="60" y1="35" x2="60" y2="5"/>
+        <polygon points="52,16 60,2 68,16"/>
 
-      <!-- spin arrows (up/down) -->
-      <g stroke="#7a4ca8" stroke-width="1.8" fill="none">
-        <path d="M -2 -10 L -2 -22" marker-end="url(#a1)"/>
-        <path d="M 50 -10 L 50 -22" marker-end="url(#a1)"/>
-        <path d="M 26 24 L 26 36" marker-end="url(#a2)"/>
+        <circle cx="180" cy="105" r="9"/>
+        <line x1="180" y1="105" x2="180" y2="135"/>
+        <polygon points="172,124 180,138 188,124"/>
+
+        <circle cx="300" cy="35" r="9"/>
+        <line x1="300" y1="35" x2="300" y2="5"/>
+        <polygon points="292,16 300,2 308,16"/>
+
+        <circle cx="420" cy="105" r="9"/>
+        <line x1="420" y1="105" x2="420" y2="75"/>
+        <polygon points="412,86 420,72 428,86"/>
       </g>
-      <defs>
-        <marker id="a1" markerWidth="6" markerHeight="6" refX="3" refY="3" orient="auto">
-          <path d="M0 6 L3 0 L6 6 z" fill="#7a4ca8"/>
-        </marker>
-        <marker id="a2" markerWidth="6" markerHeight="6" refX="3" refY="3" orient="auto">
-          <path d="M0 0 L3 6 L6 0 z" fill="#7a4ca8"/>
-        </marker>
-      </defs>
     </g>
 
-    <text x="170" y="260" font-size="12" text-anchor="middle" fill="#444">Honeycomb lattice with representative spin orientations</text>
+    <!-- field arrow -->
+    <g transform="translate(520,40)">
+      <line x1="0" y1="200" x2="0" y2="40" stroke="#e83e8c" stroke-width="4"/>
+      <polygon points="-10,56 0,34 10,56" fill="#e83e8c"/>
+      <text x="20" y="120" class="small" fill="#e83e8c">applied field</text>
+    </g>
   </g>
+
+  <text x="600" y="760" text-anchor="middle" class="small">Geometry and field tune spin texture and emergent diode like response</text>
 </svg>
