@@ -75,7 +75,9 @@ if (contactForm) {
 }
 
 // Intersection Observer for animation on scroll (with fallback)
-const revealSelector = '.about-content, .projects-grid, .publications-list, .teaching .about-content, .contact-content, .project-card';
+// Keep the Research Initiatives section always visible by excluding
+// its grid and cards from the reveal animation.
+const revealSelector = '.about-content, .publications-list, .teaching .about-content, .contact-content';
 
 if ('IntersectionObserver' in window) {
     const revealObserverOptions = {
