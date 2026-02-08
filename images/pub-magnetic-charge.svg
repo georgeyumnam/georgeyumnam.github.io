@@ -1,0 +1,6 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="600" height="400" viewBox="0 0 600 400">
+  <rect width="600" height="400" fill="#1a1a3e"/>
+  <text x="300" y="180" text-anchor="middle" fill="#667eea" font-family="sans-serif" font-size="28" font-weight="bold">Magnetic Charge</text>
+  <text x="300" y="220" text-anchor="middle" fill="#aaa" font-family="sans-serif" font-size="16">Ultra-low Voltage Diode</text>
+  <text x="300" y="260" text-anchor="middle" fill="#666" font-family="sans-serif" font-size="13">Replace with paper figure</text>
+</svg>
