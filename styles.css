@@ -330,9 +330,8 @@ section {
 
 /* Make About section span full page width inside the site frame */
 .about .container {
-    max-width: 100%;
-    padding-left: 20px;
-    padding-right: 20px;
+    max-width: 80%;
+    margin: 0 auto;
 }
 .about-content {
     max-width: none;
