@@ -334,11 +334,11 @@ section {
     margin: 10 auto;
 }
 .about-content {
-    max-width: none;
-    width: 100%;
+    max-width: 70%;
+    width: 60%;
 }
 .about-text {
-    width: 100%;
+    width: 60%;
 }
 
 .about::before {
