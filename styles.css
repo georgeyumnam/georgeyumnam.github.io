@@ -562,7 +562,7 @@ section {
 .education-list li {
     margin-bottom: 0.6rem;
     color: var(--light-text);
-    font-size: 1rem;
+    font-size: var(--hero-affiliation-size);
 }
 
 /* Education & Research sections (separate from About) */
@@ -575,7 +575,7 @@ section {
 .education-list li strong {
     font-weight: 700;
     color: var(--dark);
-    font-size: 1.05rem;
+    font-size: calc(var(--hero-affiliation-size) * 1.05);
     margin-right: 0.4rem;
 }
 
