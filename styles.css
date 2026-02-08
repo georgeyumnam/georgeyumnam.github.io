@@ -214,8 +214,11 @@ body {
 .hero-description {
     font-size: 1.1rem;
     margin-bottom: 2rem;
-    opacity: 0.9;
     line-height: 1.8;
+}
+
+.hero .hero-description {
+    opacity: 0.9;
 }
 
 .cta-buttons {
@@ -324,25 +327,26 @@ section {
 
 /* About Section */
 .about {
-    background: linear-gradient(to bottom, #ffffff, #f8f9fa);
+    background: #ffffff;
     position: relative;
-    overflow: hidden;
 }
 
 .about .container {
-    max-width: 1400px;
+    max-width: 980px;
 }
 
-.about::before {
-    content: '';
-    position: absolute;
-    top: -50%;
-    left: -10%;
-    width: 500px;
-    height: 500px;
-    background: radial-gradient(circle, rgba(102, 126, 234, 0.08) 0%, transparent 70%);
-    border-radius: 50%;
-    z-index: 0;
+.about .section-title {
+    text-align: left;
+    font-size: 2.2rem;
+    font-weight: 400;
+    letter-spacing: 0;
+}
+
+.about .section-title::after {
+    left: 0;
+    transform: scaleX(1);
+    width: 60px;
+    height: 3px;
 }
 
 /* Publications Section */
@@ -531,11 +535,13 @@ section {
 }
 
 .about-text p {
-    font-size: 1.1rem;
-    color: var(--light-text);
-    margin-bottom: 1.5rem;
-    line-height: 1.9;
+    font-size: 1.05rem;
+    color: var(--text-color);
+    margin-bottom: 1.8rem;
+    line-height: 1.85;
     text-align: justify;
+    font-weight: 300;
+    letter-spacing: 0.01em;
 }
 
 .education h3,
