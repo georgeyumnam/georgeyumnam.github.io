@@ -8,6 +8,7 @@
     --white: #ffffff;
     --dark: #1a1a1a;
     --transition: all 0.3s ease;
+    --hero-affiliation-size: 1.5rem;
 }
 
 /* Reset & Base Styles */
@@ -189,6 +190,24 @@ body {
     margin-bottom: 1rem;
     opacity: 0.95;
     font-weight: 500;
+}
+
+/* Role and affiliation sizing: role is 5% larger than affiliation */
+.hero-affiliations {
+    display: inline-block;
+    line-height: 1.15;
+}
+.hero-affiliation {
+    font-size: var(--hero-affiliation-size);
+    margin: 0.15rem 0;
+    opacity: 0.95;
+    font-weight: 500;
+}
+.hero-role {
+    font-size: calc(var(--hero-affiliation-size) * 1.05);
+    margin-bottom: 0.6rem;
+    opacity: 0.98;
+    font-weight: 600;
 }
 
 .hero-description {
