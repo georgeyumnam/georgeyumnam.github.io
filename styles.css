@@ -551,6 +551,30 @@ section {
     font-size: 1rem;
 }
 
+/* Education & Research sections (separate from About) */
+.education-section,
+.research-areas {
+    padding: 60px 20px;
+    background: linear-gradient(to bottom, #ffffff, #fbfdff);
+}
+
+.education-list li strong {
+    font-weight: 700;
+    color: var(--dark);
+    font-size: 1.05rem;
+    margin-right: 0.4rem;
+}
+
+.research-areas .skills-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 1rem;
+}
+
+@media (max-width: 900px) {
+    .research-areas .skills-grid { grid-template-columns: repeat(2, 1fr); }
+}
+
 @media (max-width: 900px) {
     .about-content {
         grid-template-columns: 1fr;
