@@ -324,32 +324,20 @@ section {
 
 /* About Section */
 .about {
-    background: linear-gradient(to bottom, var(--secondary-color), #ffffff);
+    background: linear-gradient(to bottom, #ffffff, #f8f9fa);
     position: relative;
-}
-
-/* Make About section span full page width inside the site frame */
-.about .container {
-    max-width: 60%;
-    margin: 10 auto;
-}
-.about-content {
-    max-width: 70%;
-    width: 60%;
-}
-.about-text {
-    width: 60%;
+    overflow: hidden;
 }
 
 .about::before {
     content: '';
     position: absolute;
-    top: 0;
-    left: 0;
-    right: 0;
-    height: 100px;
-    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-    opacity: 0.05;
+    top: -50%;
+    left: -10%;
+    width: 500px;
+    height: 500px;
+    background: radial-gradient(circle, rgba(102, 126, 234, 0.08) 0%, transparent 70%);
+    border-radius: 50%;
     z-index: 0;
 }
 
