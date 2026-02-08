@@ -520,9 +520,9 @@ section {
 
 .about-content {
     display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 3rem;
-    align-items: center;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 2.5rem;
+    align-items: start;
     position: relative;
     z-index: 1;
 }
@@ -532,6 +532,31 @@ section {
     color: var(--light-text);
     margin-bottom: 1.5rem;
     line-height: 1.9;
+}
+
+.education h3,
+.skills h3 {
+    margin-top: 0;
+}
+
+.education-list {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+}
+
+.education-list li {
+    margin-bottom: 0.6rem;
+    color: var(--light-text);
+    font-size: 1rem;
+}
+
+@media (max-width: 900px) {
+    .about-content {
+        grid-template-columns: 1fr;
+        gap: 1.5rem;
+    }
+    .hero-title { font-size: 2.6rem; }
 }
 
 .skills h3 {
