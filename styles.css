@@ -329,6 +329,10 @@ section {
     overflow: hidden;
 }
 
+.about .container {
+    max-width: 1400px;
+}
+
 .about::before {
     content: '';
     position: absolute;
