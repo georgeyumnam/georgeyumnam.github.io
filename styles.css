@@ -196,6 +196,7 @@ body {
 .hero-affiliations {
     display: inline-block;
     line-height: 1.15;
+    margin-bottom: 1cm;
 }
 .hero-affiliation {
     font-size: var(--hero-affiliation-size);
