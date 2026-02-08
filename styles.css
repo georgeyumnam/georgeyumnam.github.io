@@ -534,10 +534,7 @@ section {
 }
 
 .about-content {
-    display: grid;
-    grid-template-columns: repeat(3, 1fr);
-    gap: 2.5rem;
-    align-items: start;
+    display: block;
     position: relative;
     z-index: 1;
 }
@@ -547,6 +544,7 @@ section {
     color: var(--light-text);
     margin-bottom: 1.5rem;
     line-height: 1.9;
+    text-align: justify;
 }
 
 .education h3,
