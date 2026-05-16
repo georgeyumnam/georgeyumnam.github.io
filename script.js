@@ -39,7 +39,7 @@ window.addEventListener('scroll', onScroll); onScroll();
 
   const D      = 80;     // bond length (px) — larger cell for bigger atoms
   const S3     = Math.sqrt(3);
-  const AL     = 26;     // arrow half-length (~5× bigger than before)
+  const AL     = 44;     // arrow half-length (1.7× increase)
   const ATOM_R = 9;      // atom radius (~5× bigger than before)
   const THETA0 = 0.182;  // base cone angle (rad, ~10°) — 40% increase
   const OMEGA  = 3.0;    // base precession rate (rad/s) — 2× increase
