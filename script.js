@@ -167,8 +167,9 @@ window.addEventListener('scroll', onScroll); onScroll();
       const theta   = THETA0 * (1 - pf * 0.88);   // shrinks toward ~zero near mouse
       const omegaEff = OMEGA * (1 - pf * 0.80);    // slows to 20% of normal near mouse
 
-      const phi  = omegaEff * t + atom.phase;
       const spin = atom.spin;
+      // Red (spin-up) lags blue (spin-down) by half a precession period (π)
+      const phi  = omegaEff * t + atom.phase + (spin === 1 ? Math.PI : 0);
 
       const tipX = atom.x + AL * Math.sin(theta) * Math.cos(phi);
       const tipY = atom.y - spin * AL * Math.cos(theta)
