@@ -168,13 +168,15 @@ a { text-decoration: none; }
 
 .hero-text {
     flex: 1;
-    background: var(--glass-card);
-    backdrop-filter: blur(16px);
-    -webkit-backdrop-filter: blur(16px);
-    border: 1px solid rgba(94, 184, 232, 0.30);
-    border-radius: 14px;
+    background: rgba(255, 255, 255, 0.84);
+    backdrop-filter: blur(20px);
+    -webkit-backdrop-filter: blur(20px);
+    border: 1px solid var(--border);
+    border-radius: 20px;
     padding: 1.5rem 2rem;
-    box-shadow: 0 4px 22px rgba(52, 119, 160, 0.13);
+    box-shadow: var(--glow);
+    position: relative;
+    overflow: hidden;
 }
 
 .hero-title {
