@@ -184,19 +184,22 @@ window.addEventListener('scroll', onScroll); onScroll();
 
       drawCylinderArrow(tlX, tlY, tipX, tipY, rgb, alpha);
 
-      // Atom dot — slightly dims/freezes near mouse
-      const dotAlpha = 0.55 - pf * 0.15;
-      ctx.beginPath();
-      ctx.arc(atom.x, atom.y, ATOM_R, 0, Math.PI * 2);
-      ctx.fillStyle = `rgba(255,255,255,${dotAlpha})`;
-      ctx.fill();
+      // Shiny black ball — specular highlight points toward mouse
+      const lx = mouse.x > -9000 ? -mdx / (mdist || 1) : -0.5;
+      const ly = mouse.y > -9000 ? -mdy / (mdist || 1) : -0.8;
+      const hlX = atom.x + lx * ATOM_R * 0.36;
+      const hlY = atom.y + ly * ATOM_R * 0.36;
 
-      // Atom ring (tinted by spin colour)
+      const grad = ctx.createRadialGradient(hlX, hlY, 0, atom.x, atom.y, ATOM_R);
+      grad.addColorStop(0,    'rgba(255,255,255,0.92)');
+      grad.addColorStop(0.18, 'rgba(190,205,225,0.55)');
+      grad.addColorStop(0.42, 'rgba(16,16,20,1)');
+      grad.addColorStop(1,    'rgba(4,4,6,1)');
+
       ctx.beginPath();
       ctx.arc(atom.x, atom.y, ATOM_R, 0, Math.PI * 2);
-      ctx.strokeStyle = `rgba(${rgb},0.45)`;
-      ctx.lineWidth = 2.0;
-      ctx.stroke();
+      ctx.fillStyle = grad;
+      ctx.fill();
     }
   }
 
