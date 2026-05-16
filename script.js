@@ -7,7 +7,6 @@ if (hamburger) hamburger.onclick = () => {
   hamburger.classList.toggle('active');
 };
 
-// Smooth anchor clicks + nav close
 document.addEventListener('click', e => {
   const link = e.target.closest('.nav-link');
   if (link) { navMenu?.classList.remove('active'); hamburger?.classList.remove('active'); }
@@ -18,7 +17,6 @@ document.addEventListener('click', e => {
   }
 });
 
-// Active nav link on scroll
 const sections = $$('section'), navLinks = $$('.nav-link');
 function onScroll() {
   const y = window.pageYOffset;
@@ -32,29 +30,24 @@ function onScroll() {
 }
 window.addEventListener('scroll', onScroll); onScroll();
 
-// ── Honeycomb spin lattice with precessing magnetic moments ─────────────────
+// ── Full-page honeycomb spin lattice ───────────────────────────────────────
 (function () {
-  const hero = document.querySelector('.hero');
-  if (!hero) return;
-
   const canvas = document.createElement('canvas');
-  canvas.style.cssText = 'position:absolute;inset:0;width:100%;height:100%;pointer-events:none;z-index:0;';
-  hero.prepend(canvas);
+  canvas.style.cssText = 'position:fixed;top:0;left:0;width:100%;height:100%;pointer-events:none;z-index:0;';
+  document.body.insertBefore(canvas, document.body.firstChild);
   const ctx = canvas.getContext('2d');
 
-  const D      = 54;           // bond length (px)
+  const D      = 80;     // bond length (px) — larger cell for bigger atoms
   const S3     = Math.sqrt(3);
-  const AL     = 17;           // spin arrow half-length (px)
-  const THETA0 = 0.20;         // base precession cone angle (~11°)
-  const THETA1 = 0.72;         // perturbed cone angle (~41°)
-  const OMEGA  = 1.6;          // base precession rate (rad/s)
-  const MOUSE_R = 140;         // mouse influence radius (px)
-  const PERSP  = 0.32;         // perspective factor for depth axis
+  const AL     = 26;     // arrow half-length (~5× bigger than before)
+  const ATOM_R = 9;      // atom radius (~5× bigger than before)
+  const THETA0 = 0.13;   // base cone angle (rad, ~7°) — subtle, not exaggerated
+  const OMEGA  = 1.5;    // base precession rate (rad/s)
+  const MOUSE_R = 160;   // mouse influence radius (px)
+  const PERSP  = 0.30;   // perspective factor for depth axis
 
-  // Honeycomb primitive vectors
   const A1x = S3 * D, A1y = 0;
   const A2x = S3 * D / 2, A2y = 1.5 * D;
-  // B-atom offset within unit cell
   const BDX = S3 * D / 2, BDY = D / 2;
 
   let W, H, atoms = [], bonds = [];
@@ -71,27 +64,24 @@ window.addEventListener('scroll', onScroll); onScroll();
         const cx = n * A1x + m * A2x;
         const cy = n * A1y + m * A2y;
 
-        // A sublattice — spin up
+        // A sublattice — spin up (red)
         const ai = atoms.length;
-        atoms.push({
-          x: cx, y: cy, spin: 1,
-          phase: ((n * 13 + m * 7 + 3) & 0x7FFF) / 0x7FFF * Math.PI * 2
-        });
+        atoms.push({ x: cx, y: cy, spin: 1,
+          phase: ((n * 13 + m * 7  + 3) & 0x7FFF) / 0x7FFF * Math.PI * 2 });
         map.set(`A${n},${m}`, ai);
 
-        // B sublattice — spin down
+        // B sublattice — spin down (blue)
         const bi = atoms.length;
-        atoms.push({
-          x: cx + BDX, y: cy + BDY, spin: -1,
-          phase: ((n * 11 + m * 17 + 5) & 0x7FFF) / 0x7FFF * Math.PI * 2
-        });
+        atoms.push({ x: cx + BDX, y: cy + BDY, spin: -1,
+          phase: ((n * 11 + m * 17 + 5) & 0x7FFF) / 0x7FFF * Math.PI * 2 });
         map.set(`B${n},${m}`, bi);
       }
     }
 
-    // Each A(n,m) bonds to B(n,m), B(n-1,m), B(n,m-1) — gives exact honeycomb
-    for (let m = -1; m < rows; m++) {
-      for (let n = -1; n < cols; n++) {
+    const cols2 = Math.ceil(W / (S3 * D)) + 3;
+    const rows2 = Math.ceil(H / (1.5 * D)) + 3;
+    for (let m = -1; m < rows2; m++) {
+      for (let n = -1; n < cols2; n++) {
         const ai = map.get(`A${n},${m}`);
         if (ai === undefined) continue;
         for (const key of [`B${n},${m}`, `B${n-1},${m}`, `B${n},${m-1}`]) {
@@ -117,82 +107,81 @@ window.addEventListener('scroll', onScroll); onScroll();
     ctx.clearRect(0, 0, W, H);
     const t = ts * 0.001;
 
-    // Draw honeycomb bonds
-    ctx.lineWidth = 0.9;
-    ctx.strokeStyle = 'rgba(255,255,255,0.11)';
+    // Bonds
+    ctx.lineWidth = 1.2;
+    ctx.strokeStyle = 'rgba(255,255,255,0.12)';
     for (const [ai, bi] of bonds) {
       const a = atoms[ai], b = atoms[bi];
-      if (a.x < -D * 2 || a.x > W + D * 2) continue;
       ctx.beginPath();
       ctx.moveTo(a.x, a.y);
       ctx.lineTo(b.x, b.y);
       ctx.stroke();
     }
 
-    // Draw precessing spins
+    // Spins
     for (const atom of atoms) {
-      if (atom.x < -D * 2 || atom.x > W + D * 2 ||
-          atom.y < -D * 2 || atom.y > H + D * 2) continue;
-
       const mdx = atom.x - mouse.x, mdy = atom.y - mouse.y;
       const mdist = Math.sqrt(mdx * mdx + mdy * mdy);
-      const pf = Math.max(0, 1 - mdist / MOUSE_R); // 0 → 1 near mouse
+      // pf: 1 = at mouse, 0 = far away
+      const pf = Math.max(0, 1 - mdist / MOUSE_R);
 
-      // Cone angle widens, precession speeds up, wobble added — all near mouse
-      const theta  = THETA0 + (THETA1 - THETA0) * pf * pf;
-      const wobble = pf * 0.42 * Math.sin(t * 9.7 + atom.phase * 2.3);
-      const phi    = (OMEGA + pf * 2.8) * t + atom.phase + wobble;
+      // Mouse DAMPENS the precession: cone narrows and slows near mouse
+      const theta   = THETA0 * (1 - pf * 0.88);   // shrinks toward ~zero near mouse
+      const omegaEff = OMEGA * (1 - pf * 0.80);    // slows to 20% of normal near mouse
 
-      const spin = atom.spin; // +1 = up, -1 = down
+      const phi  = omegaEff * t + atom.phase;
+      const spin = atom.spin;
 
-      // 3D precession projected to 2D with perspective on depth axis
       const tipX = atom.x + AL * Math.sin(theta) * Math.cos(phi);
       const tipY = atom.y - spin * AL * Math.cos(theta)
                          + AL * Math.sin(theta) * Math.sin(phi) * PERSP;
-
-      // Short tail stub in opposite direction
-      const tf  = 0.38;
-      const tlX = atom.x - AL * tf * Math.sin(theta) * Math.cos(phi);
-      const tlY = atom.y + spin * AL * tf * Math.cos(theta)
+      const tf   = 0.40;
+      const tlX  = atom.x - AL * tf * Math.sin(theta) * Math.cos(phi);
+      const tlY  = atom.y + spin * AL * tf * Math.cos(theta)
                          - AL * tf * Math.sin(theta) * Math.sin(phi) * PERSP;
 
-      // A (up) = teal, B (down) = lighter teal
-      const rgb   = spin === 1 ? '20,184,166' : '94,234,212';
-      const alpha = 0.55 + pf * 0.45;
+      // Up = red, Down = blue
+      const rgb   = spin === 1 ? '239,68,68' : '96,165,250';
+      const alpha = 0.60 + pf * 0.10;  // very slightly brighter when dampened (frozen)
 
       ctx.strokeStyle = `rgba(${rgb},${alpha})`;
       ctx.fillStyle   = `rgba(${rgb},${alpha})`;
-      ctx.lineWidth   = 1.5;
+      ctx.lineWidth   = 2.0;
 
-      // Shaft
       ctx.beginPath();
       ctx.moveTo(tlX, tlY);
       ctx.lineTo(tipX, tipY);
       ctx.stroke();
 
-      // Arrowhead at tip
-      drawArrowHead(tlX, tlY, tipX, tipY, 5.5);
+      drawArrowHead(tlX, tlY, tipX, tipY, 7);
 
-      // Atom dot — glows when mouse is close
+      // Atom dot — slightly dims/freezes near mouse
+      const dotAlpha = 0.55 - pf * 0.15;
       ctx.beginPath();
-      ctx.arc(atom.x, atom.y, 2.0 + pf * 1.8, 0, Math.PI * 2);
-      ctx.fillStyle = `rgba(255,255,255,${0.28 + pf * 0.55})`;
+      ctx.arc(atom.x, atom.y, ATOM_R, 0, Math.PI * 2);
+      ctx.fillStyle = `rgba(255,255,255,${dotAlpha})`;
       ctx.fill();
+
+      // Atom ring (tinted by spin colour)
+      ctx.beginPath();
+      ctx.arc(atom.x, atom.y, ATOM_R, 0, Math.PI * 2);
+      ctx.strokeStyle = `rgba(${rgb},0.45)`;
+      ctx.lineWidth = 1.5;
+      ctx.stroke();
     }
   }
 
   function resize() {
-    W = canvas.width  = hero.offsetWidth;
-    H = canvas.height = hero.offsetHeight;
+    W = canvas.width  = window.innerWidth;
+    H = canvas.height = window.innerHeight;
     build();
   }
 
-  hero.addEventListener('mousemove', e => {
-    const r = hero.getBoundingClientRect();
-    mouse.x = e.clientX - r.left;
-    mouse.y = e.clientY - r.top;
+  document.addEventListener('mousemove', e => {
+    mouse.x = e.clientX;
+    mouse.y = e.clientY;
   });
-  hero.addEventListener('mouseleave', () => { mouse.x = -9999; mouse.y = -9999; });
+  document.addEventListener('mouseleave', () => { mouse.x = -9999; mouse.y = -9999; });
   window.addEventListener('resize', resize);
 
   resize();
