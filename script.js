@@ -37,7 +37,7 @@ window.addEventListener('scroll', onScroll); onScroll();
   document.body.insertBefore(canvas, document.body.firstChild);
   const ctx = canvas.getContext('2d');
 
-  const D      = 80;     // bond length (px) — larger cell for bigger atoms
+  const D      = 104;    // bond length (px) — 1.3× larger honeycomb cells
   const S3     = Math.sqrt(3);
   const AL     = 44;     // arrow half-length (1.7× increase)
   const ATOM_R = 9;      // atom radius (~5× bigger than before)
