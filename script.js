@@ -69,7 +69,8 @@ window.addEventListener('scroll', onScroll); onScroll();
     // y-spacing at the entry wall = a / cos(θ) so that perpendicular separation = A
     const ySpacing = A / Math.cos(ANGLE);
     const nLanes   = Math.ceil((H + ySpacing) / ySpacing);
-    const laneY    = (nLane % nLanes) * ySpacing;
+    const jitter   = (Math.random() - 0.5) * 38;  // ±19 px (~±5 mm at 96 DPI)
+    const laneY    = (nLane % nLanes) * ySpacing + jitter;
     nLane++;
     neutrons.push({
       x: -NEUTRON_R,
