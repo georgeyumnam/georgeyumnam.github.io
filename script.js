@@ -184,17 +184,24 @@ window.addEventListener('scroll', onScroll); onScroll();
 
       drawCylinderArrow(tlX, tlY, tipX, tipY, rgb, alpha);
 
-      // Shiny black ball — specular highlight points toward mouse
+      // Shiny black ball — directional hemisphere light from mouse side
       const lx = mouse.x > -9000 ? -mdx / (mdist || 1) : -0.5;
       const ly = mouse.y > -9000 ? -mdy / (mdist || 1) : -0.8;
-      const hlX = atom.x + lx * ATOM_R * 0.36;
-      const hlY = atom.y + ly * ATOM_R * 0.36;
 
-      const grad = ctx.createRadialGradient(hlX, hlY, 0, atom.x, atom.y, ATOM_R);
-      grad.addColorStop(0,    'rgba(255,255,255,0.92)');
-      grad.addColorStop(0.18, 'rgba(190,205,225,0.55)');
-      grad.addColorStop(0.42, 'rgba(16,16,20,1)');
-      grad.addColorStop(1,    'rgba(4,4,6,1)');
+      // Black base sphere
+      ctx.beginPath();
+      ctx.arc(atom.x, atom.y, ATOM_R, 0, Math.PI * 2);
+      ctx.fillStyle = 'rgb(4,4,6)';
+      ctx.fill();
+
+      // Light overlay: full white on lit side, zero on dark side
+      const grad = ctx.createLinearGradient(
+        atom.x + lx * ATOM_R, atom.y + ly * ATOM_R,
+        atom.x - lx * ATOM_R, atom.y - ly * ATOM_R
+      );
+      grad.addColorStop(0,    'rgba(255,255,255,0.82)');
+      grad.addColorStop(0.50, 'rgba(255,255,255,0.08)');
+      grad.addColorStop(1,    'rgba(255,255,255,0)');
 
       ctx.beginPath();
       ctx.arc(atom.x, atom.y, ATOM_R, 0, Math.PI * 2);
