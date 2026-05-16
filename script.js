@@ -41,8 +41,8 @@ window.addEventListener('scroll', onScroll); onScroll();
   const S3     = Math.sqrt(3);
   const AL     = 26;     // arrow half-length (~5× bigger than before)
   const ATOM_R = 9;      // atom radius (~5× bigger than before)
-  const THETA0 = 0.13;   // base cone angle (rad, ~7°) — subtle, not exaggerated
-  const OMEGA  = 1.5;    // base precession rate (rad/s)
+  const THETA0 = 0.182;  // base cone angle (rad, ~10°) — 40% increase
+  const OMEGA  = 3.0;    // base precession rate (rad/s) — 2× increase
   const MOUSE_R = 160;   // mouse influence radius (px)
   const PERSP  = 0.30;   // perspective factor for depth axis
 
@@ -92,14 +92,51 @@ window.addEventListener('scroll', onScroll); onScroll();
     }
   }
 
-  function drawArrowHead(x1, y1, x2, y2, size) {
+  // Draws a cylinder shaft + conical arrowhead from (x1,y1) to (x2,y2)
+  function drawCylinderArrow(x1, y1, x2, y2, color, alpha) {
+    const SHAFT_W  = 6;   // cylinder diameter (px) — 3× the old ~2px line
+    const HEAD_W   = 15;  // cone base diameter
+    const HEAD_LEN = 17;  // cone length
+
     const angle = Math.atan2(y2 - y1, x2 - x1);
+    const totalLen = Math.sqrt((x2-x1)**2 + (y2-y1)**2);
+    const shaftLen = Math.max(0, totalLen - HEAD_LEN);
+
+    ctx.save();
+    ctx.translate(x1, y1);
+    ctx.rotate(angle);
+
+    // ── Cylinder shaft ──────────────────────────
+    ctx.fillStyle = `rgba(${color},${alpha})`;
     ctx.beginPath();
-    ctx.moveTo(x2, y2);
-    ctx.lineTo(x2 - size * Math.cos(angle - 0.42), y2 - size * Math.sin(angle - 0.42));
-    ctx.lineTo(x2 - size * Math.cos(angle + 0.42), y2 - size * Math.sin(angle + 0.42));
+    ctx.rect(0, -SHAFT_W / 2, shaftLen, SHAFT_W);
+    ctx.fill();
+
+    // Highlight strip — top ~25% of shaft for 3-D cylinder illusion
+    ctx.fillStyle = `rgba(255,255,255,0.22)`;
+    ctx.beginPath();
+    ctx.rect(0, -SHAFT_W / 2, shaftLen, SHAFT_W * 0.28);
+    ctx.fill();
+
+    // ── Cone arrowhead ───────────────────────────
+    ctx.fillStyle = `rgba(${color},${alpha})`;
+    ctx.beginPath();
+    ctx.moveTo(totalLen, 0);                      // tip
+    ctx.lineTo(shaftLen, -HEAD_W / 2);            // base left
+    ctx.lineTo(shaftLen,  HEAD_W / 2);            // base right
     ctx.closePath();
     ctx.fill();
+
+    // Cone highlight
+    ctx.fillStyle = `rgba(255,255,255,0.18)`;
+    ctx.beginPath();
+    ctx.moveTo(totalLen, 0);
+    ctx.lineTo(shaftLen, -HEAD_W / 2);
+    ctx.lineTo(shaftLen, -HEAD_W * 0.05);
+    ctx.closePath();
+    ctx.fill();
+
+    ctx.restore();
   }
 
   function draw(ts) {
@@ -142,18 +179,9 @@ window.addEventListener('scroll', onScroll); onScroll();
 
       // Up = red, Down = blue
       const rgb   = spin === 1 ? '239,68,68' : '96,165,250';
-      const alpha = 0.60 + pf * 0.10;  // very slightly brighter when dampened (frozen)
+      const alpha = 0.70 + pf * 0.10;
 
-      ctx.strokeStyle = `rgba(${rgb},${alpha})`;
-      ctx.fillStyle   = `rgba(${rgb},${alpha})`;
-      ctx.lineWidth   = 2.0;
-
-      ctx.beginPath();
-      ctx.moveTo(tlX, tlY);
-      ctx.lineTo(tipX, tipY);
-      ctx.stroke();
-
-      drawArrowHead(tlX, tlY, tipX, tipY, 7);
+      drawCylinderArrow(tlX, tlY, tipX, tipY, rgb, alpha);
 
       // Atom dot — slightly dims/freezes near mouse
       const dotAlpha = 0.55 - pf * 0.15;

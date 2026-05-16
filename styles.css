@@ -59,7 +59,7 @@ a { text-decoration: none; }
 }
 
 .logo {
-    font-size: 1.1rem;
+    font-size: 1.25rem;
     font-weight: 700;
     color: var(--white);
     letter-spacing: -0.3px;
@@ -75,7 +75,7 @@ a { text-decoration: none; }
 }
 
 .nav-link {
-    font-size: 0.9rem;
+    font-size: 1rem;
     font-weight: 500;
     color: var(--text-dim);
     transition: var(--transition);
@@ -154,7 +154,7 @@ a { text-decoration: none; }
 .hero-text { flex: 1; }
 
 .hero-title {
-    font-size: 3rem;
+    font-size: 3.6rem;
     font-weight: 800;
     letter-spacing: -1.5px;
     line-height: 1.1;
@@ -162,16 +162,16 @@ a { text-decoration: none; }
 }
 
 .hero-role {
-    font-size: 1.15rem;
+    font-size: 1.35rem;
     font-weight: 600;
     color: var(--teal);
     margin-bottom: 0.4rem;
 }
 
-.hero-affiliations { margin-bottom: 1.8rem; line-height: 1.55; }
+.hero-affiliations { margin-bottom: 1.8rem; line-height: 1.65; }
 
 .hero-affiliation {
-    font-size: 0.95rem;
+    font-size: 1.05rem;
     color: rgba(255,255,255,0.68);
     font-weight: 400;
 }
@@ -184,9 +184,9 @@ a { text-decoration: none; }
 }
 
 .btn {
-    padding: 11px 28px;
+    padding: 12px 30px;
     border-radius: var(--radius);
-    font-size: 0.9rem;
+    font-size: 1rem;
     font-weight: 600;
     cursor: pointer;
     transition: var(--transition);
@@ -261,7 +261,7 @@ section {
 }
 
 .section-title {
-    font-size: 2rem;
+    font-size: 2.4rem;
     font-weight: 800;
     color: var(--white);
     margin-bottom: 0.5rem;
@@ -282,20 +282,29 @@ section {
 .section-header { margin-bottom: 3rem; }
 
 /* ── About ────────────────────────────────────── */
-.about .container { max-width: 1000px; }
+.about .container { max-width: 1200px; }
 
 .about-layout {
     display: grid;
-    grid-template-columns: 1fr 320px;
+    grid-template-columns: 1fr 440px;
     gap: 3.5rem;
     align-items: start;
 }
 
+.about-text {
+    background: var(--glass-card);
+    backdrop-filter: blur(12px);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 2rem 2.25rem;
+    box-shadow: var(--shadow-md);
+}
+
 .about-text p {
-    font-size: 1.05rem;
+    font-size: 1.15rem;
     color: var(--text-dim);
     margin-bottom: 1.5rem;
-    line-height: 1.85;
+    line-height: 1.9;
 }
 .about-text p:last-child { margin-bottom: 0; }
 
@@ -310,7 +319,7 @@ section {
 }
 
 .about-photo-caption {
-    font-size: 0.8rem;
+    font-size: 0.85rem;
     color: var(--text-dim);
     text-align: center;
     margin-top: 0.6rem;
@@ -332,14 +341,14 @@ section {
     display: flex;
     align-items: flex-start;
     gap: 1rem;
-    font-size: 1rem;
+    font-size: 1.1rem;
     color: var(--text-dim);
-    padding: 1rem 1.25rem;
+    padding: 1.1rem 1.4rem;
     background: var(--glass-card);
     border-radius: var(--radius);
     border-left: 3px solid var(--teal);
     box-shadow: var(--shadow-sm);
-    backdrop-filter: blur(8px);
+    backdrop-filter: blur(10px);
 }
 .education-list li strong {
     color: var(--white);
@@ -422,7 +431,7 @@ section {
 }
 
 .project-title {
-    font-size: 1.1rem;
+    font-size: 1.25rem;
     font-weight: 700;
     color: var(--white);
     margin-bottom: 0.6rem;
@@ -430,9 +439,9 @@ section {
 }
 
 .project-description {
-    font-size: 0.9rem;
+    font-size: 1rem;
     color: var(--text-dim);
-    line-height: 1.75;
+    line-height: 1.8;
     margin-bottom: 1.25rem;
     flex: 1;
 }
@@ -491,7 +500,7 @@ section {
 }
 
 .pub-card-title {
-    font-size: 1rem;
+    font-size: 1.1rem;
     font-weight: 700;
     color: var(--white);
     margin-bottom: 0.6rem;
@@ -499,7 +508,7 @@ section {
 }
 
 .pub-authors {
-    font-size: 0.85rem;
+    font-size: 0.95rem;
     color: var(--text-dim);
     margin-bottom: 0.5rem;
     line-height: 1.55;
@@ -529,11 +538,17 @@ section {
 
 /* ── Teaching ─────────────────────────────────── */
 .teaching-intro {
-    font-size: 1.05rem;
+    font-size: 1.15rem;
     color: var(--text-dim);
-    line-height: 1.8;
-    max-width: 780px;
+    line-height: 1.85;
+    max-width: 860px;
     margin-bottom: 2.5rem;
+    background: var(--glass-card);
+    backdrop-filter: blur(12px);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 1.75rem 2rem;
+    box-shadow: var(--shadow-md);
 }
 
 .cards-grid {
@@ -557,15 +572,15 @@ section {
     transform: translateY(-4px);
 }
 .opp-card h4 {
-    font-size: 1rem;
+    font-size: 1.1rem;
     font-weight: 700;
     color: var(--white);
     margin-bottom: 0.6rem;
 }
 .opp-card p {
-    font-size: 0.9rem;
+    font-size: 1rem;
     color: var(--text-dim);
-    line-height: 1.65;
+    line-height: 1.7;
 }
 
 /* ── Contact ──────────────────────────────────── */
