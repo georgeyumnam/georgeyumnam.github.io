@@ -3,68 +3,125 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Honeycomb Lattice Magnetism – George Yumnam</title>
+    <title>Artificial Honeycomb Lattices – George Yumnam</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="styles.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 </head>
 <body>
-    <!-- Navigation -->
+
     <nav class="navbar">
         <div class="container">
             <div class="nav-wrapper">
-                <a href="index.html#home" class="logo">George Yumnam</a>
+                <a href="index.html" class="logo">George Yumnam</a>
                 <ul class="nav-menu">
-                    <li><a href="index.html#home" class="nav-link">Home</a></li>
                     <li><a href="index.html#about" class="nav-link">About</a></li>
                     <li><a href="index.html#projects" class="nav-link">Research</a></li>
                     <li><a href="index.html#publications" class="nav-link">Publications</a></li>
                     <li><a href="index.html#teaching" class="nav-link">Teaching</a></li>
                     <li><a href="index.html#contact" class="nav-link">Contact</a></li>
                 </ul>
-                <div class="hamburger">
-                    <span></span>
-                    <span></span>
-                    <span></span>
-                </div>
+                <div class="hamburger"><span></span><span></span><span></span></div>
             </div>
         </div>
     </nav>
 
-    <section class="projects" style="padding-top: 4rem;">
-        <div class="container">
-            <h1 class="section-title">Honeycomb Lattice Magnetism</h1>
-            <div class="projects-grid">
-                <div class="project-card">
-                    <div class="project-image">
-                        <img src="images/disorder.png" alt="Honeycomb Lattice Magnetism">
-                    </div>
-                    <p class="project-description">
-                        We work on artificial permalloy honeycomb lattices that realize tunable, frustrated Ising-like networks.
-                        We track how field history, temperature and geometry drive the system between ice-like, charge-ordered and
-                        diode-like conducting states, and relate these regimes to changes in their collective magnetic
-                        configurations.
-                    </p>
-                    <p class="project-description">
-                        Simple models then connect local vertex configurations and magnetic-charge textures to non-reciprocal
-                        transport signatures and ultra-low forward-voltage behaviour. This highlights routes toward neuromorphic
-                        elements and energy-efficient magnetic diodes built from geometrically engineered frustration.
-                    </p>
-                    <a href="index.html#projects" class="project-link">← Back to Research Initiatives</a>
+    <!-- Hero image banner -->
+    <div class="research-hero">
+        <img src="images/disorder.png" alt="Artificial Honeycomb Lattices" class="research-hero-img">
+        <div class="research-hero-overlay">
+            <a href="index.html#projects" class="research-back">← Back to Research</a>
+            <h1 class="research-hero-title">Artificial Honeycomb Lattices</h1>
+            <p class="research-hero-sub">Geometric frustration · Magnetic charge ice · Emergent spin-diode behavior</p>
+        </div>
+    </div>
+
+    <!-- Content -->
+    <div class="research-body">
+
+        <div class="research-panel">
+            <h2>Overview</h2>
+            <p>Artificial spin-ice systems are lithographically patterned arrays of nanoscale magnetic islands whose geometry enforces strong frustration — the lattice topology makes it impossible to simultaneously minimize every pairwise interaction. Among these, the artificial honeycomb lattice stands out because its three-island vertices support an exact analogy with magnetic charge: vertex configurations map onto charge states, and the system effectively realizes a disordered Coulomb gas of effective magnetic charges on a coordination-3 lattice.</p>
+            <p>My research uses permalloy (Ni₈₁Fe₁₉) honeycomb arrays fabricated by electron-beam lithography to explore how the emergent charge-ice phenomenology evolves with applied field and geometric control parameters. By combining magnetic force microscopy (MFM), magneto-optical Kerr effect (MOKE) measurements, and micromagnetic simulations, we map the phase diagram of the honeycomb charge-ice and identify a regime where the array functions as a magnetic diode — transmitting flux preferentially in one direction as a consequence of broken symmetry induced by field history.</p>
+        </div>
+
+        <div class="research-two-col">
+            <div class="research-panel">
+                <h2>Experimental Methods</h2>
+                <ul>
+                    <li>Electron-beam lithography (EBL) patterning of Ni₈₁Fe₁₉ (permalloy) nanoislands</li>
+                    <li>Magnetic force microscopy (MFM) for single-island moment imaging</li>
+                    <li>Magneto-optical Kerr effect (MOKE) for ensemble hysteresis loops</li>
+                    <li>Micromagnetic simulations (OOMMF / MuMax3) for switching dynamics</li>
+                    <li>Vertex statistics analysis to quantify charge-ice ordering and monopole density</li>
+                </ul>
+            </div>
+            <div class="research-panel">
+                <h2>Central Questions</h2>
+                <ul>
+                    <li>Can geometric tuning of the honeycomb array stabilize long-range charge-ordered phases at room temperature?</li>
+                    <li>What is the microscopic switching mechanism that underpins the observed magnetic diode effect?</li>
+                    <li>How do topological defects (magnetic monopole pairs) nucleate, propagate, and annihilate within the frustrated lattice?</li>
+                    <li>Can the diode functionality be toggled reversibly by a small applied field, enabling non-volatile magnetic switching?</li>
+                </ul>
+            </div>
+        </div>
+
+        <div class="research-panel">
+            <h2>Geometric Frustration and Magnetic Charge Ice</h2>
+            <p>In the honeycomb geometry, each vertex connects exactly three islands. The Ising-like magnetic moments — constrained to lie along each island's long axis — cannot all be mutually antiparallel at a three-island vertex. The lowest-energy "two-in, one-out" and "one-in, two-out" vertex types carry a net magnetic charge analogous to a Coulomb monopole. The system therefore spontaneously fractionates into a gas of effective magnetic charges whose interactions are long-ranged and Coulombic, realizing the magnetic analogue of a proton-disorder ice model on a coordination-3 lattice.</p>
+            <p>By varying island length, width, thickness, and lattice constant independently, we systematically control the island switching field, the dipolar coupling strength, and the vertex degeneracy. This parameter space tunes the system from a nearly uncorrelated paramagnet (weak coupling) through a strongly correlated charge-ice phase (intermediate coupling) to a topologically ordered phase with macroscopic remanence (strong coupling). The charge-ice phase is identified by a characteristic plateau in the vertex-type population statistics measured by MFM as a function of applied field.</p>
+        </div>
+
+        <div class="research-panel">
+            <h2>The Magnetic Diode Effect</h2>
+            <p>A central discovery of this research is that the honeycomb array can be conditioned into a state where flux transmission is strongly asymmetric with respect to field direction — a magnetic analogue of the electrical diode. When the array is initialized by a large field applied along one of the three crystallographic axes of the honeycomb, a net imbalance of charge types is frozen in. Subsequent application of a smaller AC field along the same axis drives avalanche-like domain reversals that preferentially nucleate and propagate in one direction, leading to a pronounced asymmetry in the MOKE hysteresis loop.</p>
+            <p>Micromagnetic simulations reveal that the asymmetry originates from the distinct energy barriers for positive and negative charge propagation through the conditioned lattice: the frozen charge background acts as a built-in potential that lowers the barrier in one direction while raising it in the other. The rectification ratio scales with the density of frozen charges and can be controlled by the amplitude and history of the conditioning field. This mechanism is fully reversible and requires no moving parts, making it attractive for field-controlled magnetic logic and neuromorphic applications.</p>
+            <div class="research-tags-row">
+                <span class="tech-tag">Artificial spin ice</span>
+                <span class="tech-tag">Magnetic charge ice</span>
+                <span class="tech-tag">Geometric frustration</span>
+                <span class="tech-tag">Magnetic diode</span>
+                <span class="tech-tag">Permalloy</span>
+                <span class="tech-tag">MFM</span>
+            </div>
+        </div>
+
+        <div class="research-panel">
+            <h2>Topological Defects and Monopole Dynamics</h2>
+            <p>Beyond the static diode effect, we have characterized the dynamics of magnetic monopole–antimonopole pair nucleation and annihilation using field-driven MFM imaging. When the applied field is ramped through the switching region, pairs of charged vertices nucleate along domain boundaries and separate by propagating along the honeycomb bonds. The propagation pathway is directional — determined by the charge-ice background — and terminates when the monopole and antimonopole annihilate at a distant boundary or at a pre-existing charge of opposite sign.</p>
+            <p>These observations provide evidence for emergent magnetic monopole dynamics in a two-dimensional frustrated magnet, connecting the honeycomb array to the broader physics of frustrated systems in which fractionalized excitations govern low-temperature transport and relaxation. The ability to engineer and image these excitations in a lithographic system offers a uniquely controlled experimental platform for studying topological defect physics that would be inaccessible in bulk frustrated magnets.</p>
+        </div>
+
+        <div class="research-panel">
+            <h2>Related Publications</h2>
+            <div class="pub-inline">
+                <div class="pub-inline-item">
+                    <h4>Emergent magnetic diode effect in artificial honeycomb spin-ice lattices</h4>
+                    <p><strong>George Yumnam</strong>, Yuyang Lao, Ding-Fu Shao, Evgeny Y. Tsymbal, Peter Schiffer, <em>et al.</em></p>
+                    <p>Materials Today Advances, 20, 100440 (2023)</p>
+                    <a href="https://doi.org/10.1016/j.mtadv.2023.100440" target="_blank" rel="noopener noreferrer">View Publication →</a>
+                </div>
+                <div class="pub-inline-item">
+                    <h4>Magnetic charge ice states in artificial honeycomb lattices</h4>
+                    <p><strong>George Yumnam</strong>, Yuyang Lao, Peter Schiffer, <em>et al.</em></p>
+                    <p>Materials Today Physics, 27, 100797 (2022)</p>
+                    <a href="https://doi.org/10.1016/j.mtphys.2022.100797" target="_blank" rel="noopener noreferrer">View Publication →</a>
                 </div>
             </div>
         </div>
-    </section>
+
+    </div>
 
     <footer class="footer">
         <div class="container">
-            <p>&copy; 2025 George Yumnam · Department of Physics</p>
+            <p>&copy; 2025 George Yumnam · Stewart Blusson Quantum Matter Institute, UBC</p>
             <div class="footer-social">
                 <a href="https://scholar.google.com/citations?user=D3v8UV4AAAAJ&hl=en" target="_blank" rel="noopener noreferrer"><i class="fas fa-book-open"></i></a>
                 <a href="https://www.linkedin.com/in/george-yumnam/" target="_blank" rel="noopener noreferrer"><i class="fab fa-linkedin"></i></a>
-                <a href="mailto:georgeyumnam@gmail.com" rel="noopener noreferrer"><i class="fas fa-envelope"></i></a>
+                <a href="mailto:georgeyumnam@gmail.com"><i class="fas fa-envelope"></i></a>
             </div>
         </div>
     </footer>

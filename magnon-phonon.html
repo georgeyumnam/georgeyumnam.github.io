@@ -6,65 +6,127 @@
     <title>Magnon–Phonon Interactions – George Yumnam</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="styles.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 </head>
 <body>
-    <!-- Navigation -->
+
     <nav class="navbar">
         <div class="container">
             <div class="nav-wrapper">
-                <a href="index.html#home" class="logo">George Yumnam</a>
+                <a href="index.html" class="logo">George Yumnam</a>
                 <ul class="nav-menu">
-                    <li><a href="index.html#home" class="nav-link">Home</a></li>
                     <li><a href="index.html#about" class="nav-link">About</a></li>
                     <li><a href="index.html#projects" class="nav-link">Research</a></li>
                     <li><a href="index.html#publications" class="nav-link">Publications</a></li>
                     <li><a href="index.html#teaching" class="nav-link">Teaching</a></li>
                     <li><a href="index.html#contact" class="nav-link">Contact</a></li>
                 </ul>
-                <div class="hamburger">
-                    <span></span>
-                    <span></span>
-                    <span></span>
-                </div>
+                <div class="hamburger"><span></span><span></span><span></span></div>
             </div>
         </div>
     </nav>
 
-    <section class="projects" style="padding-top: 4rem;">
-        <div class="container">
-            <h1 class="section-title">Magnon–Phonon Interactions</h1>
-            <div class="projects-grid">
-                <div class="project-card">
-                    <div class="project-image">
-                        <img src="images/magnon-phonon.png" alt="Magnon–Phonon Interactions">
-                    </div>
-                    <p class="project-description">
-                        In this line of work, we use inelastic neutron and resonant X-ray scattering on itinerant antiferromagnets
-                        and correlated insulators to resolve how magnon branches hybridize with optical phonons. By quantifying
-                        dispersion renormalization, linewidth broadening and spectral-weight transfer, we build microscopic models
-                        that connect spin–lattice coupling to macroscopic transport properties.
-                    </p>
-                    <p class="project-description">
-                        A central question is when magnon–phonon coupling can be engineered to either enhance or suppress heat and
-                        spin currents in candidate magnonic and thermoelectric devices. I am particularly interested in systems
-                        where small structural or chemical changes produce qualitative shifts in the hybrid excitation spectrum.
-                    </p>
-                    <a href="index.html#projects" class="project-link">← Back to Research Initiatives</a>
+    <!-- Hero image banner -->
+    <div class="research-hero">
+        <img src="images/magnon-phonon.png" alt="Magnon-Phonon Interactions" class="research-hero-img">
+        <div class="research-hero-overlay">
+            <a href="index.html#projects" class="research-back">← Back to Research</a>
+            <h1 class="research-hero-title">Magnon–Phonon Interactions</h1>
+            <p class="research-hero-sub">Spin–lattice coupling · Inelastic neutron scattering · Thermal transport</p>
+        </div>
+    </div>
+
+    <!-- Content -->
+    <div class="research-body">
+
+        <div class="research-panel">
+            <h2>Overview</h2>
+            <p>In ordered magnets, spin waves (magnons) and lattice vibrations (phonons) are often treated as independent channels. In real materials, however, spin–orbit coupling, exchange striction, and magnetoelastic interactions mix these channels, producing hybridized quasiparticles whose properties differ qualitatively from either parent mode. My research uses inelastic neutron scattering (INS) and resonant inelastic X-ray scattering (RIXS) to directly resolve how magnon branches hybridize with optical phonons in itinerant antiferromagnets and correlated insulators.</p>
+            <p>By tracking dispersion renormalization, linewidth broadening, and spectral-weight transfer as functions of momentum, energy, temperature, and applied field, we extract the microscopic spin–lattice coupling constants that govern this hybridization. These are then fed into model Hamiltonians to understand how the hybrid excitation spectrum connects to measurable macroscopic quantities such as thermal conductivity, spin Seebeck coefficient, and magnon lifetime.</p>
+        </div>
+
+        <div class="research-two-col">
+            <div class="research-panel">
+                <h2>Experimental Techniques</h2>
+                <ul>
+                    <li>Time-of-flight inelastic neutron scattering (CNCS, HYSPEC at SNS; SEQUOIA at ORNL)</li>
+                    <li>Resonant inelastic X-ray scattering (RIXS) at synchrotron beamlines</li>
+                    <li>Nuclear resonant inelastic X-ray scattering (NRIXS) and Mössbauer spectroscopy</li>
+                    <li>Neutron powder and single-crystal diffraction for structural characterization</li>
+                    <li>Ab initio lattice dynamics (DFT-DFPT) for phonon benchmarking</li>
+                </ul>
+            </div>
+            <div class="research-panel">
+                <h2>Key Scientific Questions</h2>
+                <ul>
+                    <li>Under what conditions does spin–lattice coupling produce avoided crossings versus broadened continua in the excitation spectrum?</li>
+                    <li>How does chemical or structural disorder tune the magnon–phonon hybridization strength?</li>
+                    <li>Can selective coupling to specific phonon branches enhance or suppress spin-heat conversion efficiency?</li>
+                    <li>What are the signatures of magnon–phonon coupling in transport observables — and can they be predicted from scattering data alone?</li>
+                </ul>
+            </div>
+        </div>
+
+        <div class="research-panel">
+            <h2>Case Study: Magnon Gap Tuning in Li-doped MnTe</h2>
+            <p>Hexagonal MnTe is an altermagnetic semiconductor with a large magnon gap set by single-ion anisotropy and exchange. Using INS on the CNCS and HYSPEC spectrometers at the Spallation Neutron Source, we measured the full magnon dispersion in a series of Li<sub>x</sub>Mn<sub>1−x</sub>Te samples across a wide doping range. Li substitution on the Mn site introduces both hole doping and local structural distortions that modify the crystal-field environment around the remaining Mn²⁺ ions.</p>
+            <p>We found that the magnon gap is continuously and systematically tunable with Li content — increasing by over 50% at moderate doping levels — without destroying long-range antiferromagnetic order. By comparing the measured dispersion to spin-wave theory with a magnetoelastic coupling term, we demonstrated that the gap evolution is driven primarily by a renormalization of the single-ion anisotropy through spin–lattice interaction, rather than by changes in the exchange integrals. This work establishes Li-doped MnTe as a model system for magnon-gap engineering via chemical tuning.</p>
+            <div class="research-tags-row">
+                <span class="tech-tag">INS</span>
+                <span class="tech-tag">Antiferromagnetism</span>
+                <span class="tech-tag">Spin-wave theory</span>
+                <span class="tech-tag">Magnetoelastic coupling</span>
+                <span class="tech-tag">Altermagnetic semiconductors</span>
+            </div>
+        </div>
+
+        <div class="research-panel">
+            <h2>Case Study: Lattice Dynamics and Magnetism in RuO₂</h2>
+            <p>RuO₂ has attracted intense recent attention as a candidate altermagnet — a material with zero net magnetization but spin-split bands, promising for spin-transport applications. However, the existence and magnitude of magnetic order in RuO₂ remain actively debated, with conflicting results from different probes. We brought together phonon spectroscopy (NRIXS) and Mössbauer spectroscopy to provide independent, phonon-based constraints on the magnetic and electronic state of RuO₂.</p>
+            <p>Our NRIXS measurements resolve the ⁵⁷Fe partial phonon density of states in Fe-doped RuO₂ with high energy resolution, allowing us to detect subtle changes in the force constants that would accompany magnetic ordering. Combined with Mössbauer hyperfine parameters, our data place quantitative upper bounds on the size of any ordered moment in RuO₂ and provide clear constraints on the degree of electron correlation. These results demonstrate that scattering-based phonon probes can serve as precision sensors for magnetism in systems where conventional magnetic measurements are ambiguous.</p>
+            <div class="research-tags-row">
+                <span class="tech-tag">NRIXS</span>
+                <span class="tech-tag">Mössbauer spectroscopy</span>
+                <span class="tech-tag">Altermagnetism</span>
+                <span class="tech-tag">Phonon DOS</span>
+                <span class="tech-tag">RuO₂</span>
+            </div>
+        </div>
+
+        <div class="research-panel">
+            <h2>Broader Implications</h2>
+            <p>Understanding magnon–phonon hybridization has direct consequences for the design of magnonic and thermoelectric devices. In magnonic systems, strong spin–lattice coupling can open avoided crossings that act as frequency-selective gates for spin-wave propagation. In thermoelectrics, the same coupling modifies phonon lifetimes and thermal conductivity in ways that are not captured by purely electronic models. Our work aims to provide the quantitative microscopic foundation — extracted from direct scattering measurements — needed to engineer these effects rather than merely observe them.</p>
+        </div>
+
+        <div class="research-panel">
+            <h2>Related Publications</h2>
+            <div class="pub-inline">
+                <div class="pub-inline-item">
+                    <h4>Constraints on magnetism and correlations in RuO₂ from lattice dynamics and Mössbauer spectroscopy</h4>
+                    <p><strong>George Yumnam</strong>, Parul R. Raghuvanshi, John D. Budai, Dipanshu Bansal, Lars Bocklage, <em>et al.</em></p>
+                    <p>Cell Reports Physical Sciences, 2025</p>
+                    <a href="https://www.cell.com/cell-reports-physical-science/fulltext/S2666-3864(25)00451-5" target="_blank" rel="noopener noreferrer">View Publication →</a>
+                </div>
+                <div class="pub-inline-item">
+                    <h4>Magnon gap tuning in lithium-doped MnTe</h4>
+                    <p><strong>George Yumnam</strong>, Duncan H. Moseley, Joseph A. M. Paddison, Christiana Z. Suggs, Emma Zappala, <em>et al.</em></p>
+                    <p>Physical Review B, 109, 214434 (2024)</p>
+                    <a href="https://doi.org/10.1103/PhysRevB.109.214434" target="_blank" rel="noopener noreferrer">View Publication →</a>
                 </div>
             </div>
         </div>
-    </section>
+
+    </div>
 
     <footer class="footer">
         <div class="container">
-            <p>&copy; 2025 George Yumnam · Department of Physics</p>
+            <p>&copy; 2025 George Yumnam · Stewart Blusson Quantum Matter Institute, UBC</p>
             <div class="footer-social">
                 <a href="https://scholar.google.com/citations?user=D3v8UV4AAAAJ&hl=en" target="_blank" rel="noopener noreferrer"><i class="fas fa-book-open"></i></a>
                 <a href="https://www.linkedin.com/in/george-yumnam/" target="_blank" rel="noopener noreferrer"><i class="fab fa-linkedin"></i></a>
-                <a href="mailto:georgeyumnam@gmail.com" rel="noopener noreferrer"><i class="fas fa-envelope"></i></a>
+                <a href="mailto:georgeyumnam@gmail.com"><i class="fas fa-envelope"></i></a>
             </div>
         </div>
     </footer>

@@ -6,65 +6,105 @@
     <title>Quantum Magnetism – George Yumnam</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="styles.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 </head>
 <body>
-    <!-- Navigation -->
+
     <nav class="navbar">
         <div class="container">
             <div class="nav-wrapper">
-                <a href="index.html#home" class="logo">George Yumnam</a>
+                <a href="index.html" class="logo">George Yumnam</a>
                 <ul class="nav-menu">
-                    <li><a href="index.html#home" class="nav-link">Home</a></li>
                     <li><a href="index.html#about" class="nav-link">About</a></li>
                     <li><a href="index.html#projects" class="nav-link">Research</a></li>
                     <li><a href="index.html#publications" class="nav-link">Publications</a></li>
                     <li><a href="index.html#teaching" class="nav-link">Teaching</a></li>
                     <li><a href="index.html#contact" class="nav-link">Contact</a></li>
                 </ul>
-                <div class="hamburger">
-                    <span></span>
-                    <span></span>
-                    <span></span>
-                </div>
+                <div class="hamburger"><span></span><span></span><span></span></div>
             </div>
         </div>
     </nav>
 
-    <section class="projects" style="padding-top: 4rem;">
-        <div class="container">
-            <h1 class="section-title">Quantum Magnetism</h1>
-            <div class="projects-grid">
-                <div class="project-card">
-                    <div class="project-image">
-                        <img src="images/quantum-magnetism.png" alt="Quantum Magnetism">
-                    </div>
-                    <p class="project-description">
-                        In this initiative, I work on model quantum magnets where reduced dimensionality, frustration and
-                        anisotropic exchange produce large quantum fluctuations. Using elastic and inelastic neutron scattering
-                        together with numerical modelling, we search for proximate spin-liquid regimes, multipolar orders and
-                        excitation continua that go beyond simple magnon pictures.
-                    </p>
-                    <p class="project-description">
-                        The aim is to identify chemically accessible platforms where entangled ground states and robust collective
-                        modes coexist, providing realistic opportunities to couple quantum spin degrees of freedom to spintronic or
-                        quantum-information architectures.
-                    </p>
-                    <a href="index.html#projects" class="project-link">← Back to Research Initiatives</a>
-                </div>
+    <!-- Hero image banner -->
+    <div class="research-hero">
+        <img src="images/quantum-magnetism.png" alt="Quantum Magnetism" class="research-hero-img">
+        <div class="research-hero-overlay">
+            <a href="index.html#projects" class="research-back">← Back to Research</a>
+            <h1 class="research-hero-title">Quantum Magnetism</h1>
+            <p class="research-hero-sub">Reduced dimensionality · Spin-liquid proximate phases · Neutron scattering &amp; numerics</p>
+        </div>
+    </div>
+
+    <!-- Content -->
+    <div class="research-body">
+
+        <div class="research-panel">
+            <h2>Overview</h2>
+            <p>Quantum magnetism occupies the frontier where classical spin-wave theory breaks down: in low-dimensional, strongly frustrated, or anisotropically coupled magnets, quantum fluctuations are large enough to melt conventional ordered phases and stabilize states characterized by long-range entanglement rather than symmetry breaking. These quantum spin liquids and related exotic ordered phases are among the most challenging and consequential problems in condensed matter physics — both as fundamental puzzles in many-body quantum mechanics and as potential platforms for topological quantum computation.</p>
+            <p>My research focuses on identifying and characterizing chemically accessible model systems where proximate spin-liquid physics, fractionalized excitations, and multipolar order can be detected with neutron scattering. By combining elastic and inelastic neutron scattering with numerical techniques — exact diagonalization, density-matrix renormalization group (DMRG), and linear spin-wave theory — we move between experiment and theory to construct a coherent picture of the quantum ground state and its excitations.</p>
+        </div>
+
+        <div class="research-two-col">
+            <div class="research-panel">
+                <h2>Experimental &amp; Numerical Toolkit</h2>
+                <ul>
+                    <li>Elastic neutron diffraction for long-range order parameter determination</li>
+                    <li>Inelastic neutron scattering (INS) on powder and single-crystal samples</li>
+                    <li>Diffuse scattering for mapping short-range spin correlations in disordered phases</li>
+                    <li>Exact diagonalization (ED) on finite clusters for comparison to measured spectra</li>
+                    <li>DMRG and linear spin-wave theory for quasi-1D and 2D model Hamiltonians</li>
+                    <li>SpinW and SPINVERT codes for spin-wave and reverse Monte Carlo modelling</li>
+                </ul>
+            </div>
+            <div class="research-panel">
+                <h2>Central Questions</h2>
+                <ul>
+                    <li>How do competing exchange interactions (frustration) and reduced dimensionality conspire to suppress long-range order and stabilize quantum spin-liquid proximate phases?</li>
+                    <li>What are the spectroscopic fingerprints — in neutron spectra — that unambiguously distinguish a spin liquid from a disordered magnet?</li>
+                    <li>Can multipolar order (quadrupolar, octupolar) be stabilized in spin–orbit entangled magnets beyond the dipole-ordered ground states typically studied?</li>
+                    <li>How does quenched disorder (vacancies, bond randomness) renormalize the exotic phases and their excitations?</li>
+                </ul>
             </div>
         </div>
-    </section>
+
+        <div class="research-panel">
+            <h2>Frustration and Quantum Fluctuations</h2>
+            <p>Classical frustration arises when the lattice geometry prevents all interactions from being simultaneously satisfied — the canonical example being antiferromagnetic interactions on a triangular lattice. In the quantum case, the situation is richer: zero-point fluctuations of the spins can select an ordered state from a classically degenerate manifold (order by disorder), suppress order entirely and produce a resonating-valence-bond spin liquid, or generate exotic orders involving higher multipole moments that are invisible to conventional magnetic probes.</p>
+            <p>We study materials on geometrically frustrated lattices — honeycomb, triangular, kagome, and pyrochlore — where the interplay between exchange anisotropy, Kitaev-type bond-directional interactions, and Dzyaloshinskii–Moriya terms creates a rich competition between candidate ground states. Neutron scattering is uniquely positioned to discriminate between these phases: the wavevector and energy dependence of the magnetic scattering encodes the real-space spin correlations and the quasiparticle dispersion, both of which are highly sensitive to the specific ground state.</p>
+        </div>
+
+        <div class="research-panel">
+            <h2>Spin-Liquid Proximate Phases and Fractionalization</h2>
+            <p>Even when a material does order magnetically, it may do so in the vicinity of a quantum spin-liquid phase — a "proximate" spin liquid. In this regime, the excitation spectrum retains signatures of fractionalized quasiparticles (spinons, Majorana fermions, visons) even though the ground state breaks time-reversal symmetry. Experimentally, these signatures appear as broad continua in the inelastic neutron spectrum at energies above the magnon branches, persisting well into the ordered phase. Distinguishing these continua from magnon-magnon scattering or phonon contributions is a core methodological challenge that we address by combining temperature and field evolution of the spectrum with numerical benchmarks.</p>
+            <p>We are particularly interested in spin–orbit-coupled magnets based on 4d and 5d transition metals (Ru, Ir, Os) and f-electron systems (Ce, Yb, Pr), where the effective spin-1/2 moments carry strong bond-directional anisotropy that can realize Kitaev-type Hamiltonians. In these systems, the combination of frustrated geometry and highly anisotropic exchange places the ground state precariously close to a quantum phase transition, making them ideal laboratories for quantum spin-liquid physics at accessible energy scales.</p>
+            <div class="research-tags-row">
+                <span class="tech-tag">Quantum spin liquid</span>
+                <span class="tech-tag">Kitaev magnetism</span>
+                <span class="tech-tag">Fractionalization</span>
+                <span class="tech-tag">Inelastic neutron scattering</span>
+                <span class="tech-tag">DMRG</span>
+                <span class="tech-tag">Frustrated lattices</span>
+            </div>
+        </div>
+
+        <div class="research-panel">
+            <h2>From Quantum Magnets to Quantum Technology</h2>
+            <p>Beyond their fundamental interest, quantum magnets offer tangible technological leverage. Topological spin-liquid phases host anyonic excitations whose non-Abelian braiding statistics could underpin fault-tolerant quantum gates. Entangled ground states in frustrated magnets exhibit non-classical correlations that can be harvested for quantum sensing and quantum simulation. And the tunability of exchange interactions in molecular magnets and van der Waals magnetic materials — combined with the spatial resolution of scanning probe and X-ray microscopy techniques — opens the possibility of engineering quantum spin Hamiltonians at the nanoscale.</p>
+            <p>Our longer-term goal is to identify systems where the gap between the exotic ground state and the first excited states is large enough to be practically exploitable — robust against thermal fluctuations and disorder — while remaining within the reach of existing synthesis and nanofabrication capabilities. By building quantitative models from neutron scattering data, we aim to provide theoretically grounded design rules for this next generation of quantum magnetic materials.</p>
+        </div>
+
+    </div>
 
     <footer class="footer">
         <div class="container">
-            <p>&copy; 2025 George Yumnam · Department of Physics</p>
+            <p>&copy; 2025 George Yumnam · Stewart Blusson Quantum Matter Institute, UBC</p>
             <div class="footer-social">
                 <a href="https://scholar.google.com/citations?user=D3v8UV4AAAAJ&hl=en" target="_blank" rel="noopener noreferrer"><i class="fas fa-book-open"></i></a>
                 <a href="https://www.linkedin.com/in/george-yumnam/" target="_blank" rel="noopener noreferrer"><i class="fab fa-linkedin"></i></a>
-                <a href="mailto:georgeyumnam@gmail.com" rel="noopener noreferrer"><i class="fas fa-envelope"></i></a>
+                <a href="mailto:georgeyumnam@gmail.com"><i class="fas fa-envelope"></i></a>
             </div>
         </div>
     </footer>
