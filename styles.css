@@ -157,8 +157,8 @@ a { text-decoration: none; }
 .hero-photo-wrap { flex-shrink: 0; }
 
 .hero-photo {
-    width: 400px;
-    height: 400px;
+    width: 600px;
+    height: 600px;
     border-radius: 50%;
     object-fit: cover;
     border: 4px solid rgba(20,184,166,0.6);
@@ -747,7 +747,7 @@ section {
     .hero-content { flex-direction: column; text-align: center; gap: 2rem; }
     .cta-buttons  { justify-content: center; }
     .social-links { justify-content: center; }
-    .hero-photo   { width: 280px; height: 280px; }
+    .hero-photo   { width: 360px; height: 360px; }
     .hero-title   { font-size: 4.08rem; }
     .projects-grid, .publications-grid { grid-template-columns: 1fr; }
     .cards-grid   { grid-template-columns: 1fr; }
