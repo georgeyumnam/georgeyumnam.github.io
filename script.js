@@ -56,11 +56,14 @@ window.addEventListener('scroll', onScroll); onScroll();
   function build() {
     atoms = []; bonds = [];
     const map = new Map();
-    const cols = Math.ceil(W / (S3 * D)) + 3;
     const rows = Math.ceil(H / (1.5 * D)) + 3;
+    const cols = Math.ceil(W / (S3 * D)) + 3;
+    // A2 has a rightward component, so bottom rows are shifted right.
+    // Extend nStart negative enough to cover the bottom-left corner.
+    const nStart = -Math.ceil((rows * A2x) / A1x) - 2;
 
     for (let m = -1; m < rows; m++) {
-      for (let n = -1; n < cols; n++) {
+      for (let n = nStart; n < cols; n++) {
         const cx = n * A1x + m * A2x;
         const cy = n * A1y + m * A2y;
 
@@ -78,10 +81,8 @@ window.addEventListener('scroll', onScroll); onScroll();
       }
     }
 
-    const cols2 = Math.ceil(W / (S3 * D)) + 3;
-    const rows2 = Math.ceil(H / (1.5 * D)) + 3;
-    for (let m = -1; m < rows2; m++) {
-      for (let n = -1; n < cols2; n++) {
+    for (let m = -1; m < rows; m++) {
+      for (let n = nStart; n < cols; n++) {
         const ai = map.get(`A${n},${m}`);
         if (ai === undefined) continue;
         for (const key of [`B${n},${m}`, `B${n-1},${m}`, `B${n},${m-1}`]) {
