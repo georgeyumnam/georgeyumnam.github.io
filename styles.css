@@ -166,7 +166,16 @@ a { text-decoration: none; }
     display: block;
 }
 
-.hero-text { flex: 1; }
+.hero-text {
+    flex: 1;
+    background: rgba(255, 255, 255, 0.52);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    border: 1px solid rgba(94, 184, 232, 0.30);
+    border-radius: 14px;
+    padding: 1.5rem 2rem;
+    box-shadow: 0 4px 22px rgba(52, 119, 160, 0.13);
+}
 
 .hero-title {
     font-size: 6.12rem;
@@ -174,14 +183,6 @@ a { text-decoration: none; }
     letter-spacing: -1.5px;
     line-height: 1.1;
     margin-bottom: 0.5rem;
-    display: inline-block;
-    background: rgba(255, 255, 255, 0.52);
-    backdrop-filter: blur(12px);
-    -webkit-backdrop-filter: blur(12px);
-    border: 1px solid rgba(94, 184, 232, 0.30);
-    border-radius: 14px;
-    padding: 0.12em 0.45em;
-    box-shadow: 0 4px 22px rgba(52, 119, 160, 0.13);
 }
 
 .hero-role {
