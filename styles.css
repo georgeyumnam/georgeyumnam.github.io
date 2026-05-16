@@ -168,12 +168,12 @@ a { text-decoration: none; }
 
 .hero-text {
     flex: 1;
-    background: rgba(255, 255, 255, 0.84);
-    backdrop-filter: blur(20px);
-    -webkit-backdrop-filter: blur(20px);
+    background: var(--glass-card);
+    backdrop-filter: blur(16px);
+    -webkit-backdrop-filter: blur(16px);
     border: 1px solid var(--border);
     border-radius: 20px;
-    padding: 1.5rem 2rem;
+    padding: 2rem 2.25rem;
     box-shadow: var(--glow);
     position: relative;
     overflow: hidden;
@@ -330,6 +330,7 @@ section {
 }
 
 /* Fade edges to transparent — all glass panels */
+.hero-text::after,
 .about-text::after,
 .teaching-intro::after,
 .education-list li::after,
