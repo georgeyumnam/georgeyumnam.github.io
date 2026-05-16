@@ -307,8 +307,9 @@ section {
 
 .section-header {
     margin-bottom: 3rem;
-    display: inline-block;
-    background: var(--glass-card);
+    display: block;
+    width: fit-content;
+    background: rgba(255, 255, 255, 0.72);
     backdrop-filter: blur(16px);
     -webkit-backdrop-filter: blur(16px);
     border: 1px solid var(--border);
