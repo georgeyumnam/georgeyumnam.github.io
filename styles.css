@@ -174,6 +174,14 @@ a { text-decoration: none; }
     letter-spacing: -1.5px;
     line-height: 1.1;
     margin-bottom: 0.5rem;
+    display: inline-block;
+    background: rgba(255, 255, 255, 0.52);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    border: 1px solid rgba(94, 184, 232, 0.30);
+    border-radius: 14px;
+    padding: 0.12em 0.45em;
+    box-shadow: 0 4px 22px rgba(52, 119, 160, 0.13);
 }
 
 .hero-role {
@@ -345,14 +353,20 @@ section {
 }
 .about-text p:last-child { margin-bottom: 0; }
 
-.about-photo-wrap { position: sticky; top: 88px; }
+.about-photo-wrap {
+    position: sticky;
+    top: 88px;
+    overflow: hidden;
+    border-radius: var(--radius);
+    box-shadow: var(--shadow-md);
+    border: 1px solid var(--border);
+}
 
 .about-photo {
     width: 100%;
-    border-radius: var(--radius);
     display: block;
-    box-shadow: var(--shadow-md);
-    border: 1px solid var(--border);
+    transform: scale(1.8);
+    transform-origin: center center;
 }
 
 .about-photo-caption {

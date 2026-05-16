@@ -40,7 +40,7 @@ window.addEventListener('scroll', onScroll); onScroll();
   const D      = 104;    // bond length (px) — 1.3× larger honeycomb cells
   const S3     = Math.sqrt(3);
   const AL     = 44;     // arrow half-length (1.7× increase)
-  const ATOM_R = 9;      // atom radius (~5× bigger than before)
+  const ATOM_R = 13.5;   // atom radius (1.5× increase)
   const THETA0 = 0.182;  // base cone angle (rad, ~10°) — 40% increase
   const OMEGA  = 3.0;    // base precession rate (rad/s) — 2× increase
   const MOUSE_R = 160;   // mouse influence radius (px)
@@ -146,8 +146,8 @@ window.addEventListener('scroll', onScroll); onScroll();
     const t = ts * 0.001;
 
     // Bonds
-    ctx.lineWidth = 1.2;
-    ctx.strokeStyle = 'rgba(255,255,255,0.12)';
+    ctx.lineWidth = 1.5;
+    ctx.strokeStyle = 'rgba(22,61,86,0.28)';
     for (const [ai, bi] of bonds) {
       const a = atoms[ai], b = atoms[bi];
       ctx.beginPath();
@@ -195,7 +195,7 @@ window.addEventListener('scroll', onScroll); onScroll();
       ctx.beginPath();
       ctx.arc(atom.x, atom.y, ATOM_R, 0, Math.PI * 2);
       ctx.strokeStyle = `rgba(${rgb},0.45)`;
-      ctx.lineWidth = 1.5;
+      ctx.lineWidth = 2.0;
       ctx.stroke();
     }
   }
