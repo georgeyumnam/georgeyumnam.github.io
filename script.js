@@ -14,36 +14,125 @@ document.addEventListener('click', e => {
   }
 });
 
-// Active nav link + parallax (single scroll handler)
-const sections = $$('section'), navLinks = $$('.nav-link'), hero = $('.hero');
+// Active nav link on scroll
+const sections = $$('section'), navLinks = $$('.nav-link');
 function onScroll() {
   const y = window.pageYOffset;
   for (let i = sections.length - 1; i >= 0; i--) {
-    const sec = sections[i], top = sec.offsetTop - 220;
-    if (y >= top) {
-      const id = sec.id;
+    if (y >= sections[i].offsetTop - 220) {
+      const id = sections[i].id;
       navLinks.forEach(a => a.classList.toggle('active', a.getAttribute('href') === `#${id}`));
       break;
     }
   }
-  if (hero) hero.style.backgroundPosition = `0 ${window.scrollY * 0.5}px`;
 }
 window.addEventListener('scroll', onScroll); onScroll();
 
-// Contact form
-const contactForm = $('.contact-form');
-if (contactForm) contactForm.addEventListener('submit', e => {
-  e.preventDefault();
-  const name = contactForm.querySelector('input[type="text"]')?.value.trim();
-  const email = contactForm.querySelector('input[type="email"]')?.value.trim();
-  const message = contactForm.querySelector('textarea')?.value.trim();
-  if (name && email && message) { alert('Thank you for your message! I will get back to you soon.'); contactForm.reset(); }
-  else alert('Please fill in all fields.');
-});
+// ── Particle network on hero canvas ───────────────────────────────────────
+(function () {
+  const hero = $('.hero');
+  if (!hero) return;
 
-// Reveal on scroll
-const revealSelector = '.about-content, .publications-list, .teaching .about-content, .contact-content';
-if ('IntersectionObserver' in window) {
-  const ro = new IntersectionObserver((entries, o) => entries.forEach(en => { if (en.isIntersecting) { en.target.classList.add('reveal-visible'); o.unobserve(en.target); } }), { threshold: 0.15, rootMargin: '0px 0px -80px 0px' });
-  $$(revealSelector).forEach(el => { el.classList.add('reveal'); ro.observe(el); });
-} else $$(revealSelector).forEach(el => el.classList.add('reveal-visible'));
+  const canvas = document.createElement('canvas');
+  canvas.style.cssText = 'position:absolute;inset:0;width:100%;height:100%;pointer-events:none;z-index:0;';
+  hero.style.position = 'relative';
+  hero.prepend(canvas);
+
+  const ctx = canvas.getContext('2d');
+  const PARTICLE_COUNT = 70;
+  const CONNECT_DIST   = 140;   // max distance to draw a line between particles
+  const MOUSE_DIST     = 180;   // mouse attraction radius
+  const SPEED          = 0.45;
+
+  let W, H, particles;
+  const mouse = { x: -9999, y: -9999 };
+
+  function resize() {
+    W = canvas.width  = hero.offsetWidth;
+    H = canvas.height = hero.offsetHeight;
+  }
+
+  function mkParticle() {
+    return {
+      x:  Math.random() * W,
+      y:  Math.random() * H,
+      vx: (Math.random() - 0.5) * SPEED,
+      vy: (Math.random() - 0.5) * SPEED,
+      r:  Math.random() * 1.8 + 1.2,
+    };
+  }
+
+  function init() {
+    resize();
+    particles = Array.from({ length: PARTICLE_COUNT }, mkParticle);
+  }
+
+  function draw() {
+    ctx.clearRect(0, 0, W, H);
+
+    // update positions
+    for (const p of particles) {
+      p.x += p.vx;
+      p.y += p.vy;
+      if (p.x < 0 || p.x > W) p.vx *= -1;
+      if (p.y < 0 || p.y > H) p.vy *= -1;
+    }
+
+    // draw connections between particles
+    for (let i = 0; i < particles.length; i++) {
+      for (let j = i + 1; j < particles.length; j++) {
+        const dx = particles[i].x - particles[j].x;
+        const dy = particles[i].y - particles[j].y;
+        const dist = Math.sqrt(dx * dx + dy * dy);
+        if (dist < CONNECT_DIST) {
+          const alpha = (1 - dist / CONNECT_DIST) * 0.35;
+          ctx.strokeStyle = `rgba(20,184,166,${alpha})`;
+          ctx.lineWidth = 1;
+          ctx.beginPath();
+          ctx.moveTo(particles[i].x, particles[i].y);
+          ctx.lineTo(particles[j].x, particles[j].y);
+          ctx.stroke();
+        }
+      }
+    }
+
+    // draw connections from mouse to nearby particles
+    for (const p of particles) {
+      const dx = p.x - mouse.x;
+      const dy = p.y - mouse.y;
+      const dist = Math.sqrt(dx * dx + dy * dy);
+      if (dist < MOUSE_DIST) {
+        const alpha = (1 - dist / MOUSE_DIST) * 0.6;
+        ctx.strokeStyle = `rgba(20,184,166,${alpha})`;
+        ctx.lineWidth = 1.2;
+        ctx.beginPath();
+        ctx.moveTo(p.x, p.y);
+        ctx.lineTo(mouse.x, mouse.y);
+        ctx.stroke();
+      }
+    }
+
+    // draw dots
+    for (const p of particles) {
+      ctx.beginPath();
+      ctx.arc(p.x, p.y, p.r, 0, Math.PI * 2);
+      ctx.fillStyle = 'rgba(20,184,166,0.55)';
+      ctx.fill();
+    }
+
+    requestAnimationFrame(draw);
+  }
+
+  // track mouse relative to hero
+  hero.addEventListener('mousemove', e => {
+    const rect = hero.getBoundingClientRect();
+    mouse.x = e.clientX - rect.left;
+    mouse.y = e.clientY - rect.top;
+  });
+  hero.addEventListener('mouseleave', () => { mouse.x = -9999; mouse.y = -9999; });
+
+  window.addEventListener('resize', () => { resize(); });
+
+  init();
+  draw();
+})();

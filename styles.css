@@ -132,6 +132,7 @@ a { text-decoration: none; }
         radial-gradient(ellipse at 10% 60%, rgba(20,184,166,0.15) 0%, transparent 55%),
         radial-gradient(ellipse at 90% 20%, rgba(20,184,166,0.08) 0%, transparent 45%);
     pointer-events: none;
+    z-index: 0;
 }
 
 .hero .container { position: relative; z-index: 1; }
