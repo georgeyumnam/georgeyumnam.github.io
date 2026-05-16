@@ -1,3 +1,4 @@
+// © 2026 George Yumnam · georgeyumnam.github.io
 const $ = s => document.querySelector(s), $$ = s => document.querySelectorAll(s);
 
 // Nav hamburger
