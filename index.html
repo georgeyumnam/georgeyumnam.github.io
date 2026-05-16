@@ -6,18 +6,18 @@
     <title>George Yumnam - Portfolio</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="styles.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 </head>
 <body>
+
     <!-- Navigation -->
     <nav class="navbar">
         <div class="container">
             <div class="nav-wrapper">
                 <a href="#home" class="logo">George Yumnam</a>
                 <ul class="nav-menu">
-                    <li><a href="#home" class="nav-link">Home</a></li>
                     <li><a href="#about" class="nav-link">About</a></li>
                     <li><a href="#projects" class="nav-link">Research</a></li>
                     <li><a href="#publications" class="nav-link">Publications</a></li>
@@ -33,55 +33,62 @@
         </div>
     </nav>
 
-    <!-- Hero Section -->
+    <!-- Hero -->
     <section id="home" class="hero">
         <div class="container">
             <div class="hero-content">
-                <h1 class="hero-title">Hi, I'm George Yumnam</h1>
-                <p class="hero-role">Postdoctoral Fellow</p>
-                <div class="hero-affiliations">
-                    <p class="hero-affiliation">Stewart Blusson Quantum Matter Institute</p>
-                    <p class="hero-affiliation">Department of Physics and Astronomy</p>
-                    <p class="hero-affiliation">The University of British Columbia</p>
-                    <p> </p>
+                <div class="hero-photo-wrap">
+                    <img src="images/profile.jpg" alt="George Yumnam" class="hero-photo">
                 </div>
-                
-                <div class="cta-buttons">
-                    <a href="#projects" class="btn btn-primary">View My Work</a>
-                    <a href="#contact" class="btn btn-secondary">Get In Touch</a>
-                </div>
-                <div class="social-links">
-                    <a href="https://scholar.google.com/citations?user=D3v8UV4AAAAJ&hl=en" target="_blank" rel="noopener noreferrer"><i class="fas fa-book"></i></a>
-                    <a href="https://www.linkedin.com/in/george-yumnam/" target="_blank" rel="noopener noreferrer"><i class="fab fa-linkedin"></i></a>
-                    <a href="mailto:georgeyumnam@gmail.com" rel="noopener noreferrer"><i class="fas fa-envelope"></i></a>
+                <div class="hero-text">
+                    <h1 class="hero-title">George Yumnam</h1>
+                    <p class="hero-role">Postdoctoral Fellow</p>
+                    <div class="hero-affiliations">
+                        <p class="hero-affiliation">Stewart Blusson Quantum Matter Institute</p>
+                        <p class="hero-affiliation">Department of Physics and Astronomy</p>
+                        <p class="hero-affiliation">The University of British Columbia</p>
+                    </div>
+                    <div class="cta-buttons">
+                        <a href="#projects" class="btn btn-primary">View Research</a>
+                        <a href="#contact" class="btn btn-secondary">Get In Touch</a>
+                        <a href="https://scholar.google.com/citations?user=D3v8UV4AAAAJ&hl=en" target="_blank" rel="noopener noreferrer" class="btn btn-secondary">Google Scholar</a>
+                    </div>
+                    <div class="social-links">
+                        <a href="https://scholar.google.com/citations?user=D3v8UV4AAAAJ&hl=en" target="_blank" rel="noopener noreferrer" title="Google Scholar"><i class="fas fa-book-open"></i></a>
+                        <a href="https://www.linkedin.com/in/george-yumnam/" target="_blank" rel="noopener noreferrer" title="LinkedIn"><i class="fab fa-linkedin"></i></a>
+                        <a href="mailto:georgeyumnam@gmail.com" title="Email"><i class="fas fa-envelope"></i></a>
+                    </div>
                 </div>
             </div>
         </div>
     </section>
 
-    <!-- About Section -->
-    <section id="about" class="about">
+    <!-- About -->
+    <section id="about" class="about reveal">
         <div class="container">
-            <h2 class="section-title">About Me</h2>
-            <div class="about-content">
+            <div class="section-header">
+                <h2 class="section-title">About Me</h2>
+            </div>
+            <div class="about-layout">
                 <div class="about-text">
-                    <p class="hero-description">
-                I am a postdoctoral fellow at the Stewart Blusson Quantum Matter Institute (SBQMI) at the University of British Columbia and an experimental condensed-matter physicist specializing in neutron and X-ray scattering. My research focuses on how spin, lattice, and crystal-field degrees of freedom hybridize and evolve under disorder, field, pressure, and chemical tuning—shaping magnetic excitations and emergent functionality in quantum materials.</p>
-
-                <p class="hero-description">    
-                My research is motivated by a central question in quantum materials: how collective excitations emerge, persist, and hybridize in ordered magnets and unconventional magnets far from ideal order. I focus on understanding how spin dynamics couple to lattice, crystal-field, and electronic degrees of freedom in the presence of disorder, dilution, and external tuning parameters, and how these interactions reshape magnetic spectra across energy and temperature scales.</p>
-
-                <p class="hero-description">
-                By developing quantitatively constrained, experimentally grounded descriptions of these coupled excitations, my work aims to uncover organizing principles that govern robustness, breakdown, and reconfiguration of magnetic behavior in complex quantum magnets—providing a foundation for rational control of spin-based phenomena in real materials.</p>
+                    <p>I am a postdoctoral fellow at the Stewart Blusson Quantum Matter Institute (SBQMI) at the University of British Columbia and an experimental condensed-matter physicist specializing in neutron and X-ray scattering. My research focuses on how spin, lattice, and crystal-field degrees of freedom hybridize and evolve under disorder, field, pressure, and chemical tuning—shaping magnetic excitations and emergent functionality in quantum materials.</p>
+                    <p>My research is motivated by a central question in quantum materials: how collective excitations emerge, persist, and hybridize in ordered magnets and unconventional magnets far from ideal order. I focus on understanding how spin dynamics couple to lattice, crystal-field, and electronic degrees of freedom in the presence of disorder, dilution, and external tuning parameters, and how these interactions reshape magnetic spectra across energy and temperature scales.</p>
+                    <p>By developing quantitatively constrained, experimentally grounded descriptions of these coupled excitations, my work aims to uncover organizing principles that govern robustness, breakdown, and reconfiguration of magnetic behavior in complex quantum magnets—providing a foundation for rational control of spin-based phenomena in real materials.</p>
+                </div>
+                <div class="about-photo-wrap">
+                    <img src="images/profile2.jpg" alt="George Yumnam at a neutron scattering beamline" class="about-photo">
+                    <p class="about-photo-caption">At the neutron scattering beamline</p>
                 </div>
             </div>
         </div>
     </section>
 
-    <!-- Education Section -->
-    <section id="education" class="education-section">
+    <!-- Education -->
+    <section id="education" class="education-section reveal">
         <div class="container">
-            <h2 class="section-title">Education Background</h2>
+            <div class="section-header">
+                <h2 class="section-title">Education</h2>
+            </div>
             <ul class="education-list">
                 <li><strong>Ph.D.</strong> Department of Physics and Astronomy, University of Missouri, Columbia — 2022</li>
                 <li><strong>M.Sc.</strong> Materials Science, Indian Institute of Science, Bangalore — 2017</li>
@@ -90,13 +97,15 @@
         </div>
     </section>
 
-    <!-- Research Areas Section -->
-    <section id="research-areas" class="research-areas">
+    <!-- Research Areas -->
+    <section id="research-areas" class="research-areas reveal">
         <div class="container">
-            <h2 class="section-title">Research Areas</h2>
+            <div class="section-header">
+                <h2 class="section-title">Research Areas</h2>
+            </div>
             <div class="skills-grid">
-                <div class="skill-tag">Quantum and Unconventional Magnetism</div>
-                <div class="skill-tag">Neutron & X-ray Scattering</div>
+                <div class="skill-tag">Quantum &amp; Unconventional Magnetism</div>
+                <div class="skill-tag">Neutron &amp; X-ray Scattering</div>
                 <div class="skill-tag">Experimental Condensed Matter</div>
                 <div class="skill-tag">Quantum Materials</div>
                 <div class="skill-tag">Density Functional Theory</div>
@@ -104,77 +113,91 @@
         </div>
     </section>
 
-    <!-- Projects Section -->
-    <section id="projects" class="projects">
+    <!-- Research / Projects -->
+    <section id="projects" class="projects reveal">
         <div class="container">
-            <h2 class="section-title">Current Research Initiatives</h2>
+            <div class="section-header">
+                <h2 class="section-title">Current Research</h2>
+            </div>
             <div class="projects-grid">
+
                 <div class="project-card">
                     <div class="project-image">
                         <img src="images/magnon-phonon.png" alt="Magnon-Phonon Interactions">
                     </div>
-                    <h3 class="project-title">Magnon-Phonon Interactions</h3>
-                    <p class="project-description">In this line of work, we use inelastic neutron and resonant X-ray scattering on itinerant antiferromagnets and correlated insulators to resolve how magnon branches hybridize with optical phonons. By quantifying dispersion renormalization, linewidth broadening and spectral-weight transfer, we build microscopic models that connect spin-lattice coupling to macroscopic transport properties. The broader goal is to understand when magnon-phonon coupling can be engineered to either enhance or suppress heat and spin currents in candidate magnonic and thermoelectric devices.</p>
-                    <div class="project-tech">
-                        <span class="tech-tag">Neutron Scattering</span>
-                        <span class="tech-tag">Magnons</span>
-                        <span class="tech-tag">Thermal Transport</span>
+                    <div class="project-card-body">
+                        <h3 class="project-title">Magnon-Phonon Interactions</h3>
+                        <p class="project-description">We use inelastic neutron and resonant X-ray scattering on itinerant antiferromagnets and correlated insulators to resolve how magnon branches hybridize with optical phonons. By quantifying dispersion renormalization, linewidth broadening, and spectral-weight transfer, we build microscopic models that connect spin-lattice coupling to macroscopic transport properties.</p>
+                        <div class="project-tech">
+                            <span class="tech-tag">Neutron Scattering</span>
+                            <span class="tech-tag">Magnons</span>
+                            <span class="tech-tag">Thermal Transport</span>
+                        </div>
+                        <a href="magnon-phonon.html" class="project-link">Learn More →</a>
                     </div>
-                    <a href="magnon-phonon.html" class="project-link">Learn More →</a>
                 </div>
 
                 <div class="project-card">
                     <div class="project-image">
                         <img src="images/high-entropy.png" alt="High-Entropy Oxides">
                     </div>
-                    <h3 class="project-title">High-Entropy Oxides</h3>
-                    <p class="project-description">Here we study chemically complex, high-entropy oxides and characterize them mainly using neutron and X-ray diffraction and total scattering to map how multi-cation disorder and strain fields shape their magnetic landscape. By focusing on how scattering signatures evolve with temperature and field, and comparing to reported macroscopic responses, we distinguish conventional glassy freezing from genuinely frustrated collective states. Statistical and mean-field models then link the enormous cation-configuration space to experimentally observed scattering signatures, with an eye toward designing disordered oxides that host robust, tunable magnetic functionalities.</p>
-                    <div class="project-tech">
-                        <span class="tech-tag">Disorder</span>
-                        <span class="tech-tag">Magnetism</span>
-                        <span class="tech-tag">X-ray Scattering</span>
+                    <div class="project-card-body">
+                        <h3 class="project-title">High-Entropy Oxides</h3>
+                        <p class="project-description">We characterize chemically complex, high-entropy oxides using neutron and X-ray diffraction and total scattering to map how multi-cation disorder and strain fields shape their magnetic landscape. Statistical and mean-field models link the enormous cation-configuration space to experimentally observed scattering signatures.</p>
+                        <div class="project-tech">
+                            <span class="tech-tag">Disorder</span>
+                            <span class="tech-tag">Magnetism</span>
+                            <span class="tech-tag">X-ray Scattering</span>
+                        </div>
+                        <a href="high-entropy-oxides.html" class="project-link">Learn More →</a>
                     </div>
-                    <a href="high-entropy-oxides.html" class="project-link">Learn More →</a>
                 </div>
 
                 <div class="project-card">
                     <div class="project-image">
                         <img src="images/disorder.png" alt="Honeycomb Lattice Magnetism">
                     </div>
-                    <h3 class="project-title">Honeycomb Lattice Magnetism</h3>
-                    <p class="project-description">We work on artificial permalloy honeycomb lattices that realize tunable, frustrated Ising-like networks. We track how field history, temperature and geometry drive the system between ice-like, charge-ordered and diode-like conducting states, and relate these regimes to changes in their collective magnetic configurations. Simple models then connect local vertex configurations and magnetic-charge textures to non-reciprocal transport signatures and ultra-low forward-voltage behaviour, highlighting routes toward neuromorphic elements and energy-efficient magnetic diodes built from geometrically engineered frustration.</p>
-                    <div class="project-tech">
-                        <span class="tech-tag">Frustrated Systems</span>
-                        <span class="tech-tag">Topology</span>
-                        <span class="tech-tag">Magnetism</span>
+                    <div class="project-card-body">
+                        <h3 class="project-title">Honeycomb Lattice Magnetism</h3>
+                        <p class="project-description">We work on artificial permalloy honeycomb lattices that realize tunable, frustrated Ising-like networks. We track how field history, temperature, and geometry drive the system between ice-like, charge-ordered, and diode-like conducting states, and relate these regimes to changes in their collective magnetic configurations.</p>
+                        <div class="project-tech">
+                            <span class="tech-tag">Frustrated Systems</span>
+                            <span class="tech-tag">Topology</span>
+                            <span class="tech-tag">Magnetism</span>
+                        </div>
+                        <a href="honeycomb-lattice.html" class="project-link">Learn More →</a>
                     </div>
-                    <a href="honeycomb-lattice.html" class="project-link">Learn More →</a>
                 </div>
 
                 <div class="project-card">
                     <div class="project-image">
                         <img src="images/quantum-magnetism.png" alt="Quantum Magnetism">
                     </div>
-                    <h3 class="project-title">Quantum Magnetism</h3>
-                    <p class="project-description">In this initiative, I work on model quantum magnets where reduced dimensionality, frustration and anisotropic exchange produce large quantum fluctuations. Using elastic and inelastic neutron scattering together with numerical modelling, we search for proximate spin-liquid regimes, multipolar orders and excitation continua that go beyond simple magnon pictures. The aim is to identify chemically accessible platforms where entangled ground states and robust collective modes coexist, providing realistic opportunities to couple quantum spin degrees of freedom to spintronic or quantum-information architectures.</p>
-                    <div class="project-tech">
-                        <span class="tech-tag">Quantum Materials</span>
-                        <span class="tech-tag">Spintronics</span>
-                        <span class="tech-tag">DFT</span>
+                    <div class="project-card-body">
+                        <h3 class="project-title">Quantum Magnetism</h3>
+                        <p class="project-description">I work on model quantum magnets where reduced dimensionality, frustration, and anisotropic exchange produce large quantum fluctuations. Using elastic and inelastic neutron scattering together with numerical modelling, we search for proximate spin-liquid regimes, multipolar orders, and excitation continua beyond simple magnon pictures.</p>
+                        <div class="project-tech">
+                            <span class="tech-tag">Quantum Materials</span>
+                            <span class="tech-tag">Spintronics</span>
+                            <span class="tech-tag">DFT</span>
+                        </div>
+                        <a href="quantum-magnetism.html" class="project-link">Learn More →</a>
                     </div>
-                    <a href="quantum-magnetism.html" class="project-link">Learn More →</a>
                 </div>
+
             </div>
         </div>
     </section>
 
-    <!-- Publications Section -->
-    <section id="publications" class="publications">
+    <!-- Publications -->
+    <section id="publications" class="publications reveal">
         <div class="container">
-            <h2 class="section-title">Selected Publications</h2>
+            <div class="section-header">
+                <h2 class="section-title">Selected Publications</h2>
+            </div>
             <div class="publications-grid">
+
                 <div class="pub-card">
-                    
                     <h3 class="pub-card-title">Constraints on magnetism and correlations in RuO₂ from lattice dynamics and Mössbauer spectroscopy</h3>
                     <p class="pub-authors"><strong>George Yumnam</strong>, Parul R. Raghuvanshi, John D. Budai, Dipanshu Bansal, Lars Bocklage, <em>et al.</em></p>
                     <p class="pub-journal">Cell Reports Physical Sciences, 2025</p>
@@ -182,7 +205,6 @@
                 </div>
 
                 <div class="pub-card">
-                    
                     <h3 class="pub-card-title">Magnon gap tuning in lithium-doped MnTe</h3>
                     <p class="pub-authors"><strong>George Yumnam</strong>, Duncan H. Moseley, Joseph A. M. Paddison, Christiana Z. Suggs, Emma Zappala, <em>et al.</em></p>
                     <p class="pub-journal">Physical Review B, 109, 214434 (2024)</p>
@@ -190,7 +212,6 @@
                 </div>
 
                 <div class="pub-card">
-                    
                     <h3 class="pub-card-title">Field and temperature tuning of magnetic diode in permalloy honeycomb lattice</h3>
                     <p class="pub-authors"><strong>George Yumnam</strong>, Moudip Nandi, Pousali Ghosh, Amjed Abdullah, Mahmoud Almasri, <em>et al.</em></p>
                     <p class="pub-journal">Materials Today Advances, 18, 100386 (2023)</p>
@@ -198,75 +219,70 @@
                 </div>
 
                 <div class="pub-card">
-                    
                     <h3 class="pub-card-title">Magnetic charge and geometry confluence for ultra-low forward voltage diode in artificial honeycomb lattice</h3>
                     <p class="pub-authors"><strong>George Yumnam</strong>, Jiasen Guo, Yiyao Chen, Ashutosh Dahal, Pousali Ghosh, <em>et al.</em></p>
                     <p class="pub-journal">Materials Today Physics, 22, 100574 (2022)</p>
                     <a href="https://doi.org/10.1016/j.mtphy.2021.100574" target="_blank" rel="noopener noreferrer" class="pub-link">View Publication →</a>
                 </div>
+
             </div>
-            <div style="text-align: center; margin-top: 2rem;">
-                <a href="https://scholar.google.com/citations?user=D3v8UV4AAAAJ&hl=en" target="_blank" rel="noopener noreferrer" class="btn btn-secondary">View Full Publication List</a>
+            <div class="pub-cta">
+                <a href="https://scholar.google.com/citations?user=D3v8UV4AAAAJ&hl=en" target="_blank" rel="noopener noreferrer" class="btn btn-outline">View Full Publication List</a>
             </div>
         </div>
     </section>
 
-    <!-- Teaching Section -->
-    <section id="teaching" class="teaching">
+    <!-- Teaching -->
+    <section id="teaching" class="teaching reveal">
         <div class="container">
-            <h2 class="section-title">Teaching & Mentoring</h2>
-            <div class="about-content">
-                <div class="about-text">
-                    <p>As a postdoctoral researcher, I typically join projects once a concrete materials or scattering question is on the table. I am not currently hiring students directly, but I am very happy to co-advise, mentor on neutron and X-ray scattering experiments, and collaborate on joint proposals. I follow a bottom-up approach in teaching physics at the college and graduate level.</p>
+            <div class="section-header">
+                <h2 class="section-title">Teaching &amp; Mentoring</h2>
+            </div>
+            <p class="teaching-intro">As a postdoctoral researcher, I typically join projects once a concrete materials or scattering question is on the table. I am not currently hiring students directly, but I am very happy to co-advise, mentor on neutron and X-ray scattering experiments, and collaborate on joint proposals. I follow a bottom-up approach in teaching physics at the college and graduate level.</p>
+            <div class="cards-grid">
+                <div class="opp-card">
+                    <h4>Co-advised Students</h4>
+                    <p>Joint projects on neutron and X-ray scattering studies of magnon dynamics and related quantum materials.</p>
                 </div>
-                <div class="opportunities-cards">
-                    <h3>Collaboration Opportunities</h3>
-                    <div class="cards-grid">
-                        <div class="opp-card">
-                            <h4>Co-advised Students</h4>
-                            <p>Joint projects on neutron and X-ray scattering studies of magnon dynamics and related quantum materials.</p>
-                        </div>
-                        <div class="opp-card">
-                            <h4>Visiting Researchers</h4>
-                            <p>Short-term visits to pair scattering experiments with shared analysis notebooks and open data pipelines.</p>
-                        </div>
-                        <div class="opp-card">
-                            <h4>Collaborative Proposals</h4>
-                            <p>Partners on neutron/X-ray scattering experiments on magnetic and quantum materials with shared authorship plans.</p>
-                        </div>
-                    </div>
+                <div class="opp-card">
+                    <h4>Visiting Researchers</h4>
+                    <p>Short-term visits to pair scattering experiments with shared analysis notebooks and open data pipelines.</p>
+                </div>
+                <div class="opp-card">
+                    <h4>Collaborative Proposals</h4>
+                    <p>Partners on neutron/X-ray scattering experiments on magnetic and quantum materials with shared authorship plans.</p>
                 </div>
             </div>
         </div>
     </section>
 
-    <!-- Contact Section -->
-    <section id="contact" class="contact">
+    <!-- Contact -->
+    <section id="contact" class="contact reveal">
         <div class="container">
-            <h2 class="section-title">Let's Work Together</h2>
-            <p class="contact-subtitle">I'm always interested in hearing about new projects and opportunities.</p>
-            <div class="contact-content">
-                <div class="contact-info">
-                    <div class="contact-item">
-                        <i class="fas fa-envelope"></i>
-                        <div>
-                            <h4>Email</h4>
-                            <p><a href="mailto:georgeyumnam@gmail.com">georgeyumnam@gmail.com</a></p>
-                        </div>
+            <div class="section-header">
+                <h2 class="section-title">Get In Touch</h2>
+                <p class="contact-subtitle">I'm always open to collaboration, mentorship, and new research conversations.</p>
+            </div>
+            <div class="contact-info">
+                <div class="contact-item">
+                    <i class="fas fa-envelope"></i>
+                    <div>
+                        <h4>Email</h4>
+                        <p><a href="mailto:georgeyumnam@gmail.com">georgeyumnam@gmail.com</a></p>
                     </div>
-                    <div class="contact-item">
-                        <i class="fas fa-map-marker-alt"></i>
-                        <div>
-                            <h4>Location</h4>
-                            <p><a href="https://qmi.ubc.ca/" target="_blank" rel="noopener noreferrer">Stewart Blusson Quantum Matter Institute, UBC</a></p>
-                        </div>
+                </div>
+                <div class="contact-item">
+                    <i class="fas fa-map-marker-alt"></i>
+                    <div>
+                        <h4>Location</h4>
+                        <p><a href="https://qmi.ubc.ca/" target="_blank" rel="noopener noreferrer">Stewart Blusson Quantum Matter Institute, UBC</a></p>
                     </div>
-                    <div class="contact-item">
-                        <i class="fas fa-graduation-cap"></i>
-                        <div>
-                            <h4>Scholar Profile</h4>
-                            <p><a href="https://scholar.google.com/citations?user=D3v8UV4AAAAJ&hl=en" target="_blank" rel="noopener noreferrer">Google Scholar</a></p>
-                        </div>
+                </div>
+                <div class="contact-item">
+                    <i class="fas fa-graduation-cap"></i>
+                    <div>
+                        <h4>Scholar Profile</h4>
+                        <p><a href="https://scholar.google.com/citations?user=D3v8UV4AAAAJ&hl=en" target="_blank" rel="noopener noreferrer">Google Scholar</a></p>
                     </div>
                 </div>
             </div>
@@ -276,12 +292,11 @@
     <!-- Footer -->
     <footer class="footer">
         <div class="container">
-            <p>&copy; 2025 George Yumnam · Stewart Blusson Quantum Matter Institute, UBC</p>
-            <p style="font-size: 0.9rem; opacity: 0.8;">Built for clarity, mentorship, and rapid publishing.</p>
+            <p>&copy; 2025 George Yumnam &middot; Stewart Blusson Quantum Matter Institute, UBC</p>
             <div class="footer-social">
                 <a href="https://scholar.google.com/citations?user=D3v8UV4AAAAJ&hl=en" target="_blank" rel="noopener noreferrer"><i class="fas fa-book-open"></i></a>
                 <a href="https://www.linkedin.com/in/george-yumnam/" target="_blank" rel="noopener noreferrer"><i class="fab fa-linkedin"></i></a>
-                <a href="mailto:georgeyumnam@gmail.com" rel="noopener noreferrer"><i class="fas fa-envelope"></i></a>
+                <a href="mailto:georgeyumnam@gmail.com"><i class="fas fa-envelope"></i></a>
             </div>
         </div>
     </footer>
