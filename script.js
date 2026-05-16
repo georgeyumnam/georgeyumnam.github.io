@@ -46,12 +46,38 @@ window.addEventListener('scroll', onScroll); onScroll();
   const MOUSE_R = 160;   // mouse influence radius (px)
   const PERSP  = 0.30;   // perspective factor for depth axis
 
+  const NEUTRON_R      = 9;
+  const NEUTRON_SPEED  = 260;  // px/s, all fly left → right
+  const NEUTRON_WINDOW = 3.0;  // seconds per spawn window
+  const NEUTRON_MAX    = 10;   // neutrons per window
+  const ANGLE          = 20 * Math.PI / 180;  // entry angle from horizontal (rad)
+  const REFLECT_ANGLE  = -20 * Math.PI / 180; // fixed outgoing angle after collision (rad)
+  const A              = D / 2;               // perpendicular lane spacing (half honeycomb lattice)
+
   const A1x = S3 * D, A1y = 0;
   const A2x = S3 * D / 2, A2y = 1.5 * D;
   const BDX = S3 * D / 2, BDY = D / 2;
 
   let W, H, atoms = [], bonds = [];
   const mouse = { x: -9999, y: -9999 };
+
+  let neutrons = [];
+  let nWindowStart = 0, nCountInWindow = 0, nLastSpawn = -99, prevT = 0, nLane = 0;
+
+  function spawnNeutron() {
+    // y-spacing at the entry wall = a / cos(θ) so that perpendicular separation = A
+    const ySpacing = A / Math.cos(ANGLE);
+    const nLanes   = Math.ceil((H + ySpacing) / ySpacing);
+    const laneY    = (nLane % nLanes) * ySpacing;
+    nLane++;
+    neutrons.push({
+      x: -NEUTRON_R,
+      y: laneY,
+      vx: NEUTRON_SPEED * Math.cos(ANGLE),
+      vy: NEUTRON_SPEED * Math.sin(ANGLE),
+      lastHitT: -1,
+    });
+  }
 
   function build() {
     atoms = []; bonds = [];
@@ -208,6 +234,79 @@ window.addEventListener('scroll', onScroll); onScroll();
       ctx.arc(atom.x, atom.y, ATOM_R, 0, Math.PI * 2);
       ctx.fillStyle = grad;
       ctx.fill();
+    }
+
+    // Neutrons
+    const dt = Math.min(t - prevT, 0.05);
+    prevT = t;
+    if (t - nWindowStart >= NEUTRON_WINDOW) { nWindowStart = t; nCountInWindow = 0; }
+    if (nCountInWindow < NEUTRON_MAX && t - nLastSpawn >= NEUTRON_WINDOW / NEUTRON_MAX) {
+      spawnNeutron(); nCountInWindow++; nLastSpawn = t;
+    }
+    for (let i = neutrons.length - 1; i >= 0; i--) {
+      const n = neutrons[i];
+      n.x += n.vx * dt; n.y += n.vy * dt;
+      for (const atom of atoms) {
+        const dx = n.x - atom.x, dy = n.y - atom.y;
+        const dist = Math.hypot(dx, dy);
+        const minD = ATOM_R + NEUTRON_R;
+        if (dist < minD && t - n.lastHitT > 5.0) {
+          n.lastHitT = t;  // always consume the encounter to prevent re-rolling next frame
+          if (Math.random() < 3/7) {
+            const nx = dx / dist, ny = dy / dist;
+            n.x = atom.x + (minD + 1) * nx;
+            n.y = atom.y + (minD + 1) * ny;
+            n.vx = NEUTRON_SPEED * Math.cos(REFLECT_ANGLE);
+            n.vy = NEUTRON_SPEED * Math.sin(REFLECT_ANGLE);
+          }
+          break;
+        }
+      }
+      if (n.x > W + NEUTRON_R * 2 || n.x < -W || n.y < -H || n.y > H + NEUTRON_R * 2) {
+        neutrons.splice(i, 1); continue;
+      }
+      ctx.save();
+      ctx.shadowColor = 'rgba(100,255,40,0.9)';
+      ctx.shadowBlur = 14;
+      ctx.beginPath();
+      ctx.arc(n.x, n.y, NEUTRON_R, 0, Math.PI * 2);
+      const ng = ctx.createRadialGradient(
+        n.x - NEUTRON_R * 0.3, n.y - NEUTRON_R * 0.3, NEUTRON_R * 0.1,
+        n.x, n.y, NEUTRON_R);
+      ng.addColorStop(0,    'rgb(255,245,60)');   // glowing yellow core
+      ng.addColorStop(0.55, 'rgb(90,240,50)');    // firefly green
+      ng.addColorStop(1,    'rgb(28,155,10)');    // deep green edge
+      ctx.fillStyle = ng; ctx.fill();
+      ctx.shadowBlur = 0;
+      const nh = ctx.createLinearGradient(
+        n.x - NEUTRON_R * 0.5, n.y - NEUTRON_R * 0.5,
+        n.x + NEUTRON_R * 0.5, n.y + NEUTRON_R * 0.5);
+      nh.addColorStop(0,   'rgba(255,255,255,0.75)');
+      nh.addColorStop(0.5, 'rgba(255,255,255,0.08)');
+      nh.addColorStop(1,   'rgba(255,255,255,0)');
+      ctx.beginPath();
+      ctx.arc(n.x, n.y, NEUTRON_R, 0, Math.PI * 2);
+      ctx.fillStyle = nh; ctx.fill();
+      ctx.restore();
+
+      // Double-headed arrow perpendicular to motion
+      const spd = Math.hypot(n.vx, n.vy);
+      const px = n.vy / spd, py = -n.vx / spd;  // unit perp vector (pointing up on screen)
+      const ahl = 22, ahd = 8;
+      const ax1 = n.x - px * ahl, ay1 = n.y - py * ahl;
+      const ax2 = n.x + px * ahl, ay2 = n.y + py * ahl;
+      const aang = Math.atan2(py, px);
+      ctx.save();
+      ctx.strokeStyle = 'rgba(90,240,50,0.95)';
+      ctx.lineWidth = 2.5;
+      ctx.beginPath(); ctx.moveTo(ax1, ay1); ctx.lineTo(ax2, ay2); ctx.stroke();
+      ctx.fillStyle = 'rgba(90,240,50,0.95)';
+      ctx.beginPath();
+      ctx.moveTo(ax2, ay2);
+      ctx.lineTo(ax2 - ahd * Math.cos(aang - Math.PI / 6), ay2 - ahd * Math.sin(aang - Math.PI / 6));
+      ctx.lineTo(ax2 - ahd * Math.cos(aang + Math.PI / 6), ay2 - ahd * Math.sin(aang + Math.PI / 6));
+      ctx.closePath(); ctx.fill();
+      ctx.restore();
     }
   }
 

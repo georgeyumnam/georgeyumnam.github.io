@@ -835,9 +835,9 @@ section {
     position: absolute;
     inset: 0;
     background: linear-gradient(to bottom,
-        rgba(255,255,255,0.06) 0%,
-        rgba(216,243,255,0.36) 52%,
-        rgba(236,250,255,0.92) 100%);
+        rgba(255,255,255,0) 0%,
+        rgba(255,255,255,0) 55%,
+        rgba(236,250,255,0.82) 100%);
     display: flex;
     flex-direction: column;
     justify-content: flex-end;
@@ -904,7 +904,7 @@ section {
 }
 
 .research-panel h2 {
-    font-size: 1.7rem;
+    font-size: 2.9rem;
     font-weight: 700;
     color: var(--white);
     margin-bottom: 1.1rem;
@@ -913,7 +913,7 @@ section {
 }
 
 .research-panel p {
-    font-size: 1.1rem;
+    font-size: 1.87rem;
     color: var(--text-dim);
     line-height: 1.85;
     margin-bottom: 1.1rem;
@@ -930,7 +930,7 @@ section {
 }
 
 .research-panel ul li {
-    font-size: 1.05rem;
+    font-size: 1.79rem;
     color: var(--text-dim);
     padding-left: 1.4rem;
     position: relative;
@@ -942,7 +942,7 @@ section {
     position: absolute;
     left: 0;
     color: var(--teal);
-    font-size: 0.9rem;
+    font-size: 1.53rem;
 }
 
 .research-tags-row {
@@ -973,7 +973,7 @@ section {
 }
 
 .pub-inline-item h4 {
-    font-size: 1rem;
+    font-size: 1.7rem;
     font-weight: 700;
     color: var(--white);
     margin-bottom: 0.35rem;
@@ -981,13 +981,13 @@ section {
 }
 
 .pub-inline-item p {
-    font-size: 0.9rem !important;
+    font-size: 1.53rem !important;
     color: var(--text-dim);
     margin-bottom: 0.4rem !important;
 }
 
 .pub-inline-item a {
-    font-size: 0.88rem;
+    font-size: 1.5rem;
     font-weight: 700;
     color: var(--teal);
     transition: var(--transition);
