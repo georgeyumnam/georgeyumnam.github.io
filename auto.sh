@@ -22,13 +22,13 @@ git add -A
 echo "Committing changes..."
 git commit -m "$COMMIT_MSG"
 
-echo "Pushing to remote..."
-# Push to the default remote and current branch
-git push
+echo "Pushing to origin main and gh-pages..."
+# Push the current commit (HEAD) to both main and gh-pages on the remote
+git push origin HEAD:main HEAD:gh-pages
 
 # Verify if the push was successful
 if [ $? -eq 0 ]; then
-  echo "✅ Successfully committed and pushed changes."
+  echo "✅ Successfully committed and pushed changes to main and gh-pages."
 else
   echo "❌ Error: Push failed. Check your remote configuration or network."
   exit 1
