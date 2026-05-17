@@ -65,7 +65,7 @@ window.addEventListener('scroll', onScroll); onScroll();
   let neutrons = [];
   let nWindowStart = 0, nCountInWindow = 0, nLastSpawn = -99, prevT = 0, nLane = 0;
 
-  function spawnNeutron() {
+  function spawnNeutron(t) {
     // y-spacing at the entry wall = a / cos(θ) so that perpendicular separation = A
     const ySpacing = A / Math.cos(ANGLE);
     const nLanes   = Math.ceil((H + ySpacing) / ySpacing);
@@ -78,6 +78,7 @@ window.addEventListener('scroll', onScroll); onScroll();
       vx: NEUTRON_SPEED * Math.cos(ANGLE),
       vy: NEUTRON_SPEED * Math.sin(ANGLE),
       lastHitT: -1,
+      spawnT: t,
     });
   }
 
@@ -243,7 +244,7 @@ window.addEventListener('scroll', onScroll); onScroll();
     prevT = t;
     if (t - nWindowStart >= NEUTRON_WINDOW) { nWindowStart = t; nCountInWindow = 0; }
     if (nCountInWindow < NEUTRON_MAX && t - nLastSpawn >= NEUTRON_WINDOW / NEUTRON_MAX) {
-      spawnNeutron(); nCountInWindow++; nLastSpawn = t;
+      spawnNeutron(t); nCountInWindow++; nLastSpawn = t;
     }
     for (let i = neutrons.length - 1; i >= 0; i--) {
       const n = neutrons[i];
@@ -254,7 +255,7 @@ window.addEventListener('scroll', onScroll); onScroll();
         const minD = ATOM_R + NEUTRON_R;
         if (dist < minD && t - n.lastHitT > 5.0) {
           n.lastHitT = t;  // always consume the encounter to prevent re-rolling next frame
-          if (Math.random() < Math.min(1, 3/7 + Math.floor(t / 2) / 8)) {
+          if (Math.random() < Math.min(1, 3/7 + Math.floor((t - n.spawnT) / 2) / 8)) {
             const nx = dx / dist, ny = dy / dist;
             n.x = atom.x + (minD + 1) * nx;
             n.y = atom.y + (minD + 1) * ny;
