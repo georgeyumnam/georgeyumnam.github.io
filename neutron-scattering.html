@@ -7,7 +7,7 @@
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="styles.css?v=5">
+    <link rel="stylesheet" href="styles.css?v=6">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
         .tool-hero { padding: 64px 24px 40px; position: relative; z-index: 1; }
@@ -27,7 +27,7 @@
         .tool-sub   { font-size: 1.7rem; color: var(--teal); font-weight: 600; margin-bottom: 0.75rem; }
         .tool-desc  { font-size: 1.615rem; color: var(--text-dim); line-height: 1.75; }
         .selector-section { padding: 0 24px 32px; position: relative; z-index: 1; }
-        .inst-grid { display: grid; grid-template-columns: repeat(7,1fr); gap: 0.75rem; }
+        .inst-grid { display: grid; grid-template-columns: repeat(5,1fr); gap: 0.75rem; }
         .inst-card {
             background: var(--glass-card); border: 2px solid var(--border); border-radius: 16px;
             padding: 1rem 0.75rem; cursor: pointer; transition: var(--transition);
@@ -87,7 +87,7 @@
         .signal-header-title { font-size: 1.1rem; font-weight: 600; color: rgba(92,194,210,0.9); letter-spacing: 0.04em; }
         .signal-header-axis  { font-size: 0.95rem; color: rgba(92,194,210,0.45); font-style: italic; }
         #signal-canvas { display: block; width: 100%; height: 100%; }
-        @media (max-width: 1100px) { .inst-grid { grid-template-columns: repeat(4,1fr); } }
+        @media (max-width: 900px) { .inst-grid { grid-template-columns: repeat(3,1fr); } }
         @media (max-width: 768px) {
             .inst-grid { grid-template-columns: repeat(2,1fr); }
             .tool-title { font-size: 2.2rem; }
@@ -140,21 +140,13 @@
                     <div class="inst-name">POWGEN</div>
                     <div class="inst-hint">SNS · TOF powder diffraction</div>
                 </div>
-                <div class="inst-card" data-inst="powder">
-                    <div class="inst-icon"><i class="fas fa-th"></i></div>
-                    <div class="inst-name">POWDER</div>
-                    <div class="inst-hint">HFIR HB-2A · reactor diffraction</div>
-                </div>
+
                 <div class="inst-card" data-inst="sequoia">
                     <div class="inst-icon"><i class="fas fa-bolt"></i></div>
-                    <div class="inst-name">SEQUOIA</div>
-                    <div class="inst-hint">SNS · fine-resolution DGS</div>
+                    <div class="inst-name">SEQUOIA / ARCS</div>
+                    <div class="inst-hint">SNS · DGS spectrometers</div>
                 </div>
-                <div class="inst-card" data-inst="arcs">
-                    <div class="inst-icon"><i class="fas fa-bolt"></i></div>
-                    <div class="inst-name">ARCS</div>
-                    <div class="inst-hint">SNS · wide angular range DGS</div>
-                </div>
+
                 <div class="inst-card" data-inst="hyspec">
                     <div class="inst-icon"><i class="fas fa-sliders-h"></i></div>
                     <div class="inst-name">HYSPEC</div>
@@ -211,7 +203,7 @@
         </div>
     </footer>
 
-    <script src="script.js?v=5"></script>
+    <script src="script.js?v=6"></script>
     <script>
     // ── Neutron Scattering Instrument Demo Engine — Physics-accurate Monte Carlo ──
     (function () {
@@ -228,6 +220,7 @@
     const LW = 900, LH = 506;   // logical canvas dims
 
     let activeKey = null, state = null, prevT = null;
+    const PSIM = 20.0;  // neutron particle speed multiplier
 
     // ── Colour helpers ────────────────────────────────────────────────────────
     // λ normalized 0 (fast/hot/short) → 1 (cold/slow/long): maps to blue→green→red
@@ -515,163 +508,257 @@
         // ── 1. POWGEN ── SNS TOF powder diffractometer ──────────────────────────
         powgen: {
             label: 'POWGEN',
-            tag:   'SNS · BL-11A · Time-of-Flight',
+            tag:   'SNS · BL-11A · Time-of-Flight Diffraction',
             info: `<h3>POWGEN (SNS)</h3>
-                <span class="info-tag">Bragg's law · 2d sinθ = nλ</span>
-                <p>POWGEN is the general-purpose powder diffractometer at the Spallation Neutron Source (SNS), BL-11A. The pulsed source provides polychromatic neutrons; time-of-flight to the detector encodes wavelength, giving access to a large d-spacing range (0.1–5 Å) simultaneously without scanning the monochromator.</p>
-                <p>In this Monte Carlo simulation, each neutron carries a wavelength sampled from a thermal spectrum. The monochromator transmits only neutrons near λ_mono with a Gaussian probability. Scattered neutrons accumulate the powder diffraction pattern I(2θ) in the detector ring.</p>
+                <span class="info-tag">TOF · d = λt/(2L sinθ) · 0.1–5 Å</span>
+                <p>POWGEN (SNS BL-11A) is the general-purpose powder diffractometer at the Spallation Neutron Source. The pulsed white beam first passes through the frame-opening (F/O) chopper that removes the prompt γ flash, then through three bandwidth choppers that carve a useful wavelength window — all without a monochromator. Each neutron's time-of-flight to the detector encodes its wavelength, so the full d-spacing range 0.1–5 Å is measured simultaneously in one shot.</p>
+                <p>Scattered neutrons form Debye-Scherrer cones at each Bragg angle. The large cylindrical ³He detector bank spans 0.5°–168° in 2θ, providing both forward-scattering coverage for large d-spacings and high-resolution backscattering for small d.</p>
                 <ul>
-                    <li>Color = neutron wavelength (blue=fast/short, red=slow/long λ)</li>
-                    <li>Large-solid-angle detector array at 15–168° 2θ; backscattering for high resolution</li>
-                    <li>d-spacing range: 0.1–5 Å in one shot — no wavelength scanning needed</li>
+                    <li>F/O chopper (red) removes prompt γ; three bandwidth choppers (orange) define λ window</li>
+                    <li>Rainbow Debye-Scherrer cones: blue = short d, red = large d</li>
+                    <li>Cylindrical ³He detector: 0.5°–168° 2θ; d-spacing 0.1–5 Å simultaneously</li>
                     <li>Instrument: POWGEN, SNS BL-11A</li>
                 </ul>`,
             init() {
-                // d-spacings → 2θ angles (for λ_mono = 0.35, spd-normalized)
-                // 2θ = 2*arcsin(λ/(2d)) — here using fixed visual angles
-                const braggAngles = [32, 58, 88, 118, 148];
-                const signal = new Float32Array(160);  // 10° to 170°
-                return { particles: [], spawnT: 0, detHit: new Array(40).fill(0), braggAngles, signal };
+                const N = 140;
+                const signal = new Float32Array(N);
+                const dPeaks = [0.82, 1.05, 1.48, 2.04, 2.45, 3.35];
+                const dMin = 0.3, dMax = 5.0;
+                for (let b = 0; b < N; b++) {
+                    const d = dMin + (b / N) * (dMax - dMin);
+                    dPeaks.forEach(function (dp) {
+                        signal[b] += 0.82 * Math.exp(-0.5 * ((d - dp) / 0.045) ** 2);
+                    });
+                    signal[b] += 0.012 * Math.random();
+                }
+                return { particles: [], pulseT: -99,
+                         t0A: 0, bc1A: 0, bc2A: 0, bc3A: 0,
+                         detHit: new Array(64).fill(0), signal };
             },
             update(s, t, dt) {
-                s.detHit = s.detHit.map(function (v) { return Math.max(0, v - dt * 0.9); });
-                const SX = 490, SY = LH / 2;
-                const MX = 210, MY = LH / 2;
-                const LAM_MONO = 0.35;
-
-                // Spawn polychromatic neutrons from source
-                if (t - s.spawnT > 0.14) {
-                    s.spawnT = t;
-                    const lam = sampleLambda();
-                    const spd = 280 * (1 - lam * 0.65);
-                    s.particles.push({ x: 95, y: SY + (Math.random() - 0.5) * 10, vx: spd, vy: 0, lam: lam, w: 1, r: 4.5, col: wlCol(lam), state: 'toMono' });
+                s.t0A  += dt * 14;
+                s.bc1A += dt * 9.5;
+                s.bc2A += dt * 7.2;
+                s.bc3A += dt * 5.4;
+                s.detHit = s.detHit.map(function (v) { return Math.max(0, v - dt * 0.75); });
+                const SX = 560, SY = LH / 2;
+                const T0X = 118, BC1X = 228, BC2X = 348, BC3X = 458;
+                const braggAngles = [18, 32, 52, 78, 105, 135, 158];
+                const dMin = 0.3, dMax = 5.0;
+                if (t - s.pulseT > 0.20) {
+                    s.pulseT = t;
+                    for (let k = 0; k < 18; k++) {
+                        const lam = sampleLambda();
+                        const spd = 95 + (1 - lam) * 215;
+                        s.particles.push({ x: 60, y: SY + (Math.random() - 0.5) * 10,
+                            vx: spd, vy: 0, lam, w: 1, r: 4.5, col: wlCol(lam),
+                            state: 'pre0', dVal: null });
+                    }
                 }
-
                 for (let i = s.particles.length - 1; i >= 0; i--) {
                     const p = s.particles[i];
-                    p.x += p.vx * dt; p.y += p.vy * dt;
-
-                    if (p.state === 'toMono') {
-                        if (Math.hypot(p.x - MX, p.y - MY) < 17) {
-                            const T = transmit(p.lam, LAM_MONO, 0.07);
-                            if (Math.random() < T) {
-                                const monoSpd = 230;
-                                const div = (Math.random() - 0.5) * 0.05; // beam divergence
-                                p.vx = monoSpd * Math.cos(div); p.vy = monoSpd * Math.sin(div);
-                                p.lam = LAM_MONO + (Math.random() - 0.5) * 0.015;
-                                p.col = wlCol(p.lam); p.w = T; p.state = 'toSample';
-                            } else { s.particles.splice(i, 1); continue; }
-                        }
-                    } else if (p.state === 'toSample') {
-                        if (Math.hypot(p.x - SX, p.y - SY) < 16) {
-                            // Bragg scatter: pick one of the Bragg angles
-                            const ba = s.braggAngles[Math.floor(Math.random() * s.braggAngles.length)];
-                            const sign = Math.random() > 0.5 ? 1 : -1;
-                            const a = ba * Math.PI / 180 * sign;
-                            const spd = 210;
-                            p.vx = spd * Math.cos(a); p.vy = spd * Math.sin(a);
-                            p.braggDeg = ba; p.state = 'out';
-                        }
-                    } else if (p.state === 'out') {
-                        const d = Math.hypot(p.x - SX, p.y - SY);
-                        if (d > 178) {
-                            const a = Math.atan2(p.y - SY, p.x - SX);
-                            const idx = Math.floor(((a + Math.PI) / (2 * Math.PI)) * 40) % 40;
-                            s.detHit[idx] = Math.min(1, (s.detHit[idx] || 0) + p.w * 0.9);
-                            const deg = p.braggDeg || 90;
-                            for (let b = 0; b < 160; b++) {
-                                const d2th = (b / 160) * 160 + 10;
-                                s.signal[b] += p.w * Math.exp(-0.5 * ((d2th - deg) / 2.8) ** 2) * (1.2 + Math.random() * 0.6);
+                    p.x += p.vx * dt * PSIM; p.y += p.vy * dt * PSIM;
+                    if (p.state === 'pre0' && p.x > T0X) {
+                        if (Math.random() < 0.78) { p.state = 'pre1'; }
+                        else { s.particles.splice(i, 1); continue; }
+                    }
+                    if (p.state === 'pre1' && p.x > BC1X) {
+                        const gate = Math.sin(s.bc1A * 2.0) > 0.55 && p.lam > 0.15 && p.lam < 0.80;
+                        if (gate) { p.state = 'pre2'; }
+                        else { s.particles.splice(i, 1); continue; }
+                    }
+                    if (p.state === 'pre2' && p.x > BC2X) {
+                        if (Math.random() < 0.88) { p.state = 'pre3'; }
+                        else { s.particles.splice(i, 1); continue; }
+                    }
+                    if (p.state === 'pre3' && p.x > BC3X) {
+                        if (Math.random() < 0.90) { p.state = 'pre_s'; }
+                        else { s.particles.splice(i, 1); continue; }
+                    }
+                    if (p.state === 'pre_s' && Math.hypot(p.x - SX, p.y - SY) < 16) {
+                        const ba = braggAngles[Math.floor(Math.random() * braggAngles.length)];
+                        const sign = Math.random() > 0.5 ? 1 : -1;
+                        const a = ba * Math.PI / 180 * sign;
+                        p.vx = 185 * Math.cos(a); p.vy = 185 * Math.sin(a);
+                        p.braggDeg = ba; p.state = 'out';
+                        const d = 1.2 / (2 * Math.sin(ba * Math.PI / 360));
+                        p.dVal = Math.max(dMin, Math.min(dMax, d));
+                        p.col = wlCol(Math.min(1, Math.max(0, (p.dVal - dMin) / (dMax - dMin))));
+                    }
+                    if (p.state === 'out') {
+                        const dist = Math.hypot(p.x - SX, p.y - SY);
+                        if (dist > 155 && dist < 188) {
+                            const ang = Math.atan2(p.y - SY, p.x - SX);
+                            const di = Math.min(63, Math.max(0, Math.floor(((ang + Math.PI) / (2 * Math.PI)) * 64)));
+                            s.detHit[di] = Math.min(1, s.detHit[di] + 0.85);
+                            if (p.dVal !== null) {
+                                const bin = Math.min(139, Math.max(0, Math.floor(((p.dVal - dMin) / (dMax - dMin)) * 140)));
+                                s.signal[bin] = Math.min(1, s.signal[bin] + 0.012);
                             }
                             s.particles.splice(i, 1); continue;
                         }
                     }
-                    if (p.x < -30 || p.x > LW + 30 || p.y < -30 || p.y > LH + 30) s.particles.splice(i, 1);
+                    if (p.x < -40 || p.x > LW + 40 || p.y < -40 || p.y > LH + 40) s.particles.splice(i, 1);
                 }
             },
             plotSignal(sig) {
                 drawSignalPlot(sig, {
-                    xL: '10°', xM: '90°', xR: '170°',
-                    xTitle: '2θ  (degrees)', yTitle: 'Counts',
+                    xL: '0.3', xM: '2.5 Å', xR: '5.0',
+                    xTitle: 'd-spacing  (Å)', yTitle: 'Counts',
+                    lineCol: 'rgb(140,220,80)',
                     peaks: [
-                        { frac: 0.138, lbl: '(100)' }, { frac: 0.3, lbl: '(110)' },
-                        { frac: 0.488, lbl: '(111)' }, { frac: 0.675, lbl: '(200)' },
-                        { frac: 0.863, lbl: '(210)' }
+                        { frac: 0.11, lbl: '(220)' }, { frac: 0.16, lbl: '(200)' },
+                        { frac: 0.25, lbl: '(111)' }, { frac: 0.38, lbl: '(110)' },
+                        { frac: 0.46, lbl: '(100)' }, { frac: 0.64, lbl: '(001)' }
                     ]
                 });
             },
             draw(s, t) {
-                const SX = 490, SY = LH / 2;
-                const MX = 210, MY = LH / 2;
-                drawSource(80, SY, this._sourceType || 'spallation', t);
+                const SX = 560, SY = LH / 2;
+                const T0X = 118, BC1X = 228, BC2X = 348, BC3X = 458;
+                const detR = 165, nDet = 64;
+                const braggAngles = [18, 32, 52, 78, 105, 135, 158];
+                const dMin = 0.3, dMax = 5.0;
 
-                // Polychromatic guide — rainbow gradient
-                const rg = ctx.createLinearGradient(104, SY - 8, 190, SY - 8);
-                rg.addColorStop(0, 'rgba(80,80,255,0.35)'); rg.addColorStop(0.4, 'rgba(50,230,50,0.35)'); rg.addColorStop(1, 'rgba(255,80,50,0.35)');
-                ctx.fillStyle = rg; ctx.fillRect(104, SY - 7, 86, 14);
-                ctx.strokeStyle = 'rgba(52,142,190,0.4)'; ctx.lineWidth = 1.5; ctx.strokeRect(104, SY - 7, 86, 14);
+                drawSource(52, SY, this._sourceType || 'spallation', t);
 
-                // Monochromator
-                drawCrystal(MX, MY, -0.42, 'PG(002)\nmono');
-                label(MX, MY - 34, 'λ_mono selected', { size: 10, color: C.teal });
+                // Beam tubes
+                drawGuide(84, SY, T0X - 26, SY, 10);
+                drawGuide(T0X + 26, SY, BC1X - 20, SY, 10);
+                drawGuide(BC1X + 20, SY, BC2X - 20, SY, 10);
+                drawGuide(BC2X + 20, SY, BC3X - 20, SY, 10);
+                drawGuide(BC3X + 20, SY, SX - 18, SY, 10);
 
-                // Collimator slits
-                [[226, SY - 8, 226, SY - 3], [226, SY + 3, 226, SY + 8],
-                 [242, SY - 8, 242, SY - 3], [242, SY + 3, 242, SY + 8]].forEach(function (c) {
-                    ctx.beginPath(); ctx.moveTo(c[0], c[1]); ctx.lineTo(c[2], c[3]);
-                    ctx.strokeStyle = 'rgba(22,61,86,0.7)'; ctx.lineWidth = 2; ctx.stroke();
-                });
+                // Primary flight path annotation
+                ctx.setLineDash([3, 5]);
+                ctx.strokeStyle = 'rgba(0,143,163,0.22)'; ctx.lineWidth = 1;
+                ctx.beginPath(); ctx.moveTo(84, SY - 52); ctx.lineTo(SX, SY - 52); ctx.stroke();
+                ctx.setLineDash([]);
+                label((84 + SX) / 2, SY - 60, 'Primary flight path  ~47 m', { size: 10, color: 'rgba(0,143,163,0.52)' });
 
-                // Guide (monochromatic — single green)
-                drawGuide(248, SY, SX - 20, SY, 10);
+                // ── F/O Chopper — RED large disc ─────────────────────────────────────
+                (function () {
+                    const R = 38;
+                    ctx.beginPath(); ctx.arc(T0X, SY, R, 0, Math.PI * 2);
+                    ctx.fillStyle = 'rgba(160,30,30,0.82)'; ctx.fill();
+                    ctx.strokeStyle = 'rgba(220,80,60,0.90)'; ctx.lineWidth = 2; ctx.stroke();
+                    for (let k = 0; k < 6; k++) {
+                        const a = s.t0A + k * Math.PI / 3;
+                        ctx.beginPath();
+                        ctx.moveTo(T0X + 11 * Math.cos(a), SY + 11 * Math.sin(a));
+                        ctx.lineTo(T0X + (R - 5) * Math.cos(a), SY + (R - 5) * Math.sin(a));
+                        ctx.strokeStyle = 'rgba(255,120,90,0.40)'; ctx.lineWidth = 1.5; ctx.stroke();
+                    }
+                    ctx.save(); ctx.translate(T0X, SY); ctx.rotate(s.t0A);
+                    ctx.beginPath(); ctx.moveTo(0, 0); ctx.arc(0, 0, R, -0.11, 0.11); ctx.closePath();
+                    ctx.fillStyle = 'rgba(255,180,150,0.32)'; ctx.fill(); ctx.restore();
+                    ctx.beginPath(); ctx.arc(T0X, SY, 9, 0, Math.PI * 2);
+                    ctx.fillStyle = 'rgba(100,20,20,0.95)'; ctx.fill();
+                    label(T0X, SY - R - 11, 'F/O', { size: 11 });
+                    label(T0X, SY + R + 14, 'T₀ chopper', { size: 9, color: 'rgba(220,100,80,0.70)' });
+                }());
 
-                // Detector ring
-                drawDetArc(SX, SY, 178, 0, 2 * Math.PI, 40, s.detHit);
+                // ── Bandwidth choppers — ORANGE single discs ──────────────────────────
+                function drawBWChopper(cx, angle, idx) {
+                    const R = 30;
+                    ctx.beginPath(); ctx.arc(cx, SY, R, 0, Math.PI * 2);
+                    ctx.fillStyle = 'rgba(175,95,15,0.82)'; ctx.fill();
+                    ctx.strokeStyle = 'rgba(230,140,40,0.90)'; ctx.lineWidth = 1.5; ctx.stroke();
+                    for (let k = 0; k < 6; k++) {
+                        const a = angle + k * Math.PI / 3;
+                        ctx.beginPath();
+                        ctx.moveTo(cx + 8 * Math.cos(a), SY + 8 * Math.sin(a));
+                        ctx.lineTo(cx + (R - 4) * Math.cos(a), SY + (R - 4) * Math.sin(a));
+                        ctx.strokeStyle = 'rgba(255,180,60,0.35)'; ctx.lineWidth = 1; ctx.stroke();
+                    }
+                    ctx.save(); ctx.translate(cx, SY); ctx.rotate(angle);
+                    ctx.beginPath(); ctx.moveTo(0, 0); ctx.arc(0, 0, R, -0.12, 0.12); ctx.closePath();
+                    ctx.fillStyle = 'rgba(255,200,100,0.28)'; ctx.fill(); ctx.restore();
+                    ctx.beginPath(); ctx.arc(cx, SY, 7, 0, Math.PI * 2);
+                    ctx.fillStyle = 'rgba(110,60,10,0.95)'; ctx.fill();
+                    label(cx, SY - R - 11, 'BW' + idx, { size: 10 });
+                    label(cx, SY + R + 14, 'Bandwidth', { size: 9, color: 'rgba(230,150,50,0.65)' });
+                }
+                drawBWChopper(BC1X, s.bc1A, 1);
+                drawBWChopper(BC2X, s.bc2A, 2);
+                drawBWChopper(BC3X, s.bc3A, 3);
 
-                // Sample with lattice planes
+                // Sample
                 drawSample(SX, SY);
 
-                // Bragg angle guide lines + labels
-                s.braggAngles.forEach(function (ba) {
+                // ── Debye-Scherrer rainbow cones ──────────────────────────────────────
+                braggAngles.forEach(function (ba) {
+                    const d = 1.2 / (2 * Math.sin(ba * Math.PI / 360));
+                    const dNorm = Math.max(0, Math.min(1, (Math.max(dMin, Math.min(dMax, d)) - dMin) / (dMax - dMin)));
+                    const coneCol = wlCol(dNorm, 0.40);
                     [-1, 1].forEach(function (sign) {
                         const a = ba * Math.PI / 180 * sign;
-                        ctx.setLineDash([3, 5]);
-                        ctx.beginPath(); ctx.moveTo(SX, SY); ctx.lineTo(SX + 195 * Math.cos(a), SY + 195 * Math.sin(a));
-                        ctx.strokeStyle = 'rgba(0,143,163,0.15)'; ctx.lineWidth = 1; ctx.stroke();
-                        ctx.setLineDash([]);
+                        ctx.beginPath();
+                        ctx.moveTo(SX, SY);
+                        ctx.lineTo(SX + (detR + 14) * Math.cos(a), SY + (detR + 14) * Math.sin(a));
+                        ctx.strokeStyle = coneCol; ctx.lineWidth = 1.3;
+                        ctx.setLineDash([4, 4]); ctx.stroke(); ctx.setLineDash([]);
                     });
-                    const a0 = s.braggAngles[0] * Math.PI / 180;
-                    angleArc(SX, SY, 55, 0, a0, C.teal, '2θ');
-                    const xL = SX + 200 * Math.cos(ba * Math.PI / 180);
-                    const yL = SY - 200 * Math.sin(ba * Math.PI / 180);
-                    label(xL, yL - 4, ba * 2 + '°', { size: 9, color: 'rgba(0,143,163,0.55)' });
                 });
 
-                // Wavelength legend
-                [[wlCol(0.08), 'Short λ (fast)'], [wlCol(0.35), 'λ_mono (selected)'], [wlCol(0.75), 'Long λ (slow)']].forEach(function (cl, i) {
-                    const yy = 22 + i * 22;
-                    ctx.beginPath(); ctx.arc(LW - 148, yy, 6, 0, Math.PI * 2); ctx.fillStyle = cl[0]; ctx.fill();
-                    label(LW - 130, yy + 5, cl[1], { align: 'left', size: 11 });
+                // ── Cylindrical detector arc 0.5°–168° 2θ ────────────────────────────
+                for (let di = 0; di < nDet; di++) {
+                    let ang;
+                    if (di < 32) {
+                        ang = (5 + (di / 31) * 163) * Math.PI / 180;
+                    } else {
+                        ang = -(5 + ((di - 32) / 31) * 163) * Math.PI / 180;
+                    }
+                    const dx = SX + detR * Math.cos(ang);
+                    const dy = SY + detR * Math.sin(ang);
+                    const hit = s.detHit[di] || 0;
+                    const dNorm2 = Math.abs(ang) / Math.PI;
+                    const baseCol = wlCol(dNorm2, 0.55);
+                    const hitCol = `rgba(0,220,180,${0.45 + hit * 0.55})`;
+                    ctx.beginPath(); ctx.arc(dx, dy, 5, 0, Math.PI * 2);
+                    ctx.fillStyle = hit > 0.05 ? hitCol : baseCol; ctx.fill();
+                }
+                ctx.beginPath(); ctx.arc(SX, SY, detR, 5 * Math.PI / 180, 168 * Math.PI / 180);
+                ctx.strokeStyle = 'rgba(0,143,163,0.30)'; ctx.lineWidth = 1.5; ctx.stroke();
+                ctx.beginPath(); ctx.arc(SX, SY, detR, -168 * Math.PI / 180, -5 * Math.PI / 180);
+                ctx.strokeStyle = 'rgba(0,143,163,0.30)'; ctx.lineWidth = 1.5; ctx.stroke();
+                label(SX + detR + 10, SY - 7, '³He PSD', { size: 9, color: C.teal, align: 'left' });
+                label(SX + detR + 10, SY + 7, '0.5°–168°', { size: 9, color: 'rgba(92,194,210,0.5)', align: 'left' });
+
+                // d-spacing color legend
+                [[wlCol(0.05), 'short d'], [wlCol(0.50), 'medium d'], [wlCol(0.95), 'large d']].forEach(function (dl, i) {
+                    const yy = 22 + i * 20;
+                    ctx.beginPath(); ctx.arc(LW - 148, yy, 5, 0, Math.PI * 2);
+                    ctx.fillStyle = dl[0]; ctx.fill();
+                    label(LW - 130, yy + 5, dl[1], { align: 'left', size: 11 });
                 });
+
+                // TOF ruler at bottom
+                [[T0X, 'F/O'], [BC1X, 'BW1'], [BC2X, 'BW2'], [BC3X, 'BW3'], [SX, 'Sample']].forEach(function (r) {
+                    ctx.beginPath(); ctx.moveTo(r[0], LH - 36); ctx.lineTo(r[0], LH - 26);
+                    ctx.strokeStyle = 'rgba(0,143,163,0.30)'; ctx.lineWidth = 1; ctx.stroke();
+                    label(r[0], LH - 18, r[1], { size: 9, color: 'rgba(0,143,163,0.45)' });
+                });
+                ctx.beginPath(); ctx.moveTo(T0X, LH - 31); ctx.lineTo(SX, LH - 31);
+                ctx.strokeStyle = 'rgba(0,143,163,0.18)'; ctx.lineWidth = 1; ctx.stroke();
+                label(LW / 2, LH - 10, 'Time-of-flight → λ → d = λ / (2 sinθ)', { size: 10, color: 'rgba(0,143,163,0.38)' });
 
                 s.particles.forEach(function (p) { drawNeutron(p.x, p.y, p.r, p.col, p.w); });
-                label(SX, LH - 12, 'Debye-Scherrer detector ring · Powder diffraction · I(2θ)');
             }
         },
-
         // ── 2. SEQUOIA ── Fine-resolution DGS at SNS ─────────────────────────────
         sequoia: {
-            label: 'SEQUOIA',
-            tag:   'SNS · BL-17 · Fine Resolution DGS',
-            info: `<h3>SEQUOIA (SNS)</h3>
-                <span class="info-tag">Direct geometry · T0 + 3 Fermi pairs · 2π sr cylindrical detector</span>
-                <p>SEQUOIA (Fine Resolution Fermi Chopper Spectrometer, SNS BL-17) has four chopper stages along its 20.0 m primary flight path. The T0 chopper (red, 2.1 m) removes the prompt γ flash and fast neutrons and defines the TOF start. Three Fermi chopper pairs (orange, at 4.5, 8.0, and 11.5 m) successively define Ei, suppress higher-order frame overlap, and optimize energy resolution.</p>
-                <p>After the sample, a cylindrical ³He PSD detector array (2π sr solid angle) records the arrival time of each scattered neutron. Ei − Ef = ℏω and the detector position gives Q, mapping the full excitation spectrum S(Q,ω) simultaneously over a wide angular range.</p>
+            label: 'SEQUOIA / ARCS',
+            tag:   'SNS · BL-17 / BL-18 · Fine & Wide Resolution DGS',
+            info: `<h3>SEQUOIA / ARCS (SNS)</h3>
+                <span class="info-tag">Direct geometry · T0 + Fermi chopper pairs · cylindrical detector</span>
+                <p>SEQUOIA (BL-17) and ARCS (BL-18) are the two direct-geometry Fermi chopper spectrometers at the Spallation Neutron Source. Both use a T0 chopper (red) to suppress the prompt γ flash, followed by Fermi chopper pairs (orange) to select the incident energy Ei. The pulsed beam then travels to the sample; Ei − Ef = ℏω with the detector angle giving Q.</p>
+                <p>SEQUOIA is optimized for fine energy resolution (δE/Ei &lt; 2%) and higher-Q coverage; ARCS for wide angular range and high count rate. Both instruments use large cylindrical ³He PSD detector arrays covering a wide solid angle, enabling simultaneous mapping of S(Q,ω) over the full excitation spectrum.</p>
                 <ul>
                     <li>T0 chopper (red) removes prompt background; Fermi pairs (orange) select Ei</li>
-                    <li>Ei range: 10 meV – 2 eV; energy resolution δE/Ei &lt; 2%</li>
-                    <li>Cylindrical ³He detector: 2π sr coverage, Q range 0.1–12 Å⁻¹</li>
-                    <li>Instrument: SEQUOIA, SNS BL-17</li>
+                    <li>Ei range: 10 meV – 2 eV; SEQUOIA BL-17 source-to-sample 20.0 m</li>
+                    <li>Cylindrical ³He detector: wide solid-angle coverage, Q range 0.1–12 Å⁻¹</li>
+                    <li>Instruments: SEQUOIA SNS BL-17; ARCS SNS BL-18</li>
                 </ul>`,
             init() {
                 const signal = new Float32Array(120);
@@ -693,7 +780,7 @@
                 s.detHit = s.detHit.map(function (v) { return Math.max(0, v - dt * 0.65); });
                 const SX = 538, SY = LH / 2;
                 const T0X = 108, FC1X = 165, FC2X = 256, FC3X = 348;
-                if (t - s.pulseT > 1.38) {
+                if (t - s.pulseT > 0.22) {
                     s.pulseT = t;
                     for (let k = 0; k < 15; k++) {
                         const lam = sampleLambda();
@@ -705,7 +792,7 @@
                 }
                 for (let i = s.particles.length - 1; i >= 0; i--) {
                     const p = s.particles[i];
-                    p.x += p.vx * dt; p.y += p.vy * dt;
+                    p.x += p.vx * dt * PSIM; p.y += p.vy * dt * PSIM;
                     // T0 gate
                     if (p.state === 'pre0' && p.x > T0X) {
                         if (Math.random() < 0.80) { p.state = 'pre1'; }
@@ -879,60 +966,64 @@
             }
         },
 
-        // ── 3. MAGREF ── Magnetism Reflectometer at SNS ─────────────────────────
+        // ── 3. MAGREF ── Magnetism Reflectometer at SNS BL-4A ─────────────────
         magref: {
             label: 'MAGREF',
             tag:   'SNS · BL-4A · Polarized Neutron Reflectometry',
             info: `<h3>MAGREF (SNS)</h3>
                 <span class="info-tag">Polarized reflectometry · magnetic depth profiles</span>
-                <p>MAGREF (Magnetism Reflectometer, SNS BL-4A) specializes in polarized neutron reflectometry (PNR) to probe magnetic depth profiles in thin films and multilayers. Neutrons strike the flat surface at grazing angle θ; below the critical angle θ_c, total external reflection occurs. Above θ_c, reflected intensity R(Q⊥) encodes the depth-resolved scattering-length-density profile ρ(z).</p>
-                <p>By flipping neutron spin between spin-up and spin-down before the sample, PNR separates nuclear and magnetic SLD profiles layer by layer — uniquely sensitive to buried magnetic interfaces invisible to charge-based probes.</p>
+                <p>MAGREF (Magnetism Reflectometer, SNS BL-4A) uses the pulsed SNS source and a super-mirror polarizer to deliver a spin-polarized, time-of-flight white beam to a flat sample at grazing incidence. An FO chopper removes the prompt flash. Neutrons reflect specularly below the critical angle θ_c; above θ_c, R(Q⊥) encodes the depth-resolved scattering-length-density profile ρ(z) of the magnetic and nuclear layers.</p>
+                <p>An optional ³He analyzer on the reflected side enables full polarization analysis — separating R⁺⁺, R⁻⁻ (spin-flip) and R⁺⁻, R⁻⁺ (non-spin-flip) cross-sections to disentangle nuclear and magnetic SLD profiles layer by layer.</p>
                 <ul>
-                    <li>Cyan = specularly reflected; orange = transmitted/refracted below critical angle</li>
-                    <li>Kiessig fringes: period ΔQ = 2π/d gives layer thickness d</li>
-                    <li>Q⊥ range: 0.008–0.25 Å⁻¹; polarization analysis for magnetic vs. nuclear SLD</li>
+                    <li>Cyan = specularly reflected beam; off-specular in purple dashes</li>
+                    <li>Kiessig fringes: period ΔQ⊥ = 2π/d gives individual layer thickness d</li>
+                    <li>Q⊥ range: 0.008–0.25 Å⁻¹; full polarization analysis via ³He analyzer</li>
                     <li>Instrument: MAGREF, SNS BL-4A</li>
                 </ul>`,
             init() {
                 const N = 80, sig = new Float32Array(N);
-                // R(Q) with critical edge + Kiessig fringes: two-layer model
-                const QC = 0.022; // critical Q (Å⁻¹)
+                const QC = 0.022;
                 for (let b = 0; b < N; b++) {
-                    const Q = 0.005 + (b / N) * 0.295; // 0.005 to 0.3 Å⁻¹
+                    const Q = 0.005 + (b / N) * 0.295;
                     let R;
                     if (Q < QC) { R = 1.0; }
                     else {
                         const Rfresnel = Math.pow((Q - Math.sqrt(Q * Q - QC * QC)) / (Q + Math.sqrt(Q * Q - QC * QC)), 2);
-                        const fringe1 = 1 + 0.55 * Math.cos(2 * Math.PI * Q * 120);  // 120 Å layer
-                        const fringe2 = 1 + 0.25 * Math.cos(2 * Math.PI * Q * 280);  // 280 Å layer
+                        const fringe1 = 1 + 0.55 * Math.cos(2 * Math.PI * Q * 120);
+                        const fringe2 = 1 + 0.25 * Math.cos(2 * Math.PI * Q * 280);
                         R = Math.max(1e-6, Rfresnel * fringe1 * fringe2);
                     }
                     sig[b] = R;
                 }
-                return { particles: [], spawnT: 0, angle: 5 * Math.PI / 180, signal: sig };
+                return { particles: [], spawnT: 0, angle: 5 * Math.PI / 180, chopA: 0, signal: sig };
             },
             update(s, t, dt) {
-                const SY = 310, a = s.angle;
-                if (t - s.spawnT > 0.28) {
+                s.chopA += dt * 11;
+                const SY = 318, a = s.angle;
+                const HIT_X = 460;
+                const srcY = SY - (HIT_X - 80) * Math.tan(a);
+                if (t - s.spawnT > 0.05) {
                     s.spawnT = t;
                     const lam = 0.2 + Math.random() * 0.5;
-                    const spd = 195;
-                    // Critical angle for this wavelength (λ-dependent)
-                    const thetaC = 0.022 * lam * 2; // simplified
+                    const spd = 310;
+                    const thetaC = 0.022 * lam * 2;
                     const reflected = a > thetaC ? (Math.random() < 0.45) : true;
-                    s.particles.push({ x: 80, y: SY - 230 * Math.tan(a) + (Math.random() - 0.5) * 4, vx: spd * Math.cos(a), vy: spd * Math.sin(a), lam: lam, w: 1, r: 4.5, col: wlCol(lam), state: 'in', reflected: reflected });
+                    const spinUp = Math.random() > 0.5;
+                    s.particles.push({ x: 80, y: srcY + (Math.random() - 0.5) * 3,
+                        vx: spd * Math.cos(a), vy: spd * Math.sin(a),
+                        lam, w: 1, r: 4.5, col: wlCol(lam), state: 'in',
+                        reflected, spinUp });
                 }
                 for (let i = s.particles.length - 1; i >= 0; i--) {
                     const p = s.particles[i];
-                    p.x += p.vx * dt; p.y += p.vy * dt;
-                    if (p.state === 'in' && p.y >= SY && p.x > 155) {
+                    p.x += p.vx * dt * PSIM; p.y += p.vy * dt * PSIM;
+                    if (p.state === 'in' && p.y >= SY && p.x > HIT_X - 12) {
                         if (p.reflected) {
                             p.vy = -Math.abs(p.vy); p.col = '#22d3ee'; p.state = 'out';
-                            // Add small perturbation to Kiessig fringe signal
                             const b = Math.min(79, Math.max(0, Math.floor(Math.random() * 80)));
                             s.signal[b] = Math.max(1e-6, s.signal[b] * (0.985 + Math.random() * 0.03));
                         } else {
-                            p.vy = Math.abs(p.vy) * 0.35; p.vx *= 0.45;
+                            p.vy = Math.abs(p.vy) * 0.30; p.vx *= 0.40;
                             p.col = wlCol(Math.min(0.9, p.lam + 0.25)); p.state = 'out';
                         }
                     }
@@ -948,15 +1039,64 @@
                 });
             },
             draw(s, t) {
-                const SY = 310, X0 = 155, X1 = 770, a = s.angle;
-                const srcY = SY - 230 * Math.tan(a) - 6;
-                drawSource(80, srcY, 'reactor', t);
+                const SY = 318, a = s.angle;
+                const HIT_X = 460;
+                const srcY = SY - (HIT_X - 80) * Math.tan(a);
+                const X0 = 355, X1 = 760; // sample surface extent
 
-                // Layered flat sample — top view
+                drawSource(80, srcY, 'spallation', t);
+
+                // ── Super Mirror Polarizer (purple) ───────────────────────────────────
+                const P_X = 125, P_Y = srcY + (P_X - 80) * Math.tan(a);
+                ctx.fillStyle = 'rgba(120,50,200,0.75)';
+                ctx.save(); ctx.translate(P_X, P_Y); ctx.rotate(a);
+                ctx.fillRect(-6, -30, 12, 60); ctx.strokeStyle = 'rgba(180,100,255,0.90)'; ctx.lineWidth = 1.5; ctx.strokeRect(-6, -30, 12, 60); ctx.restore();
+                label(P_X, P_Y - 38, 'SM Pol.', { size: 9, color: 'rgba(180,100,255,0.85)' });
+
+                // ── FO Chopper — RED disc ─────────────────────────────────────────────
+                const FC_X = 220, FC_Y = srcY + (FC_X - 80) * Math.tan(a);
+                const R = 28;
+                ctx.beginPath(); ctx.arc(FC_X, FC_Y, R, 0, Math.PI * 2);
+                ctx.fillStyle = 'rgba(160,30,30,0.80)'; ctx.fill();
+                ctx.strokeStyle = 'rgba(220,80,60,0.90)'; ctx.lineWidth = 1.5; ctx.stroke();
+                for (let k = 0; k < 6; k++) {
+                    const ac = s.chopA + k * Math.PI / 3;
+                    ctx.beginPath();
+                    ctx.moveTo(FC_X + 8 * Math.cos(ac), FC_Y + 8 * Math.sin(ac));
+                    ctx.lineTo(FC_X + (R - 4) * Math.cos(ac), FC_Y + (R - 4) * Math.sin(ac));
+                    ctx.strokeStyle = 'rgba(255,120,90,0.38)'; ctx.lineWidth = 1.2; ctx.stroke();
+                }
+                ctx.save(); ctx.translate(FC_X, FC_Y); ctx.rotate(s.chopA + a);
+                ctx.beginPath(); ctx.moveTo(0, 0); ctx.arc(0, 0, R, -0.12, 0.12); ctx.closePath();
+                ctx.fillStyle = 'rgba(255,180,150,0.30)'; ctx.fill(); ctx.restore();
+                ctx.beginPath(); ctx.arc(FC_X, FC_Y, 7, 0, Math.PI * 2);
+                ctx.fillStyle = 'rgba(100,20,20,0.95)'; ctx.fill();
+                label(FC_X, FC_Y - R - 10, 'F/O', { size: 10 });
+                label(FC_X, FC_Y + R + 13, 'Chopper', { size: 9, color: 'rgba(220,100,80,0.70)' });
+
+                // ── Collimation slits (grey) ──────────────────────────────────────────
+                const SL_X = 335, SL_Y = srcY + (SL_X - 80) * Math.tan(a);
+                [[-8, -3], [3, 8]].forEach(function (off) {
+                    const x1 = SL_X + off[0] * Math.cos(a + Math.PI / 2);
+                    const y1 = SL_Y + off[0] * Math.sin(a + Math.PI / 2);
+                    const x2 = SL_X + off[1] * Math.cos(a + Math.PI / 2);
+                    const y2 = SL_Y + off[1] * Math.sin(a + Math.PI / 2);
+                    ctx.beginPath(); ctx.moveTo(x1, y1); ctx.lineTo(x2, y2);
+                    ctx.strokeStyle = 'rgba(22,61,86,0.75)'; ctx.lineWidth = 4; ctx.stroke();
+                });
+                label(SL_X, SL_Y - 18, 'Slits', { size: 9 });
+
+                // ── Beam guide lines (primary path) ───────────────────────────────────
+                ctx.setLineDash([3, 5]);
+                ctx.strokeStyle = 'rgba(0,143,163,0.18)'; ctx.lineWidth = 1;
+                ctx.beginPath(); ctx.moveTo(104, srcY); ctx.lineTo(HIT_X, SY); ctx.stroke();
+                ctx.setLineDash([]);
+
+                // ── Flat sample layers ────────────────────────────────────────────────
                 const layers = [
-                    { y: SY, h: 12, col: 'rgba(0,143,163,0.22)', lbl: 'Magnetic layer (Co, 120 Å)' },
-                    { y: SY + 12, h: 10, col: 'rgba(0,143,163,0.12)', lbl: 'Buffer (Cu, 280 Å)' },
-                    { y: SY + 22, h: 40, col: 'rgba(22,61,86,0.10)', lbl: 'Substrate (Si)' }
+                    { y: SY, h: 14, col: 'rgba(0,143,163,0.22)', lbl: 'Magnetic layer (Co)' },
+                    { y: SY + 14, h: 10, col: 'rgba(0,143,163,0.12)', lbl: 'Buffer (Cu)' },
+                    { y: SY + 24, h: 38, col: 'rgba(22,61,86,0.10)', lbl: 'Substrate (Si)' }
                 ];
                 layers.forEach(function (ly) {
                     ctx.fillStyle = ly.col; ctx.fillRect(X0, ly.y, X1 - X0, ly.h);
@@ -967,98 +1107,127 @@
                 ctx.strokeStyle = C.teal; ctx.lineWidth = 2;
                 ctx.beginPath(); ctx.moveTo(X0, SY); ctx.lineTo(X1, SY); ctx.stroke();
 
-                // Incident & reflected dashed guides
-                const hitX = 240;
-                drawBeamLine(80, srcY, hitX, SY, '22,61,86', 0.12, [5, 5]);
-                drawBeamLine(hitX, SY, 780, SY - (780 - hitX) * Math.tan(a), '34,211,238', 0.15, [5, 5]);
+                // ── Angle arcs at hit point ───────────────────────────────────────────
+                angleArc(HIT_X, SY, 48, Math.PI - a, Math.PI, C.teal, 'θᵢ');
+                angleArc(HIT_X, SY, 48, 0, a, C.teal, 'θᶠ');
 
-                // Angle arcs
-                angleArc(hitX, SY, 50, -Math.PI + a, -Math.PI + a * 2, C.teal, 'θ');
-                angleArc(hitX, SY, 50, -a, a * 0, C.teal);
+                // ── Specular reflection guide ─────────────────────────────────────────
+                const DX = 800, DY = SY - (DX - HIT_X) * Math.tan(a);
+                ctx.setLineDash([5, 5]);
+                ctx.beginPath(); ctx.moveTo(HIT_X, SY); ctx.lineTo(DX, DY);
+                ctx.strokeStyle = 'rgba(34,211,238,0.20)'; ctx.lineWidth = 1; ctx.stroke();
+                ctx.setLineDash([]);
 
-                // Detector
-                const DX = 820, DY = SY - (DX - hitX) * Math.tan(a);
-                drawDetector(DX - 18, DY, -Math.PI / 2 + a, 34, 'Detector');
+                // ── Optional ³He Analyzer (purple) ───────────────────────────────────
+                const AN_X = 680, AN_Y = SY - (AN_X - HIT_X) * Math.tan(a);
+                ctx.fillStyle = 'rgba(120,50,200,0.70)';
+                ctx.save(); ctx.translate(AN_X, AN_Y); ctx.rotate(-a);
+                ctx.fillRect(-6, -28, 12, 56); ctx.strokeStyle = 'rgba(180,100,255,0.85)'; ctx.lineWidth = 1.5; ctx.strokeRect(-6, -28, 12, 56); ctx.restore();
+                label(AN_X, AN_Y - 36, '³He', { size: 9, color: 'rgba(180,100,255,0.85)' });
+                label(AN_X, AN_Y - 24, 'Ana.', { size: 9, color: 'rgba(180,100,255,0.85)' });
 
-                // ── SLD profile inset ───────────────────────────────────────
-                const IX = LW - 195, IY = 18, IW = 185, IH = 155;
-                ctx.fillStyle = 'rgba(22,61,86,0.06)';
-                ctx.strokeStyle = 'rgba(0,143,163,0.35)'; ctx.lineWidth = 1;
+                // ── PSD Detector ──────────────────────────────────────────────────────
+                ctx.fillStyle = 'rgba(10,30,70,0.88)';
+                ctx.save(); ctx.translate(DX - 10, DY); ctx.rotate(-a);
+                ctx.fillRect(0, -42, 18, 84); ctx.strokeStyle = '#5cc2d2'; ctx.lineWidth = 1.5; ctx.strokeRect(0, -42, 18, 84);
+                ctx.strokeStyle = 'rgba(92,194,210,0.30)'; ctx.lineWidth = 0.7;
+                for (let row = -32; row <= 32; row += 14) { ctx.beginPath(); ctx.moveTo(0, row); ctx.lineTo(18, row); ctx.stroke(); }
+                ctx.restore();
+                label(DX + 8, DY - 50, '³He PSD', { size: 9, color: C.teal, align: 'left' });
+
+                // ── Off-specular dashes ───────────────────────────────────────────────
+                [0.05, 0.10, -0.05].forEach(function (dA) {
+                    ctx.setLineDash([3, 6]);
+                    ctx.beginPath(); ctx.moveTo(HIT_X, SY);
+                    const a2 = -a + dA;
+                    ctx.lineTo(HIT_X + 160 * Math.cos(a2), SY + 160 * Math.sin(a2));
+                    ctx.strokeStyle = 'rgba(160,80,200,0.28)'; ctx.lineWidth = 1; ctx.stroke();
+                    ctx.setLineDash([]);
+                });
+                label(HIT_X + 90, SY - 28, 'Off-specular', { size: 9, color: 'rgba(160,80,200,0.45)' });
+
+                // ── SLD inset ─────────────────────────────────────────────────────────
+                const IX = 20, IY = 18, IW = 178, IH = 148;
+                ctx.fillStyle = 'rgba(22,61,86,0.06)'; ctx.strokeStyle = 'rgba(0,143,163,0.35)'; ctx.lineWidth = 1;
                 ctx.fillRect(IX, IY, IW, IH); ctx.strokeRect(IX, IY, IW, IH);
-                label(IX + IW / 2, IY + 11, 'SLD depth profile ρ(z)', { size: 10, color: 'rgba(0,143,163,0.8)' });
-                // SLD steps: air, Co, Cu, Si substrate
-                const sldData = [
-                    { z0: 0, z1: 0.12, rho: 0 },      // air/vacuum
-                    { z0: 0.12, z1: 0.40, rho: 0.82 }, // Co layer
-                    { z0: 0.40, z1: 0.65, rho: 0.65 }, // Cu buffer
-                    { z0: 0.65, z1: 1.00, rho: 0.20 }  // Si
-                ];
-                ctx.beginPath();
-                ctx.moveTo(IX + 14, IY + IH - 14 - 0 * (IH - 30));
+                label(IX + IW / 2, IY + 11, 'SLD profile ρ(z)', { size: 10, color: 'rgba(0,143,163,0.8)' });
+                const sldData = [{ z0:0, z1:0.10, rho:0 }, { z0:0.10, z1:0.38, rho:0.82 }, { z0:0.38, z1:0.62, rho:0.65 }, { z0:0.62, z1:1.0, rho:0.20 }];
+                ctx.beginPath(); ctx.moveTo(IX + 14, IY + IH - 14);
                 sldData.forEach(function (seg) {
-                    const x0 = IX + 14 + seg.z0 * (IW - 20);
-                    const x1 = IX + 14 + seg.z1 * (IW - 20);
-                    const y  = IY + IH - 14 - seg.rho * (IH - 30);
+                    const x0 = IX + 14 + seg.z0 * (IW - 20), x1 = IX + 14 + seg.z1 * (IW - 20), y = IY + IH - 14 - seg.rho * (IH - 30);
                     ctx.lineTo(x0, y); ctx.lineTo(x1, y);
                 });
                 ctx.strokeStyle = 'rgba(34,211,238,0.75)'; ctx.lineWidth = 1.8; ctx.stroke();
-                // Shade under
                 ctx.lineTo(IX + IW - 6, IY + IH - 14); ctx.lineTo(IX + 14, IY + IH - 14); ctx.closePath();
                 ctx.fillStyle = 'rgba(34,211,238,0.07)'; ctx.fill();
                 label(IX + 8, IY + IH - 3, 'z (depth) →', { align: 'left', size: 9, color: 'rgba(0,143,163,0.5)' });
-                label(IX + IW - 5, IY + IH - 3, 'ρ(z) ↑', { align: 'right', size: 9, color: 'rgba(0,143,163,0.5)' });
 
-                label(455, SY + 68, 'Layered film: Co | Cu | Si substrate');
-                label(hitX + 200, SY - 200 * Math.tan(a) - 16, 'Specular reflection', { size: 11, color: C.teal });
+                label(HIT_X, SY + 64, 'Layered film: Co | Cu | Si');
+                label(HIT_X + 160, DY - 24, 'Specular reflection', { size: 11, color: C.teal });
 
-                s.particles.forEach(function (p) { drawNeutron(p.x, p.y, p.r, p.col, p.w); });
+                s.particles.forEach(function (p) {
+                    drawNeutron(p.x, p.y, p.r, p.col, p.w);
+                    // Spin arrow on polarized neutrons
+                    if (p.state === 'in') {
+                        ctx.save(); ctx.translate(p.x, p.y);
+                        ctx.strokeStyle = p.spinUp ? 'rgba(92,194,210,0.9)' : 'rgba(255,140,60,0.9)';
+                        ctx.lineWidth = 1.5;
+                        const dir = p.spinUp ? -1 : 1;
+                        ctx.beginPath(); ctx.moveTo(0, 0); ctx.lineTo(0, dir * 10); ctx.stroke();
+                        ctx.beginPath(); ctx.moveTo(-3, dir * 6); ctx.lineTo(0, dir * 10); ctx.lineTo(3, dir * 6); ctx.stroke();
+                        ctx.restore();
+                    }
+                });
             }
         },
 
-        // ── 4. NSE ── Neutron Spin Echo at SNS ───────────────────────────────────
+        // ── 4. NSE ── Neutron Spin Echo at SNS BL-15 ───────────────────────────
         nse: {
             label: 'NSE',
             tag:   'SNS · BL-15 · Larmor precession · ps–ns',
-            info: `<h3>NSE — Neutron Spin Echo (SNS)</h3>
-                <span class="info-tag">Sub-μeV resolution · ps–ns timescales</span>
-                <p>NSE (SNS BL-15) encodes inelastic velocity changes directly in the neutron spin phase via Larmor precession. Coil 1 precesses the spin by φ = γBL/v before the sample; coil 2 applies −B after, rewinding the precession. For elastic scattering φ_net = 0 and a coherent <em>echo</em> forms. Inelastic events break the echo — the echo amplitude S(Q,t)/S(Q,0) is the intermediate scattering function.</p>
-                <p>The spin arrow color shows the Larmor phase: <em>white = elastic (echo intact), orange = inelastic (dephased)</em>. NSE probes dynamics 3–4 orders of magnitude slower than DGS without needing a monochromator — it is the highest-energy-resolution neutron technique available.</p>
+            info: `<h3>NSE — Neutron Spin Echo (SNS BL-15)</h3>
+                <span class="info-tag">Sub-μeV resolution · 0.1–1000 ns timescales</span>
+                <p>NSE (SNS BL-15) encodes inelastic velocity changes directly in the neutron spin phase via Larmor precession. A ³He polarizer produces a spin-polarized beam. RF Flipper 1 (π/2 pulse) tips spins into the precession plane; the neutrons then precess through Larmor Magnet L₁. RF Flipper 2 (π pulse) at the sample position reverses the precession direction. Scattered neutrons traverse L₂ and regain their original spin phase if the scattering was elastic — forming the spin echo. Inelastic scattering breaks the echo proportionally to ℏω.</p>
+                <p>The echo amplitude S(Q,t)/S(Q,0) is the intermediate scattering function F(Q,t) measured at Fourier time t = (mγℏ/2E)(L₁+L₂). A ³He analyzer and ³He PSD detector bank complete the instrument.</p>
                 <ul>
-                    <li>Timescales: 0.1 ps to 500 ns — highest energy resolution in neutrons</li>
-                    <li>Probes dynamics invisible to DGS: polymer reptation, membrane fluctuations, protein motions</li>
-                    <li>Instrument: NSE, SNS BL-15</li>
+                    <li>³He polarizer → RF flippers (π/2, π) → Larmor magnets L₁, L₂ → ³He analyzer</li>
+                    <li>Green spin = elastic (echo intact); orange spin = inelastic (dephased)</li>
+                    <li>Timescales: 0.1 ps – 1 μs; energy resolution 0.3–3 neV</li>
+                    <li>Instrument: NSE, SNS BL-15; Q range 0.02–2.0 Å⁻¹</li>
                 </ul>`,
             init() {
                 const N = 30, sig = new Float32Array(N);
-                // Stretched exponential F(Q,t) = exp(-(t/τ)^β)
                 for (let b = 0; b < N; b++) {
                     sig[b] = Math.exp(-Math.pow((b / (N - 1)) * 2.8, 0.72));
                 }
                 return { particles: [], spawnT: 0, signal: sig };
             },
             update(s, t, dt) {
-                const C1S = 205, C1E = 370, SX = 460, SY = LH / 2, C2S = 548, C2E = 715;
-                if (t - s.spawnT > 0.30) {
+                const POL = 116, RF1 = 196, M1S = 222, M1E = 398, RF2 = 430;
+                const SX = 490, SY = LH / 2;
+                const RF3 = 552, M2S = 578, M2E = 754, RF4 = 786;
+                if (t - s.spawnT > 0.06) {
                     s.spawnT = t;
-                    s.particles.push({ x: 80, y: SY + (Math.random() - 0.5) * 10, vx: 160, vy: 0, r: 5, col: wlCol(0.35), w: 1, phase: 0, state: 'pre', elastic: Math.random() > 0.38, trail: [] });
+                    s.particles.push({ x: 60, y: SY + (Math.random() - 0.5) * 8,
+                        vx: 155, vy: 0, r: 5, col: wlCol(0.35), w: 1,
+                        phase: 0, state: 'pre', elastic: Math.random() > 0.38, trail: [] });
                 }
                 for (let i = s.particles.length - 1; i >= 0; i--) {
                     const p = s.particles[i];
-                    // Larmor precession in coils
-                    if (p.x > C1S && p.x < C1E) p.phase += dt * 9.5;
-                    if (p.x > C2S && p.x < C2E) {
+                    // Larmor precession in magnets
+                    if (p.x > M1S && p.x < M1E) p.phase += dt * 9.5;
+                    if (p.x > M2S && p.x < M2E) {
                         p.phase -= dt * 9.5;
-                        if (!p.elastic) p.phase -= dt * 1.8; // dephasing
+                        if (!p.elastic) p.phase -= dt * 1.8;
                     }
-                    p.x += p.vx * dt; p.y += p.vy * dt;
-                    // Trail for precession visualization (limit length)
+                    p.x += p.vx * dt * PSIM; p.y += p.vy * dt * PSIM;
                     if (p.trail.length < 20) p.trail.push({ x: p.x, y: p.y, ph: p.phase });
                     else { p.trail.shift(); p.trail.push({ x: p.x, y: p.y, ph: p.phase }); }
                     if (p.state === 'pre' && Math.hypot(p.x - SX, p.y - SY) < 16) {
                         if (!p.elastic) p.vx *= 0.87;
                         p.state = 'post';
                     }
-                    if (p.x > 870) {
+                    if (p.x > 880) {
                         const b = Math.min(29, Math.max(0, Math.floor(Math.random() * 30)));
                         if (p.elastic) {
                             const echo = Math.cos(p.phase) * 0.004;
@@ -1078,55 +1247,118 @@
                 });
             },
             draw(s, t) {
-                const SX = 460, SY = LH / 2, C1S = 205, C1E = 370, C2S = 548, C2E = 715;
-                drawSource(80, SY, 'reactor', t);
-                drawGuide(106, SY, C1S, SY, 12);
+                const POL = 116, RF1 = 196, M1S = 222, M1E = 398, RF2 = 430;
+                const SX = 490, SY = LH / 2;
+                const RF3 = 552, M2S = 578, M2E = 754, RF4 = 786;
+                const ANA = 820, DET = 858;
 
-                // Precession coil 1 (B upward)
-                ctx.fillStyle = 'rgba(22,61,86,0.07)';
-                ctx.strokeStyle = 'rgba(0,143,163,0.45)'; ctx.lineWidth = 1.5;
-                ctx.fillRect(C1S, SY - 40, C1E - C1S, 80); ctx.strokeRect(C1S, SY - 40, C1E - C1S, 80);
-                for (let x = C1S + 14; x < C1E; x += 18) {
-                    ctx.beginPath(); ctx.ellipse(x, SY, 5, 40, 0, 0, 2 * Math.PI);
-                    ctx.strokeStyle = 'rgba(0,143,163,0.45)'; ctx.lineWidth = 0.9; ctx.stroke();
-                }
-                // B field arrows
-                for (let xa = C1S + 20; xa < C1E; xa += 30) {
-                    ctx.beginPath(); ctx.moveTo(xa, SY + 28); ctx.lineTo(xa, SY + 10);
-                    ctx.strokeStyle = 'rgba(0,143,163,0.3)'; ctx.lineWidth = 1; ctx.stroke();
-                    ctx.beginPath(); ctx.moveTo(xa - 3, SY + 13); ctx.lineTo(xa, SY + 10); ctx.lineTo(xa + 3, SY + 13);
-                    ctx.stroke();
-                }
-                label((C1S + C1E) / 2, SY - 50, 'Precession coil 1 →', { size: 10 });
-                label((C1S + C1E) / 2, SY + 54, 'B ↑', { size: 10, color: C.teal });
+                drawSource(48, SY, 'spallation', t);
+                drawGuide(84, SY, POL - 10, SY, 10);
 
-                drawGuide(C1E, SY, SX - 16, SY, 12);
+                // ── ³He Polarizer ─────────────────────────────────────────────────────
+                ctx.fillStyle = 'rgba(120,50,200,0.75)';
+                ctx.fillRect(POL - 6, SY - 32, 12, 64);
+                ctx.strokeStyle = 'rgba(180,100,255,0.90)'; ctx.lineWidth = 1.5;
+                ctx.strokeRect(POL - 6, SY - 32, 12, 64);
+                label(POL, SY - 42, '³He', { size: 9, color: 'rgba(180,100,255,0.85)' });
+                label(POL, SY - 30, 'Pol.', { size: 9, color: 'rgba(180,100,255,0.85)' });
+
+                drawGuide(POL + 10, SY, RF1 - 12, SY, 10);
+
+                // ── RF Flipper helper ────────────────────────────────────────────────
+                function drawRFFlip(cx, topLbl, botLbl) {
+                    const R = 26, W = 14;
+                    ctx.fillStyle = 'rgba(20,140,40,0.10)';
+                    ctx.fillRect(cx - W / 2, SY - R, W, 2 * R);
+                    for (let k = 0; k < 5; k++) {
+                        const xc = cx - W / 2 + (k / 4) * W;
+                        ctx.beginPath(); ctx.ellipse(xc, SY, 4, R, 0, 0, 2 * Math.PI);
+                        ctx.strokeStyle = 'rgba(30,200,60,0.70)'; ctx.lineWidth = 1.4; ctx.stroke();
+                    }
+                    label(cx, SY - R - 12, topLbl, { size: 10 });
+                    label(cx, SY + R + 14, botLbl, { size: 9, color: 'rgba(30,200,60,0.65)' });
+                }
+
+                // ── Larmor magnet solenoid helper ─────────────────────────────────────
+                function drawMagnet(x1, x2, upward, lbl) {
+                    const R = 34, W = x2 - x1;
+                    const col = upward ? 'rgba(0,143,163,0.18)' : 'rgba(232,93,4,0.14)';
+                    const wireCol = upward ? 'rgba(0,143,163,0.55)' : 'rgba(232,93,4,0.55)';
+                    const arrCol  = upward ? 'rgba(0,143,163,0.35)' : 'rgba(232,93,4,0.35)';
+                    ctx.fillStyle = col;
+                    ctx.fillRect(x1, SY - R, W, 2 * R);
+                    ctx.strokeStyle = wireCol; ctx.lineWidth = 0.8;
+                    ctx.strokeRect(x1, SY - R, W, 2 * R);
+                    const nCoil = Math.floor(W / 13);
+                    for (let k = 0; k <= nCoil; k++) {
+                        const xc = x1 + (k / nCoil) * W;
+                        ctx.beginPath(); ctx.ellipse(xc, SY, 5, R, 0, 0, 2 * Math.PI);
+                        ctx.strokeStyle = wireCol; ctx.lineWidth = 1.2; ctx.stroke();
+                    }
+                    // B-field arrows inside
+                    const dir = upward ? -1 : 1;
+                    for (let xa = x1 + 22; xa < x2; xa += 28) {
+                        const y0 = SY + dir * 18, y1 = SY + dir * 4;
+                        ctx.beginPath(); ctx.moveTo(xa, y0); ctx.lineTo(xa, y1);
+                        ctx.strokeStyle = arrCol; ctx.lineWidth = 1; ctx.stroke();
+                        ctx.beginPath(); ctx.moveTo(xa - 3, y1 + dir * 4); ctx.lineTo(xa, y1); ctx.lineTo(xa + 3, y1 + dir * 4);
+                        ctx.strokeStyle = arrCol; ctx.lineWidth = 1; ctx.stroke();
+                    }
+                    label((x1 + x2) / 2, SY - R - 12, lbl, { size: 10 });
+                    label((x1 + x2) / 2, SY + R + 13, upward ? 'B ↑' : 'B ↓ (−)', { size: 9, color: wireCol });
+                }
+
+                drawRFFlip(RF1, 'RF₁', 'π/2');
+                drawMagnet(M1S, M1E, true, 'Larmor Magnet  L₁');
+                drawRFFlip(RF2, 'RF₂', 'π');
+                drawGuide(RF1 + 8, SY, M1S, SY, 8);
+                drawGuide(M1E, SY, RF2 - 8, SY, 8);
+
+                // ── Sample ─────────────────────────────────────────────────────────────
+                drawGuide(RF2 + 8, SY, SX - 16, SY, 8);
                 drawSample(SX, SY, 'Sample\n(soft matter)');
-                drawGuide(SX + 16, SY, C2S, SY, 12);
+                drawGuide(SX + 16, SY, RF3 - 8, SY, 8);
 
-                // Precession coil 2 (B reversed)
-                ctx.fillStyle = 'rgba(22,61,86,0.07)';
-                ctx.strokeStyle = 'rgba(232,93,4,0.45)'; ctx.lineWidth = 1.5;
-                ctx.fillRect(C2S, SY - 40, C2E - C2S, 80); ctx.strokeRect(C2S, SY - 40, C2E - C2S, 80);
-                for (let x = C2S + 14; x < C2E; x += 18) {
-                    ctx.beginPath(); ctx.ellipse(x, SY, 5, 40, 0, 0, 2 * Math.PI);
-                    ctx.strokeStyle = 'rgba(232,93,4,0.45)'; ctx.lineWidth = 0.9; ctx.stroke();
+                drawRFFlip(RF3, 'RF₃', 'π/2');
+                drawMagnet(M2S, M2E, false, 'Larmor Magnet  L₂');
+                drawRFFlip(RF4, 'RF₄', 'π/2');
+                drawGuide(RF3 + 8, SY, M2S, SY, 8);
+                drawGuide(M2E, SY, RF4 - 8, SY, 8);
+
+                // ── ³He Analyzer ──────────────────────────────────────────────────────
+                drawGuide(RF4 + 8, SY, ANA - 8, SY, 10);
+                ctx.fillStyle = 'rgba(120,50,200,0.75)';
+                ctx.fillRect(ANA - 6, SY - 32, 12, 64);
+                ctx.strokeStyle = 'rgba(180,100,255,0.90)'; ctx.lineWidth = 1.5;
+                ctx.strokeRect(ANA - 6, SY - 32, 12, 64);
+                label(ANA, SY - 42, '³He', { size: 9, color: 'rgba(180,100,255,0.85)' });
+                label(ANA, SY - 30, 'Ana.', { size: 9, color: 'rgba(180,100,255,0.85)' });
+
+                // ── ³He PSD Detector bank ─────────────────────────────────────────────
+                drawGuide(ANA + 8, SY, DET - 6, SY, 10);
+                ctx.fillStyle = 'rgba(10,30,70,0.85)';
+                ctx.fillRect(DET - 6, SY - 52, 14, 104);
+                ctx.strokeStyle = '#5cc2d2'; ctx.lineWidth = 1.5;
+                ctx.strokeRect(DET - 6, SY - 52, 14, 104);
+                // PSD grid lines
+                ctx.strokeStyle = 'rgba(92,194,210,0.3)'; ctx.lineWidth = 0.7;
+                for (let row = -40; row <= 40; row += 16) {
+                    ctx.beginPath(); ctx.moveTo(DET - 6, SY + row); ctx.lineTo(DET + 8, SY + row); ctx.stroke();
                 }
-                for (let xa = C2S + 20; xa < C2E; xa += 30) {
-                    ctx.beginPath(); ctx.moveTo(xa, SY - 10); ctx.lineTo(xa, SY - 28);
-                    ctx.strokeStyle = 'rgba(232,93,4,0.3)'; ctx.lineWidth = 1; ctx.stroke();
-                    ctx.beginPath(); ctx.moveTo(xa - 3, SY - 13); ctx.lineTo(xa, SY - 10); ctx.lineTo(xa + 3, SY - 13);
-                    ctx.stroke();
-                }
-                label((C2S + C2E) / 2, SY - 50, '← Precession coil 2', { size: 10 });
-                label((C2S + C2E) / 2, SY + 54, 'B ↓ (reversed)', { size: 10, color: '#e85d04' });
+                label(DET + 2, SY - 62, '³He PSD', { size: 9, color: C.teal, align: 'left' });
+                label(DET + 2, SY - 50, 'Detector', { size: 9, color: 'rgba(92,194,210,0.5)', align: 'left' });
 
-                drawGuide(C2E, SY, 830, SY, 12);
-                drawDetector(845, SY, 0, 34, 'Detector\n+ analyzer');
+                // Arm annotations
+                ctx.setLineDash([3, 5]);
+                ctx.strokeStyle = 'rgba(0,143,163,0.20)'; ctx.lineWidth = 1;
+                ctx.beginPath(); ctx.moveTo(RF1, SY - 56); ctx.lineTo(RF2, SY - 56); ctx.stroke();
+                ctx.beginPath(); ctx.moveTo(RF3, SY - 56); ctx.lineTo(RF4, SY - 56); ctx.stroke();
+                ctx.setLineDash([]);
+                label((RF1 + RF2) / 2, SY - 64, 'First echo arm', { size: 9, color: 'rgba(0,143,163,0.45)' });
+                label((RF3 + RF4) / 2, SY - 64, 'Second echo arm', { size: 9, color: 'rgba(0,143,163,0.45)' });
 
-                // Particles with spin arrows and helix trail
+                // ── Particles with spin arrows ────────────────────────────────────────
                 s.particles.forEach(function (p) {
-                    // Draw trail as fading dots showing phase
                     if (p.trail.length > 2) {
                         for (let ti = Math.max(0, p.trail.length - 12); ti < p.trail.length; ti++) {
                             const tr = p.trail[ti];
@@ -1137,7 +1369,6 @@
                         }
                     }
                     drawNeutron(p.x, p.y, p.r, p.col, p.w);
-                    // Spin arrow
                     const sl = 14, sa = p.phase;
                     ctx.save(); ctx.translate(p.x, p.y);
                     ctx.strokeStyle = p.elastic ? 'rgba(255,255,255,0.9)' : 'rgba(255,140,60,0.9)';
@@ -1145,40 +1376,16 @@
                     ctx.beginPath(); ctx.moveTo(0, 0); ctx.lineTo(sl * Math.cos(sa), sl * Math.sin(sa)); ctx.stroke();
                     ctx.restore();
                 });
-                label(460, LH - 14, 'Echo amplitude = ⟨cos Δφ⟩ = F(Q,t) — Intermediate scattering function');
+
+                label(LW / 2, LH - 14, 'Echo amplitude = ⟨cos Δφ⟩ = F(Q,t)  —  Intermediate scattering function  |  SNS BL-15');
             }
-        },
+        }
 
     };
 
     // Derived instruments — share animation code, different label/tag/info
-    INSTRUMENTS.powder = Object.assign({}, INSTRUMENTS.powgen, { _sourceType: 'reactor' }, {
-        label: 'POWDER (HB-2A)',
-        tag:   'HFIR · HB-2A · Reactor Monochromatic',
-        info: `<h3>POWDER / HB-2A (HFIR)</h3>
-            <span class="info-tag">Bragg's law · 2d sinθ = nλ · reactor source</span>
-            <p>HB-2A is the POWDER diffractometer at the High Flux Isotope Reactor (HFIR), a constant-wavelength reactor instrument. A Ge or Si monochromator Bragg-selects a single wavelength (typically 1.54 Å) from the reactor's continuous white beam, producing a truly monochromatic beam with no time-of-flight ambiguity.</p>
-            <p>High flux from the reactor combined with a large vertically focusing monochromator gives excellent counting statistics. The instrument excels at high-resolution magnetic structure determination and temperature-dependent studies of phase transitions where continuous data collection (no pulsed timing) is an advantage.</p>
-            <ul>
-                <li>Color = neutron wavelength (blue=fast/short, red=slow/long λ)</li>
-                <li>Constant wavelength: resolution depends on monochromator geometry, not time-of-flight</li>
-                <li>Optimized for nuclear and magnetic structure determination at low temperature and field</li>
-                <li>Instrument: HB-2A, HFIR (ORNL)</li>
-            </ul>`
-    });
-    INSTRUMENTS.arcs = Object.assign({}, INSTRUMENTS.sequoia, {
-        label: 'ARCS',
-        tag:   'SNS · BL-18 · Wide Angular Range',
-        info: `<h3>ARCS (SNS)</h3>
-            <span class="info-tag">Time-of-flight · S(Q,ω) · High count rate</span>
-            <p>ARCS (Wide Angular-Range Chopper Spectrometer, SNS BL-18) is designed for high count-rate measurements with large detector area covering 3°–140° in-plane and ±30° out-of-plane. The pulsed SNS source produces short neutron bursts; a Fermi chopper selects Ei; arrival time at the detector encodes Ef and ℏω = Ei − Ef.</p>
-            <p>ARCS's large solid-angle coverage makes it especially powerful for mapping phonon dispersions and spin excitations in polycrystalline samples over a wide Q range in a single measurement, and for survey measurements of single crystals at elevated temperatures or under applied field.</p>
-            <ul>
-                <li>Detector: 3°–140°; 2.5 m sample-to-detector distance</li>
-                <li>Ei range: 10 meV – 2 eV; optimized for wide Q coverage</li>
-                <li>Instrument: ARCS, SNS BL-18</li>
-            </ul>`
-    });
+;
+
     INSTRUMENTS.hyspec = {
         label: 'HYSPEC',
         tag:   'SNS · BL-14B · Direct Geometry · Three Choppers',
@@ -1210,7 +1417,7 @@
             s.detHit = s.detHit.map(function (v) { return Math.max(0, v - dt * 0.65); });
             const SX = 530, SY = LH / 2;
             const T0X = 198, T1X = 306, T2X = 400;
-            if (t - s.pulseT > 1.35) {
+            if (t - s.pulseT > 0.22) {
                 s.pulseT = t;
                 for (let k = 0; k < 13; k++) {
                     const lam = sampleLambda();
@@ -1222,7 +1429,7 @@
             }
             for (let i = s.particles.length - 1; i >= 0; i--) {
                 const p = s.particles[i];
-                p.x += p.vx * dt; p.y += p.vy * dt;
+                p.x += p.vx * dt * PSIM; p.y += p.vy * dt * PSIM;
                 if (p.state === 'pre0' && p.x > T0X) {
                     if (Math.random() < 0.78) { p.state = 'pre1'; }
                     else { s.particles.splice(i, 1); continue; }
@@ -1405,10 +1612,8 @@
 
     // ── Instrument selection ───────────────────────────────────────────────────
     const SIG_AXIS = {
-        powgen:   'x: 2θ  |  y: Counts',
-        powder:   'x: 2θ  |  y: Counts',
+        powgen:   'x: d-spacing (Å)  |  y: Counts',
         sequoia:  'x: ℏω  |  y: S(Q,ω)',
-        arcs:     'x: ℏω  |  y: S(Q,ω)',
         hyspec:   'x: ℏω  |  y: S(Q,ω)',
         magref:   'x: Q⊥ (Å⁻¹)  |  y: R(Q⊥)',
         nse:      'x: t (ns)  |  y: F(Q,t)',
