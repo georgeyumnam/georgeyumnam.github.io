@@ -7,7 +7,7 @@
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="styles.css?v=6">
+    <link rel="stylesheet" href="styles.css?v=13">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
         .tool-hero { padding: 64px 24px 40px; position: relative; z-index: 1; }
@@ -75,17 +75,17 @@
         .info-panel ul li::before { content: '▸'; position: absolute; left: 0; color: var(--teal); font-size: 1rem; }
         .info-empty { color: rgba(22,61,86,0.38); font-size: 1.326rem; text-align: center; padding: 2rem 0; }
         .signal-shell {
-            background: #07111d; border: 1px solid rgba(0,143,163,0.40); border-radius: 16px;
-            overflow: hidden; box-shadow: 0 0 22px rgba(0,143,163,0.14),var(--shadow-md);
+            background: #000000; border: 1px solid rgba(255,255,255,0.12); border-radius: 16px;
+            overflow: hidden; box-shadow: 0 0 22px rgba(0,0,0,0.55),var(--shadow-md);
             aspect-ratio: 900/506;
         }
         .signal-header {
             display: flex; align-items: center; justify-content: space-between;
-            padding: 0.45rem 0.9rem; border-bottom: 1px solid rgba(0,143,163,0.22);
-            background: rgba(22,61,86,0.45);
+            padding: 0.45rem 0.9rem; border-bottom: 1px solid rgba(255,255,255,0.10);
+            background: rgba(0,0,0,0.85);
         }
-        .signal-header-title { font-size: 1.1rem; font-weight: 600; color: rgba(92,194,210,0.9); letter-spacing: 0.04em; }
-        .signal-header-axis  { font-size: 0.95rem; color: rgba(92,194,210,0.45); font-style: italic; }
+        .signal-header-title { font-size: 1.1rem; font-weight: 600; color: rgba(255,255,255,0.85); letter-spacing: 0.04em; }
+        .signal-header-axis  { font-size: 0.95rem; color: rgba(200,200,200,0.55); font-style: italic; }
         #signal-canvas { display: block; width: 100%; height: 100%; }
         @media (max-width: 900px) { .inst-grid { grid-template-columns: repeat(3,1fr); } }
         @media (max-width: 768px) {
@@ -203,7 +203,7 @@
         </div>
     </footer>
 
-    <script src="script.js?v=6"></script>
+    <script src="script.js?v=13"></script>
     <script>
     // ── Neutron Scattering Instrument Demo Engine — Physics-accurate Monte Carlo ──
     (function () {
@@ -220,7 +220,7 @@
     const LW = 900, LH = 506;   // logical canvas dims
 
     let activeKey = null, state = null, prevT = null;
-    const PSIM = 1.667; // neutron particle speed multiplier
+    const PSIM = 0.417; // neutron particle speed multiplier
 
     // ── Colour helpers ────────────────────────────────────────────────────────
     // λ normalized 0 (fast/hot/short) → 1 (cold/slow/long): maps to blue→green→red
@@ -359,7 +359,7 @@
             const x = cx + r * Math.cos(a), y = cy + r * Math.sin(a);
             ctx.save(); ctx.translate(x, y); ctx.rotate(a + Math.PI / 2);
             ctx.beginPath(); ctx.rect(-4, -8, 8, 16);
-            ctx.fillStyle = hit > 0.05 ? 'rgba(34,211,238,0.90)' : 'rgba(18,52,95,0.80)';
+            ctx.fillStyle = hit > 0.05 ? 'rgba(34,211,238,0.95)' : 'rgba(30,100,220,0.80)';
             ctx.fill();
             ctx.strokeStyle = 'rgba(92,194,210,0.20)'; ctx.lineWidth = 0.5; ctx.stroke();
             ctx.restore();
@@ -430,31 +430,31 @@
         const N = data.length;
         const scX = sCanvas.width / SW, scY = sCanvas.height / SH;
         sctx.save(); sctx.scale(scX, scY);
-        sctx.fillStyle = '#07111d'; sctx.fillRect(0, 0, SW, SH);
+        sctx.fillStyle = '#000000'; sctx.fillRect(0, 0, SW, SH);
         const PL = 44, PR = 10, PT = 16, PB = 30, PW = SW - PL - PR, PH = SH - PT - PB;
 
         // Grid
-        sctx.strokeStyle = 'rgba(0,143,163,0.12)'; sctx.lineWidth = 0.6;
+        sctx.strokeStyle = 'rgba(255,255,255,0.07)'; sctx.lineWidth = 0.6;
         [0, 0.25, 0.5, 0.75, 1].forEach(function (f) {
             const yg = PT + PH * (1 - f);
             sctx.beginPath(); sctx.moveTo(PL, yg); sctx.lineTo(PL + PW, yg); sctx.stroke();
             const xg = PL + PW * f;
             sctx.beginPath(); sctx.moveTo(xg, PT); sctx.lineTo(xg, PT + PH); sctx.stroke();
         });
-        sctx.strokeStyle = 'rgba(0,143,163,0.38)'; sctx.lineWidth = 1;
+        sctx.strokeStyle = 'rgba(255,255,255,0.22)'; sctx.lineWidth = 1;
         sctx.strokeRect(PL, PT, PW, PH);
 
         // Normalize
-        let norm;
+        let norm, mx = 1;
         if (logY) {
             const pos = Array.from(data).filter(function (v) { return v > 0; });
             if (pos.length < 2) { sctx.restore(); return; }
-            const mn = Math.min.apply(null, pos), mx = Math.max.apply(null, pos);
+            const mn = Math.min.apply(null, pos); mx = Math.max.apply(null, pos);
             const span = Math.log10(mx) - Math.log10(mn) || 1;
             norm = Array.from(data).map(function (v) { return v <= 0 ? 0 : (Math.log10(v) - Math.log10(mn)) / span; });
         } else {
-            const mx = Math.max(1, Math.max.apply(null, Array.from(data)));
-            norm = Array.from(data).map(function (v) { return v / mx; });
+            mx = Math.max.apply(null, Array.from(data)) || 1;
+            norm = Array.from(data).map(function (v) { return Math.min(1, Math.max(0, v / mx)); });
         }
 
         // Reference line
@@ -484,19 +484,23 @@
         peaks.forEach(function (pk) {
             const xp = PL + pk.frac * PW;
             sctx.beginPath(); sctx.moveTo(xp, PT); sctx.lineTo(xp, PT + PH);
-            sctx.strokeStyle = 'rgba(255,255,255,0.1)'; sctx.lineWidth = 0.8; sctx.stroke();
-            sctx.fillStyle = 'rgba(92,194,210,0.65)'; sctx.font = '7.5px Inter'; sctx.textAlign = 'center';
+            sctx.strokeStyle = 'rgba(255,255,255,0.10)'; sctx.lineWidth = 0.8; sctx.stroke();
+            sctx.fillStyle = 'rgba(255,255,255,0.65)'; sctx.font = '7.5px Inter'; sctx.textAlign = 'center';
             sctx.fillText(pk.lbl, xp, PT - 3);
         });
 
         // Axis labels
-        sctx.fillStyle = 'rgba(92,194,210,0.6)'; sctx.font = '9px Inter'; sctx.textAlign = 'center';
+        sctx.fillStyle = 'rgba(255,255,255,0.65)'; sctx.font = '9px Inter'; sctx.textAlign = 'center';
         sctx.fillText(xL, PL, PT + PH + 12);
         sctx.fillText(xM, PL + PW / 2, PT + PH + 12);
         sctx.fillText(xR, PL + PW, PT + PH + 12);
         sctx.fillText(xTitle, PL + PW / 2, SH - 2);
         sctx.save(); sctx.translate(11, PT + PH / 2); sctx.rotate(-Math.PI / 2);
         sctx.fillText(yTitle, 0, 0); sctx.restore();
+        // Y-axis scale: show growing max count at top and 0 at bottom
+        sctx.textAlign = 'right'; sctx.font = '8px Inter';
+        sctx.fillText(mx.toFixed(2), PL - 3, PT + 7);
+        sctx.fillText('0', PL - 3, PT + PH + 1);
         sctx.restore();
     }
 
@@ -540,12 +544,12 @@
                 s.bc1A += dt * 9.5;
                 s.bc2A += dt * 7.2;
                 s.bc3A += dt * 5.4;
-                s.detHit = s.detHit.map(function (v) { return Math.max(0, v - dt * 0.75); });
+                s.detHit = s.detHit.map(function (v) { return Math.max(0, v - dt * 0.22); });
                 const SX = 560, SY = LH / 2;
                 const T0X = 118, BC1X = 228, BC2X = 348, BC3X = 458;
                 const braggAngles = [18, 32, 52, 78, 105, 135, 158];
                 const dMin = 0.3, dMax = 5.0;
-                if (t - s.pulseT > 0.20) {
+                if (t - s.pulseT > 1.50 && s.particles.length < 350) {
                     s.pulseT = t;
                     for (let k = 0; k < 225; k++) {
                         const lam = sampleLambda();
@@ -593,7 +597,7 @@
                             s.detHit[di] = Math.min(1, s.detHit[di] + 0.85);
                             if (p.dVal !== null) {
                                 const bin = Math.min(139, Math.max(0, Math.floor(((p.dVal - dMin) / (dMax - dMin)) * 140)));
-                                s.signal[bin] = Math.min(1, s.signal[bin] + 0.012);
+                                s.signal[bin] += 0.012;
                             }
                             s.particles.splice(i, 1); continue;
                         }
@@ -605,7 +609,7 @@
                 drawSignalPlot(sig, {
                     xL: '0.3', xM: '2.5 Å', xR: '5.0',
                     xTitle: 'd-spacing  (Å)', yTitle: 'Counts',
-                    lineCol: 'rgb(140,220,80)',
+                    lineCol: 'rgb(40,130,255)',
                     peaks: [
                         { frac: 0.11, lbl: '(220)' }, { frac: 0.16, lbl: '(200)' },
                         { frac: 0.25, lbl: '(111)' }, { frac: 0.38, lbl: '(110)' },
@@ -638,7 +642,7 @@
 
                 // ── F/O Chopper — RED large disc ─────────────────────────────────────
                 (function () {
-                    const R = 38;
+                    const R = 24;
                     ctx.beginPath(); ctx.arc(T0X, SY, R, 0, Math.PI * 2);
                     ctx.fillStyle = 'rgba(160,30,30,0.82)'; ctx.fill();
                     ctx.strokeStyle = 'rgba(220,80,60,0.90)'; ctx.lineWidth = 2; ctx.stroke();
@@ -660,7 +664,7 @@
 
                 // ── Bandwidth choppers — ORANGE single discs ──────────────────────────
                 function drawBWChopper(cx, angle, idx) {
-                    const R = 30;
+                    const R = 20;
                     ctx.beginPath(); ctx.arc(cx, SY, R, 0, Math.PI * 2);
                     ctx.fillStyle = 'rgba(175,95,15,0.82)'; ctx.fill();
                     ctx.strokeStyle = 'rgba(230,140,40,0.90)'; ctx.lineWidth = 1.5; ctx.stroke();
@@ -714,15 +718,15 @@
                     const hit = s.detHit[di] || 0;
                     ctx.save(); ctx.translate(dx, dy); ctx.rotate(ang + Math.PI / 2);
                     ctx.beginPath(); ctx.rect(-4, -8, 8, 16);
-                    ctx.fillStyle = hit > 0.08 ? 'rgba(34,211,238,0.90)' : 'rgba(18,52,95,0.80)';
+                    ctx.fillStyle = hit > 0.08 ? 'rgba(34,211,238,0.95)' : 'rgba(30,100,220,0.80)';
                     ctx.fill();
                     ctx.strokeStyle = 'rgba(92,194,210,0.20)'; ctx.lineWidth = 0.5; ctx.stroke();
                     ctx.restore();
                 }
                 ctx.beginPath(); ctx.arc(SX, SY, detR, 5 * Math.PI / 180, 168 * Math.PI / 180);
-                ctx.strokeStyle = 'rgba(0,143,163,0.30)'; ctx.lineWidth = 1.5; ctx.stroke();
+                ctx.strokeStyle = 'rgba(0,143,163,0.65)'; ctx.lineWidth = 2.0; ctx.stroke();
                 ctx.beginPath(); ctx.arc(SX, SY, detR, -168 * Math.PI / 180, -5 * Math.PI / 180);
-                ctx.strokeStyle = 'rgba(0,143,163,0.30)'; ctx.lineWidth = 1.5; ctx.stroke();
+                ctx.strokeStyle = 'rgba(0,143,163,0.65)'; ctx.lineWidth = 2.0; ctx.stroke();
                 label(SX + detR + 10, SY - 7, '³He PSD', { size: 9, color: C.teal, align: 'left' });
                 label(SX + detR + 10, SY + 7, '0.5°–168°', { size: 9, color: 'rgba(92,194,210,0.5)', align: 'left' });
 
@@ -778,10 +782,10 @@
                 s.fc1A += dt * 28;
                 s.fc2A += dt * 24;
                 s.fc3A += dt * 20;
-                s.detHit = s.detHit.map(function (v) { return Math.max(0, v - dt * 0.65); });
+                s.detHit = s.detHit.map(function (v) { return Math.max(0, v - dt * 0.20); });
                 const SX = 538, SY = LH / 2;
                 const T0X = 108, FC1X = 165, FC2X = 256, FC3X = 348;
-                if (t - s.pulseT > 0.22) {
+                if (t - s.pulseT > 1.50 && s.particles.length < 350) {
                     s.pulseT = t;
                     for (let k = 0; k < 188; k++) {
                         const lam = sampleLambda();
@@ -835,7 +839,7 @@
                         if (dist > 188 && dist < 220) {
                             const ang = Math.atan2(p.y - SY, p.x - SX);
                             const bin = Math.min(119, Math.max(0, Math.floor(((p.dE + 0.5) / 1.0) * 120)));
-                            s.signal[bin] = Math.min(1, s.signal[bin] + 0.012);
+                            s.signal[bin] += 0.012;
                             const di = Math.min(67, Math.max(0, Math.floor(((ang + Math.PI) / (2 * Math.PI)) * 68)));
                             s.detHit[di] = Math.min(1, s.detHit[di] + 0.82);
                             s.particles.splice(i, 1); continue;
@@ -848,7 +852,7 @@
                 drawSignalPlot(sig, {
                     xL: '−Ei', xM: '0', xR: '+Ei',
                     xTitle: 'ℏω  (energy transfer)', yTitle: 'S(Q,ω)',
-                    lineCol: 'rgb(80,200,255)',
+                    lineCol: 'rgb(220,50,50)',
                     peaks: [
                         { frac: 0.28, lbl: 'gain' }, { frac: 0.5, lbl: 'elastic' }, { frac: 0.72, lbl: 'loss' }
                     ]
@@ -877,7 +881,7 @@
 
                 // ── T0 chopper — RED large disc ───────────────────────────────────────
                 (function () {
-                    const R = 40;
+                    const R = 26;
                     ctx.beginPath(); ctx.arc(T0X, SY, R, 0, Math.PI * 2);
                     ctx.fillStyle = 'rgba(160,30,30,0.82)'; ctx.fill();
                     ctx.strokeStyle = 'rgba(220,80,60,0.90)'; ctx.lineWidth = 2; ctx.stroke();
@@ -901,7 +905,7 @@
 
                 // ── Fermi chopper pair helper ─────────────────────────────────────────
                 function drawFermiPair(cx, angle, idx) {
-                    const R = 32, gap = 17;
+                    const R = 20, gap = 12;
                     [-1, 1].forEach(function (side) {
                         const cx2 = cx + side * gap / 2;
                         ctx.beginPath(); ctx.arc(cx2, SY, R, 0, Math.PI * 2);
@@ -929,7 +933,6 @@
 
                 // Sample
                 drawSample(SX, SY);
-                label(SX, SY + 30, 'Sample', { size: 10 });
 
                 // ── Cylindrical ³He detector (2π sr) — full-wrap arc ──────────────────
                 for (let di = 0; di < nDet; di++) {
@@ -940,14 +943,14 @@
                     const hit = s.detHit[di] || 0;
                     ctx.save(); ctx.translate(dx, dy); ctx.rotate(ang + Math.PI / 2);
                     ctx.beginPath(); ctx.rect(-4, -8, 8, 16);
-                    ctx.fillStyle = hit > 0.08 ? 'rgba(34,211,238,0.90)' : 'rgba(18,52,95,0.80)';
+                    ctx.fillStyle = hit > 0.08 ? 'rgba(34,211,238,0.95)' : 'rgba(30,100,220,0.80)';
                     ctx.fill();
                     ctx.strokeStyle = 'rgba(92,194,210,0.20)'; ctx.lineWidth = 0.5; ctx.stroke();
                     ctx.restore();
                 }
                 // Arc outline (partial – right 3/4 of cylinder)
                 ctx.beginPath(); ctx.arc(SX, SY, detR, -Math.PI * 0.72, Math.PI * 0.72);
-                ctx.strokeStyle = 'rgba(0,143,163,0.30)'; ctx.lineWidth = 1.5; ctx.stroke();
+                ctx.strokeStyle = 'rgba(0,143,163,0.65)'; ctx.lineWidth = 2.0; ctx.stroke();
                 label(SX + detR + 10, SY - 20, '³He PSD', { size: 9, color: C.teal, align: 'left' });
                 label(SX + detR + 10, SY - 6,  '2π sr', { size: 9, color: 'rgba(92,194,210,0.5)', align: 'left' });
 
@@ -984,42 +987,55 @@
                 const N = 80;
                 const sigPlus  = new Float32Array(N);  // R⁺ (spin-up,   b_nuc + b_mag)
                 const sigMinus = new Float32Array(N);  // R⁻ (spin-down, b_nuc − b_mag)
-                const QC_p = 0.026, QC_m = 0.017;     // different critical Q for ↑ and ↓
+                // QC computed from 4× nuclear SLD + 2× magnetic SLD (original 10× reduced by 5×)
+                // QC_p² = 4·QC_nuc² + 2·QC_mag²  →  0.048 Å⁻¹
+                // QC_m² = 4·QC_nuc² − 2·QC_mag²  →  0.039 Å⁻¹
+                const QC_p = 0.048, QC_m = 0.039;
                 for (let b = 0; b < N; b++) {
-                    const Q = 0.005 + (b / N) * 0.295;
-                    [[QC_p, 0.60, 0.28], [QC_m, 0.42, 0.18]].forEach(function (cfg, j) {
+                    const Q = 0.005 + (b / N) * 0.145;   // Q range 0.005–0.150 Å⁻¹
+                    // [QC, a1 (d=500Å layer), a2 (d=1000Å layer)]
+                    [[QC_p, 0.85, 0.55], [QC_m, 0.65, 0.40]].forEach(function (cfg, j) {
                         const QC = cfg[0], a1 = cfg[1], a2 = cfg[2];
                         let R;
                         if (Q < QC) { R = 1.0; }
                         else {
                             const sq = Math.sqrt(Q * Q - QC * QC);
                             const Rf = Math.pow((Q - sq) / (Q + sq), 2);
-                            R = Math.max(1e-6, Rf * (1 + a1 * Math.cos(2 * Math.PI * Q * 120))
-                                                   * (1 + a2 * Math.cos(2 * Math.PI * Q * 280)));
+                            R = Math.min(1.0, Math.max(1e-6, Rf * (1 + a1 * Math.cos(2 * Math.PI * Q * 500))
+                                                   * (1 + a2 * Math.cos(2 * Math.PI * Q * 1000))));
                         }
                         if (j === 0) sigPlus[b] = R; else sigMinus[b] = R;
                     });
                 }
-                return { particles: [], spawnT: 0, angle: 5 * Math.PI / 180, chopA: 0,
-                         signal: sigPlus, sigPlus, sigMinus };
+                const sigPlus0  = new Float32Array(sigPlus);
+                const sigMinus0 = new Float32Array(sigMinus);
+                return { particles: [], pulseT: -99, angle: 5 * Math.PI / 180, chopA: 0,
+                         signal: sigPlus, sigPlus, sigMinus, sigPlus0, sigMinus0 };
             },
             update(s, t, dt) {
                 s.chopA += dt * 11;
                 const SY = 318, a = s.angle;
-                const HIT_X = 460;
+                const HIT_X = 460, DX = 800;
                 const srcY = SY - (HIT_X - 80) * Math.tan(a);
-                if (t - s.spawnT > 0.05) {
-                    s.spawnT = t;
-                    const lam = 0.2 + Math.random() * 0.5;
-                    const spd = 310;
-                    const thetaC = 0.022 * lam * 2;
-                    const reflected = a > thetaC ? (Math.random() < 0.45) : true;
-                    const spinUp = Math.random() > 0.5;
-                    for (let _n = 0; _n < 13; _n++) {
-                    s.particles.push({ x: 80, y: srcY + (Math.random() - 0.5) * 3,
-                        vx: spd * Math.cos(a), vy: spd * Math.sin(a),
-                        lam, w: 1, r: 2.5, col: wlCol(lam), state: 'in',
-                        reflected, spinUp }); }
+                if (t - s.pulseT > 1.50 && s.particles.length < 350) {
+                    s.pulseT = t;
+                    for (let k = 0; k < 160; k++) {
+                        const lam = 0.2 + Math.random() * 0.5;
+                        const spd = 310;
+                        const thetaC = 0.022 * lam * 2;
+                        const reflected = a > thetaC ? (Math.random() < 0.45) : true;
+                        const spinUp = Math.random() > 0.5;
+                        s.particles.push({ x: 80, y: srcY + (Math.random() - 0.5) * 3,
+                            vx: spd * Math.cos(a), vy: spd * Math.sin(a),
+                            lam, w: 1, r: 2.5, col: wlCol(lam), state: 'in',
+                            reflected, spinUp });
+                    }
+                }
+                if (s.sigPlus0) {
+                    for (let b = 0; b < s.sigPlus.length; b++) {
+                        s.sigPlus[b]  = s.sigPlus[b]  * 0.992 + s.sigPlus0[b]  * 0.008;
+                        s.sigMinus[b] = s.sigMinus[b] * 0.992 + s.sigMinus0[b] * 0.008;
+                    }
                 }
                 for (let i = s.particles.length - 1; i >= 0; i--) {
                     const p = s.particles[i];
@@ -1027,14 +1043,19 @@
                     if (p.state === 'in' && p.y >= SY && p.x > HIT_X - 12) {
                         if (p.reflected) {
                             p.vy = -Math.abs(p.vy); p.col = p.spinUp ? '#22d3ee' : '#ff8040'; p.state = 'out';
-                            const b = Math.min(79, Math.max(0, Math.floor(Math.random() * 80)));
-                            const arr = p.spinUp ? s.sigPlus : s.sigMinus;
-                            arr[b] = Math.max(1e-6, arr[b] * (0.985 + Math.random() * 0.03));
-                            s.signal = s.sigPlus; // keep state.signal pointing to sigPlus for legacy check
+                            // Map wavelength to correct Q bin (longer lam → lower Q → lower bin index)
+                            p.qBin = Math.min(79, Math.max(0, Math.floor((0.7 - p.lam) / 0.5 * 79)));
+                            s.signal = s.sigPlus;
                         } else {
                             p.vy = Math.abs(p.vy) * 0.30; p.vx *= 0.40;
                             p.col = wlCol(Math.min(0.9, p.lam + 0.25)); p.state = 'out';
                         }
+                    }
+                    // Visible signal update when reflected neutron reaches PSD detector
+                    if (p.state === 'out' && p.qBin !== undefined && !p.hitCounted && p.x >= DX - 12) {
+                        p.hitCounted = true;
+                        const arr = p.spinUp ? s.sigPlus : s.sigMinus;
+                        arr[p.qBin] = Math.min(1.0, Math.max(1e-6, arr[p.qBin] * (0.86 + Math.random() * 0.30)));
                     }
                     if (p.x < -20 || p.x > LW + 20 || p.y < -20 || p.y > LH + 20) s.particles.splice(i, 1);
                 }
@@ -1044,17 +1065,17 @@
                 const sigP = state.sigPlus, sigM = state.sigMinus, N = sigP.length;
                 const scX = sCanvas.width / SW, scY = sCanvas.height / SH;
                 sctx.save(); sctx.scale(scX, scY);
-                sctx.fillStyle = '#07111d'; sctx.fillRect(0, 0, SW, SH);
+                sctx.fillStyle = '#000000'; sctx.fillRect(0, 0, SW, SH);
                 const PL = 44, PR = 10, PT = 16, PB = 30, PW = SW - PL - PR, PH = SH - PT - PB;
                 // Grid
-                sctx.strokeStyle = 'rgba(0,143,163,0.12)'; sctx.lineWidth = 0.6;
+                sctx.strokeStyle = 'rgba(255,255,255,0.07)'; sctx.lineWidth = 0.6;
                 [0, 0.25, 0.5, 0.75, 1].forEach(function (f) {
                     const yg = PT + PH * (1 - f);
                     sctx.beginPath(); sctx.moveTo(PL, yg); sctx.lineTo(PL + PW, yg); sctx.stroke();
                     const xg = PL + PW * f;
                     sctx.beginPath(); sctx.moveTo(xg, PT); sctx.lineTo(xg, PT + PH); sctx.stroke();
                 });
-                sctx.strokeStyle = 'rgba(0,143,163,0.38)'; sctx.lineWidth = 1;
+                sctx.strokeStyle = 'rgba(255,255,255,0.22)'; sctx.lineWidth = 1;
                 sctx.strokeRect(PL, PT, PW, PH);
                 // Log-normalize
                 function logNorm(arr) {
@@ -1064,7 +1085,7 @@
                     pos.forEach(function (v) { if (v < mn) mn = v; if (v > mx) mx = v; });
                     const span = Math.log10(mx) - Math.log10(mn) || 1;
                     const out = new Float32Array(arr.length);
-                    for (let i = 0; i < arr.length; i++) out[i] = arr[i] <= 0 ? 0 : (Math.log10(arr[i]) - Math.log10(mn)) / span;
+                    for (let i = 0; i < arr.length; i++) out[i] = arr[i] <= 0 ? 0 : Math.min(1, Math.max(0, (Math.log10(arr[i]) - Math.log10(mn)) / span));
                     return out;
                 }
                 const normP = logNorm(sigP), normM = logNorm(sigM);
@@ -1085,32 +1106,32 @@
                     sctx.save(); sctx.shadowColor = lineCol; sctx.shadowBlur = 4;
                     sctx.strokeStyle = lineCol; sctx.lineWidth = 1.7; sctx.stroke(); sctx.restore();
                 }
-                drawCurve(normM, 'rgb(255,110,50)',  'rgba(255,110,50,0.10)');  // R⁻ drawn first (behind)
-                drawCurve(normP, 'rgb(34,211,238)',  'rgba(34,211,238,0.12)');  // R⁺ on top
+                drawCurve(normM, 'rgb(220,50,50)',   'rgba(220,50,50,0.10)');   // R⁻ drawn first (behind)
+                drawCurve(normP, 'rgb(40,130,255)',  'rgba(40,130,255,0.12)');  // R⁺ on top
                 // Critical angle markers
-                // QC_p=0.026 → frac=(0.026-0.005)/0.295=0.071;  QC_m=0.017 → frac=(0.017-0.005)/0.295=0.041
-                [{ frac: 0.071, lbl: 'θ_c⁺', col: 'rgba(34,211,238,0.70)' },
-                 { frac: 0.041, lbl: 'θ_c⁻', col: 'rgba(255,110,50,0.70)'  }].forEach(function (pk) {
+                // QC_p=0.048 → frac=(0.048-0.005)/0.145=0.297;  QC_m=0.039 → frac=(0.039-0.005)/0.145=0.234
+                [{ frac: 0.297, lbl: 'θ_c⁺', col: 'rgba(40,130,255,0.75)' },
+                 { frac: 0.234, lbl: 'θ_c⁻', col: 'rgba(220,50,50,0.75)'  }].forEach(function (pk) {
                     const xp = PL + pk.frac * PW;
                     sctx.beginPath(); sctx.moveTo(xp, PT); sctx.lineTo(xp, PT + PH);
-                    sctx.strokeStyle = pk.col.replace('0.70', '0.22'); sctx.lineWidth = 0.8; sctx.stroke();
+                    sctx.strokeStyle = pk.col.replace('0.75', '0.20'); sctx.lineWidth = 0.8; sctx.stroke();
                     sctx.fillStyle = pk.col; sctx.font = '7.5px Inter'; sctx.textAlign = 'center';
                     sctx.fillText(pk.lbl, xp, PT - 3);
                 });
                 // Axis labels
-                sctx.fillStyle = 'rgba(92,194,210,0.6)'; sctx.font = '9px Inter'; sctx.textAlign = 'center';
-                sctx.fillText('0.01', PL, PT + PH + 12);
-                sctx.fillText('0.15 Å⁻¹', PL + PW / 2, PT + PH + 12);
-                sctx.fillText('0.30', PL + PW, PT + PH + 12);
+                sctx.fillStyle = 'rgba(255,255,255,0.65)'; sctx.font = '9px Inter'; sctx.textAlign = 'center';
+                sctx.fillText('0.005', PL, PT + PH + 12);
+                sctx.fillText('0.075 Å⁻¹', PL + PW / 2, PT + PH + 12);
+                sctx.fillText('0.15', PL + PW, PT + PH + 12);
                 sctx.fillText('Q⊥  (Å⁻¹)', PL + PW / 2, SH - 2);
                 sctx.save(); sctx.translate(11, PT + PH / 2); sctx.rotate(-Math.PI / 2);
                 sctx.fillText('R(Q⊥)', 0, 0); sctx.restore();
                 // Legend
                 sctx.font = '8px Inter'; sctx.textAlign = 'left';
-                [['R⁺ (↑)', 'rgb(34,211,238)'], ['R⁻ (↓)', 'rgb(255,110,50)']].forEach(function (lg, i) {
+                [['R⁺ (↑)', 'rgb(40,130,255)'], ['R⁻ (↓)', 'rgb(220,50,50)']].forEach(function (lg, i) {
                     const lx = PL + 6, ly = PT + 11 + i * 13;
                     sctx.fillStyle = lg[1]; sctx.fillRect(lx, ly - 3, 14, 3);
-                    sctx.fillStyle = 'rgba(200,200,200,0.75)'; sctx.fillText(lg[0], lx + 17, ly);
+                    sctx.fillStyle = 'rgba(255,255,255,0.80)'; sctx.fillText(lg[0], lx + 17, ly);
                 });
                 sctx.restore();
             },
@@ -1272,22 +1293,40 @@
                     <li>Instrument: NSE, SNS BL-15; Q range 0.02–2.0 Å⁻¹</li>
                 </ul>`,
             init() {
-                const N = 30, sig = new Float32Array(N);
-                for (let b = 0; b < N; b++) {
-                    sig[b] = Math.exp(-Math.pow((b / (N - 1)) * 2.8, 0.72));
-                }
-                return { particles: [], spawnT: 0, signal: sig };
+                const Q_VALS = [0.2, 0.6, 1.2, 2.0];  // nm⁻¹
+                const N_T = 28, T_MAX = 250;            // ns, x-axis range
+                const tauQ = [3000, 490, 185, 72], beta = 0.78;
+                const sigQT = Q_VALS.map(function(Q, qi) {
+                    const arr = new Float32Array(N_T);
+                    for (let b = 0; b < N_T; b++) {
+                        const t_ns = (b / (N_T - 1)) * T_MAX;
+                        arr[b] = b === 0 ? 1 : Math.exp(-Math.pow(t_ns / tauQ[qi], beta));
+                    }
+                    return arr;
+                });
+                const sigMeas = sigQT.map(function(arr) { return new Float32Array(arr); });
+                return { particles: [], pulseT: -99, signal: sigMeas[0], sigQT, sigMeas, Q_VALS, T_MAX };
             },
             update(s, t, dt) {
                 const POL = 116, RF1 = 196, M1S = 222, M1E = 398, RF2 = 430;
                 const SX = 490, SY = LH / 2;
                 const RF3 = 552, M2S = 578, M2E = 754, RF4 = 786;
-                if (t - s.spawnT > 0.06) {
-                    s.spawnT = t;
-                    for (let _n = 0; _n < 13; _n++) {
-                    s.particles.push({ x: 60, y: SY + (Math.random() - 0.5) * 8,
-                        vx: 155, vy: 0, r: 2.5, col: wlCol(0.35), w: 1,
-                        phase: 0, state: 'pre', elastic: Math.random() > 0.38, trail: [] }); }
+                if (t - s.pulseT > 1.50 && s.particles.length < 350) {
+                    s.pulseT = t;
+                    for (let k = 0; k < 140; k++) {
+                        s.particles.push({ x: 60, y: SY + (Math.random() - 0.5) * 8,
+                            vx: 155, vy: 0, r: 2.5, col: wlCol(0.35), w: 1,
+                            phase: 0, state: 'pre', elastic: Math.random() > 0.38, trail: [],
+                            qIdx: Math.floor(Math.random() * 4) });
+                    }
+                }
+                // Slowly revert sigMeas toward theoretical sigQT (simulates ongoing accumulation)
+                if (s.sigMeas && Math.random() < 0.06) {
+                    for (let qi = 0; qi < s.sigMeas.length; qi++) {
+                        for (let b = 0; b < s.sigMeas[qi].length; b++) {
+                            s.sigMeas[qi][b] = s.sigMeas[qi][b] * 0.96 + s.sigQT[qi][b] * 0.04;
+                        }
+                    }
                 }
                 for (let i = s.particles.length - 1; i >= 0; i--) {
                     const p = s.particles[i];
@@ -1305,23 +1344,73 @@
                         p.state = 'post';
                     }
                     if (p.x > 880) {
-                        const b = Math.min(29, Math.max(0, Math.floor(Math.random() * 30)));
-                        if (p.elastic) {
-                            const echo = Math.cos(p.phase) * 0.004;
-                            s.signal[b] = Math.max(0, Math.min(1, s.signal[b] + echo));
+                        // Update F(Q,t) for this neutron's Q channel with counting noise
+                        if (s.sigMeas) {
+                            const qi = p.qIdx !== undefined ? p.qIdx : 0;
+                            const N_T = s.sigMeas[0].length;
+                            const b = Math.min(N_T - 1, Math.max(0, Math.floor(Math.random() * N_T)));
+                            s.sigMeas[qi][b] = Math.max(0, Math.min(1.0,
+                                s.sigMeas[qi][b] + (Math.random() - 0.5) * 0.05));
                         }
                         s.particles.splice(i, 1); continue;
                     }
                     if (p.x < -20 || p.y < -20 || p.y > LH + 20) s.particles.splice(i, 1);
                 }
             },
-            plotSignal(sig) {
-                drawSignalPlot(sig, {
-                    xL: '0', xM: 'τ/2', xR: 'τ_max',
-                    xTitle: 'Fourier time  t (ns)', yTitle: 'F(Q,t)',
-                    lineCol: 'rgb(160,220,255)',
-                    peaks: [{ frac: 0, lbl: 'F=1' }]
+            plotSignal(sig, state) {
+                if (!state || !state.sigMeas) return;
+                const sigMeas = state.sigMeas, Q_VALS = state.Q_VALS || [0.2, 0.6, 1.2, 2.0];
+                const N_T = sigMeas[0].length, T_MAX = state.T_MAX || 250;
+                const scX = sCanvas.width / SW, scY = sCanvas.height / SH;
+                sctx.save(); sctx.scale(scX, scY);
+                sctx.fillStyle = '#000000'; sctx.fillRect(0, 0, SW, SH);
+                const PL = 44, PR = 8, PT = 16, PB = 30, PW = SW - PL - PR, PH = SH - PT - PB;
+                // Grid
+                sctx.strokeStyle = 'rgba(255,255,255,0.07)'; sctx.lineWidth = 0.6;
+                [0, 0.25, 0.5, 0.75, 1].forEach(function(f) {
+                    const yg = PT + PH * (1 - f);
+                    sctx.beginPath(); sctx.moveTo(PL, yg); sctx.lineTo(PL + PW, yg); sctx.stroke();
+                    const xg = PL + PW * f;
+                    sctx.beginPath(); sctx.moveTo(xg, PT); sctx.lineTo(xg, PT + PH); sctx.stroke();
                 });
+                sctx.strokeStyle = 'rgba(255,255,255,0.22)'; sctx.lineWidth = 1;
+                sctx.strokeRect(PL, PT, PW, PH);
+                // Draw one F(Q,t) curve per Q value
+                const colors = ['rgb(120,180,255)', 'rgb(40,130,255)', 'rgb(255,110,110)', 'rgb(200,30,30)'];
+                sigMeas.forEach(function(arr, qi) {
+                    sctx.beginPath();
+                    for (let b = 0; b < N_T; b++) {
+                        const xn = PL + (b / (N_T - 1)) * PW;
+                        const yn = PT + PH * (1 - Math.max(0, Math.min(1, arr[b])));
+                        b === 0 ? sctx.moveTo(xn, yn) : sctx.lineTo(xn, yn);
+                    }
+                    sctx.save(); sctx.shadowColor = colors[qi]; sctx.shadowBlur = 3;
+                    sctx.strokeStyle = colors[qi]; sctx.lineWidth = 1.8; sctx.stroke(); sctx.restore();
+                });
+                // Axis labels
+                sctx.fillStyle = 'rgba(255,255,255,0.65)'; sctx.font = '9px Inter'; sctx.textAlign = 'center';
+                sctx.fillText('0', PL, PT + PH + 12);
+                sctx.fillText((T_MAX / 2) + ' ns', PL + PW / 2, PT + PH + 12);
+                sctx.fillText(T_MAX + ' ns', PL + PW, PT + PH + 12);
+                sctx.fillText('Fourier time  τ  (ns)', PL + PW / 2, SH - 2);
+                sctx.save(); sctx.translate(11, PT + PH / 2); sctx.rotate(-Math.PI / 2);
+                sctx.fillStyle = 'rgba(255,255,255,0.65)'; sctx.font = '9px Inter';
+                sctx.fillText('S(Q,t) / S(Q,0)', 0, 0); sctx.restore();
+                // Y-axis tick labels
+                [0, 0.5, 1.0].forEach(function(v) {
+                    const yg = PT + PH * (1 - v);
+                    sctx.textAlign = 'right'; sctx.fillStyle = 'rgba(255,255,255,0.65)'; sctx.font = '8.5px Inter';
+                    sctx.fillText(v.toFixed(1), PL - 3, yg + 3);
+                });
+                // Legend (top-right corner)
+                sctx.font = '7.5px Inter'; sctx.textAlign = 'left';
+                Q_VALS.forEach(function(Q, qi) {
+                    const lx = PL + PW - 68, ly = PT + 10 + qi * 13;
+                    sctx.fillStyle = colors[qi]; sctx.fillRect(lx, ly - 4, 11, 3);
+                    sctx.fillStyle = 'rgba(255,255,255,0.80)';
+                    sctx.fillText('Q = ' + Q + ' nm⁻¹', lx + 14, ly);
+                });
+                sctx.restore();
             },
             draw(s, t) {
                 const POL = 116, RF1 = 196, M1S = 222, M1E = 398, RF2 = 430;
@@ -1440,7 +1529,7 @@
                         for (let ti = Math.max(0, p.trail.length - 12); ti < p.trail.length; ti++) {
                             const tr = p.trail[ti];
                             const alpha = (ti - (p.trail.length - 12)) / 12 * 0.4;
-                            const trCol = p.elastic ? `rgba(255,255,255,${alpha})` : `rgba(255,140,60,${alpha})`;
+                            const trCol = p.elastic ? `rgba(40,130,255,${alpha})` : `rgba(220,50,50,${alpha})`;
                             ctx.beginPath(); ctx.arc(tr.x, tr.y + Math.sin(tr.ph) * 8, 2, 0, Math.PI * 2);
                             ctx.fillStyle = trCol; ctx.fill();
                         }
@@ -1448,7 +1537,7 @@
                     drawNeutron(p.x, p.y, p.r, p.col, p.w);
                     const sl = 14, sa = p.phase;
                     ctx.save(); ctx.translate(p.x, p.y);
-                    ctx.strokeStyle = p.elastic ? 'rgba(255,255,255,0.9)' : 'rgba(255,140,60,0.9)';
+                    ctx.strokeStyle = p.elastic ? 'rgba(40,130,255,0.9)' : 'rgba(220,50,50,0.9)';
                     ctx.lineWidth = 1.5;
                     ctx.beginPath(); ctx.moveTo(0, 0); ctx.lineTo(sl * Math.cos(sa), sl * Math.sin(sa)); ctx.stroke();
                     ctx.restore();
@@ -1491,10 +1580,10 @@
             s.t0A += dt * 22;
             s.t1A += dt * 13;
             s.t2A += dt * 13;
-            s.detHit = s.detHit.map(function (v) { return Math.max(0, v - dt * 0.65); });
+            s.detHit = s.detHit.map(function (v) { return Math.max(0, v - dt * 0.20); });
             const SX = 530, SY = LH / 2;
             const T0X = 198, T1X = 306, T2X = 400;
-            if (t - s.pulseT > 0.22) {
+            if (t - s.pulseT > 1.50 && s.particles.length < 350) {
                 s.pulseT = t;
                 for (let k = 0; k < 163; k++) {
                     const lam = sampleLambda();
@@ -1539,7 +1628,7 @@
                     const ang = Math.atan2(p.y - SY, p.x - SX);
                     if (dist > 195 && dist < 235 && Math.abs(ang) < 1.35) {
                         const bin = Math.min(119, Math.max(0, Math.floor(((p.dE + 0.5) / 1.0) * 120)));
-                        s.signal[bin] = Math.min(1, s.signal[bin] + 0.014);
+                        s.signal[bin] += 0.014;
                         const di = Math.min(55, Math.max(0, Math.floor(((ang + 1.35) / 2.7) * 56)));
                         s.detHit[di] = Math.min(1, s.detHit[di] + 0.85);
                         s.particles.splice(i, 1); continue;
@@ -1576,7 +1665,7 @@
 
             // Three disc choppers
             function drawDisc(cx, t_label, b_label, angle) {
-                const R = 42;
+                const R = 28;
                 ctx.beginPath(); ctx.arc(cx, SY, R, 0, Math.PI * 2);
                 ctx.fillStyle = 'rgba(30,60,80,0.80)'; ctx.fill();
                 ctx.strokeStyle = 'rgba(80,130,160,0.80)'; ctx.lineWidth = 1.5; ctx.stroke();
@@ -1605,7 +1694,6 @@
 
             // Sample
             drawSample(SX, SY);
-            label(SX, SY + 30, 'Sample', { size: 10 });
 
             // Secondary flight path L₂ indicator
             ctx.setLineDash([3, 4]);
@@ -1623,7 +1711,7 @@
                 const hit = s.detHit[di] || 0;
                 ctx.save(); ctx.translate(dx, dy); ctx.rotate(ang + Math.PI / 2);
                 ctx.beginPath(); ctx.rect(-4, -9, 8, 18);
-                ctx.fillStyle = hit > 0.08 ? 'rgba(34,211,238,0.90)' : 'rgba(18,52,95,0.80)';
+                ctx.fillStyle = hit > 0.08 ? 'rgba(34,211,238,0.95)' : 'rgba(30,100,220,0.80)';
                 ctx.fill();
                 ctx.strokeStyle = 'rgba(92,194,210,0.20)'; ctx.lineWidth = 0.5; ctx.stroke();
                 ctx.restore();
@@ -1646,7 +1734,7 @@
             drawSignalPlot(sig, {
                 xL: '−Ei', xM: '0', xR: '+Ei',
                 xTitle: 'ℏω  (energy transfer)', yTitle: 'S(Q,ω)',
-                lineCol: 'rgb(0,200,170)'
+                lineCol: 'rgb(40,130,255)'
             });
         }
     };
@@ -1693,7 +1781,7 @@
         sequoia:  'x: ℏω  |  y: S(Q,ω)',
         hyspec:   'x: ℏω  |  y: S(Q,ω)',
         magref:   'x: Q⊥ (Å⁻¹)  |  y: R(Q⊥)',
-        nse:      'x: t (ns)  |  y: F(Q,t)',
+        nse:      'x: τ (ns)  |  y: S(Q,t)/S(Q,0)',
     };
 
     function selectInstrument(key) {
