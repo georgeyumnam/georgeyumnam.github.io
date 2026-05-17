@@ -981,21 +981,27 @@
                     <li>Instrument: MAGREF, SNS BL-4A</li>
                 </ul>`,
             init() {
-                const N = 80, sig = new Float32Array(N);
-                const QC = 0.022;
+                const N = 80;
+                const sigPlus  = new Float32Array(N);  // R⁺ (spin-up,   b_nuc + b_mag)
+                const sigMinus = new Float32Array(N);  // R⁻ (spin-down, b_nuc − b_mag)
+                const QC_p = 0.026, QC_m = 0.017;     // different critical Q for ↑ and ↓
                 for (let b = 0; b < N; b++) {
                     const Q = 0.005 + (b / N) * 0.295;
-                    let R;
-                    if (Q < QC) { R = 1.0; }
-                    else {
-                        const Rfresnel = Math.pow((Q - Math.sqrt(Q * Q - QC * QC)) / (Q + Math.sqrt(Q * Q - QC * QC)), 2);
-                        const fringe1 = 1 + 0.55 * Math.cos(2 * Math.PI * Q * 120);
-                        const fringe2 = 1 + 0.25 * Math.cos(2 * Math.PI * Q * 280);
-                        R = Math.max(1e-6, Rfresnel * fringe1 * fringe2);
-                    }
-                    sig[b] = R;
+                    [[QC_p, 0.60, 0.28], [QC_m, 0.42, 0.18]].forEach(function (cfg, j) {
+                        const QC = cfg[0], a1 = cfg[1], a2 = cfg[2];
+                        let R;
+                        if (Q < QC) { R = 1.0; }
+                        else {
+                            const sq = Math.sqrt(Q * Q - QC * QC);
+                            const Rf = Math.pow((Q - sq) / (Q + sq), 2);
+                            R = Math.max(1e-6, Rf * (1 + a1 * Math.cos(2 * Math.PI * Q * 120))
+                                                   * (1 + a2 * Math.cos(2 * Math.PI * Q * 280)));
+                        }
+                        if (j === 0) sigPlus[b] = R; else sigMinus[b] = R;
+                    });
                 }
-                return { particles: [], spawnT: 0, angle: 5 * Math.PI / 180, chopA: 0, signal: sig };
+                return { particles: [], spawnT: 0, angle: 5 * Math.PI / 180, chopA: 0,
+                         signal: sigPlus, sigPlus, sigMinus };
             },
             update(s, t, dt) {
                 s.chopA += dt * 11;
@@ -1020,9 +1026,11 @@
                     p.x += p.vx * dt * PSIM; p.y += p.vy * dt * PSIM;
                     if (p.state === 'in' && p.y >= SY && p.x > HIT_X - 12) {
                         if (p.reflected) {
-                            p.vy = -Math.abs(p.vy); p.col = '#22d3ee'; p.state = 'out';
+                            p.vy = -Math.abs(p.vy); p.col = p.spinUp ? '#22d3ee' : '#ff8040'; p.state = 'out';
                             const b = Math.min(79, Math.max(0, Math.floor(Math.random() * 80)));
-                            s.signal[b] = Math.max(1e-6, s.signal[b] * (0.985 + Math.random() * 0.03));
+                            const arr = p.spinUp ? s.sigPlus : s.sigMinus;
+                            arr[b] = Math.max(1e-6, arr[b] * (0.985 + Math.random() * 0.03));
+                            s.signal = s.sigPlus; // keep state.signal pointing to sigPlus for legacy check
                         } else {
                             p.vy = Math.abs(p.vy) * 0.30; p.vx *= 0.40;
                             p.col = wlCol(Math.min(0.9, p.lam + 0.25)); p.state = 'out';
@@ -1031,13 +1039,80 @@
                     if (p.x < -20 || p.x > LW + 20 || p.y < -20 || p.y > LH + 20) s.particles.splice(i, 1);
                 }
             },
-            plotSignal(sig) {
-                drawSignalPlot(sig, {
-                    logY: true, xL: '0.01', xM: '0.15 Å⁻¹', xR: '0.30',
-                    xTitle: 'Q⊥  (Å⁻¹)', yTitle: 'R(Q⊥)',
-                    lineCol: 'rgb(34,211,238)',
-                    peaks: [{ frac: 0.065, lbl: 'θ_c' }]
+            plotSignal(sig, state) {
+                if (!state || !state.sigPlus || !state.sigMinus) return;
+                const sigP = state.sigPlus, sigM = state.sigMinus, N = sigP.length;
+                const scX = sCanvas.width / SW, scY = sCanvas.height / SH;
+                sctx.save(); sctx.scale(scX, scY);
+                sctx.fillStyle = '#07111d'; sctx.fillRect(0, 0, SW, SH);
+                const PL = 44, PR = 10, PT = 16, PB = 30, PW = SW - PL - PR, PH = SH - PT - PB;
+                // Grid
+                sctx.strokeStyle = 'rgba(0,143,163,0.12)'; sctx.lineWidth = 0.6;
+                [0, 0.25, 0.5, 0.75, 1].forEach(function (f) {
+                    const yg = PT + PH * (1 - f);
+                    sctx.beginPath(); sctx.moveTo(PL, yg); sctx.lineTo(PL + PW, yg); sctx.stroke();
+                    const xg = PL + PW * f;
+                    sctx.beginPath(); sctx.moveTo(xg, PT); sctx.lineTo(xg, PT + PH); sctx.stroke();
                 });
+                sctx.strokeStyle = 'rgba(0,143,163,0.38)'; sctx.lineWidth = 1;
+                sctx.strokeRect(PL, PT, PW, PH);
+                // Log-normalize
+                function logNorm(arr) {
+                    const pos = []; for (let i = 0; i < arr.length; i++) if (arr[i] > 0) pos.push(arr[i]);
+                    if (pos.length < 2) return new Float32Array(arr.length);
+                    let mn = pos[0], mx = pos[0];
+                    pos.forEach(function (v) { if (v < mn) mn = v; if (v > mx) mx = v; });
+                    const span = Math.log10(mx) - Math.log10(mn) || 1;
+                    const out = new Float32Array(arr.length);
+                    for (let i = 0; i < arr.length; i++) out[i] = arr[i] <= 0 ? 0 : (Math.log10(arr[i]) - Math.log10(mn)) / span;
+                    return out;
+                }
+                const normP = logNorm(sigP), normM = logNorm(sigM);
+                // Draw one curve
+                function drawCurve(norm, lineCol, fillCol) {
+                    sctx.beginPath();
+                    for (let i = 0; i < N; i++) {
+                        const xn = PL + (i / N) * PW, yn = PT + PH - norm[i] * PH;
+                        i === 0 ? sctx.moveTo(xn, yn) : sctx.lineTo(xn, yn);
+                    }
+                    sctx.lineTo(PL + PW, PT + PH); sctx.lineTo(PL, PT + PH); sctx.closePath();
+                    sctx.fillStyle = fillCol; sctx.fill();
+                    sctx.beginPath();
+                    for (let i = 0; i < N; i++) {
+                        const xn = PL + (i / N) * PW, yn = PT + PH - norm[i] * PH;
+                        i === 0 ? sctx.moveTo(xn, yn) : sctx.lineTo(xn, yn);
+                    }
+                    sctx.save(); sctx.shadowColor = lineCol; sctx.shadowBlur = 4;
+                    sctx.strokeStyle = lineCol; sctx.lineWidth = 1.7; sctx.stroke(); sctx.restore();
+                }
+                drawCurve(normM, 'rgb(255,110,50)',  'rgba(255,110,50,0.10)');  // R⁻ drawn first (behind)
+                drawCurve(normP, 'rgb(34,211,238)',  'rgba(34,211,238,0.12)');  // R⁺ on top
+                // Critical angle markers
+                // QC_p=0.026 → frac=(0.026-0.005)/0.295=0.071;  QC_m=0.017 → frac=(0.017-0.005)/0.295=0.041
+                [{ frac: 0.071, lbl: 'θ_c⁺', col: 'rgba(34,211,238,0.70)' },
+                 { frac: 0.041, lbl: 'θ_c⁻', col: 'rgba(255,110,50,0.70)'  }].forEach(function (pk) {
+                    const xp = PL + pk.frac * PW;
+                    sctx.beginPath(); sctx.moveTo(xp, PT); sctx.lineTo(xp, PT + PH);
+                    sctx.strokeStyle = pk.col.replace('0.70', '0.22'); sctx.lineWidth = 0.8; sctx.stroke();
+                    sctx.fillStyle = pk.col; sctx.font = '7.5px Inter'; sctx.textAlign = 'center';
+                    sctx.fillText(pk.lbl, xp, PT - 3);
+                });
+                // Axis labels
+                sctx.fillStyle = 'rgba(92,194,210,0.6)'; sctx.font = '9px Inter'; sctx.textAlign = 'center';
+                sctx.fillText('0.01', PL, PT + PH + 12);
+                sctx.fillText('0.15 Å⁻¹', PL + PW / 2, PT + PH + 12);
+                sctx.fillText('0.30', PL + PW, PT + PH + 12);
+                sctx.fillText('Q⊥  (Å⁻¹)', PL + PW / 2, SH - 2);
+                sctx.save(); sctx.translate(11, PT + PH / 2); sctx.rotate(-Math.PI / 2);
+                sctx.fillText('R(Q⊥)', 0, 0); sctx.restore();
+                // Legend
+                sctx.font = '8px Inter'; sctx.textAlign = 'left';
+                [['R⁺ (↑)', 'rgb(34,211,238)'], ['R⁻ (↓)', 'rgb(255,110,50)']].forEach(function (lg, i) {
+                    const lx = PL + 6, ly = PT + 11 + i * 13;
+                    sctx.fillStyle = lg[1]; sctx.fillRect(lx, ly - 3, 14, 3);
+                    sctx.fillStyle = 'rgba(200,200,200,0.75)'; sctx.fillText(lg[0], lx + 17, ly);
+                });
+                sctx.restore();
             },
             draw(s, t) {
                 const SY = 318, a = s.angle;
@@ -1608,7 +1683,7 @@
         inst.update(state, t, dt);
         inst.draw(state, t);
         ctx.restore();
-        if (inst.plotSignal && state.signal) inst.plotSignal(state.signal);
+        if (inst.plotSignal) inst.plotSignal(state.signal, state);
     }
     requestAnimationFrame(loop);
 
