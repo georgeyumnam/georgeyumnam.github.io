@@ -47,6 +47,9 @@ window.addEventListener('scroll', onScroll); onScroll();
   const MOUSE_R = 160;   // mouse influence radius (px)
   const PERSP  = 0.30;   // perspective factor for depth axis
 
+  const PHONON_AMP   = 6;                          // px — peak lateral displacement
+  const PHONON_OMEGA = 2 * Math.PI / 1.5;          // rad/s — period = 1.5 s (0.75 s half-period)
+
   const NEUTRON_R      = 9;
   const NEUTRON_SPEED  = 260;  // px/s, all fly left → right
   const NEUTRON_WINDOW = 3.0;  // seconds per spawn window
@@ -173,6 +176,8 @@ window.addEventListener('scroll', onScroll); onScroll();
     requestAnimationFrame(draw);
     ctx.clearRect(0, 0, W, H);
     const t = ts * 0.001;
+    // phonon: red sublattice (spin=+1) moves left, blue (spin=-1) moves right — antiphase
+    const pdx = s => -s * PHONON_AMP * Math.sin(PHONON_OMEGA * t);
 
     // Bonds
     ctx.lineWidth = 1.5;
@@ -180,8 +185,8 @@ window.addEventListener('scroll', onScroll); onScroll();
     for (const [ai, bi] of bonds) {
       const a = atoms[ai], b = atoms[bi];
       ctx.beginPath();
-      ctx.moveTo(a.x, a.y);
-      ctx.lineTo(b.x, b.y);
+      ctx.moveTo(a.x + pdx(a.spin), a.y);
+      ctx.lineTo(b.x + pdx(b.spin), b.y);
       ctx.stroke();
     }
 
@@ -197,14 +202,16 @@ window.addEventListener('scroll', onScroll); onScroll();
       const omegaEff = OMEGA * (1 - pf * 0.80);    // slows to 20% of normal near mouse
 
       const spin = atom.spin;
+      const rx = atom.x + pdx(spin);   // rendered x — original + phonon displacement
+
       // Red (spin-up) lags blue (spin-down) by half a precession period (π)
       const phi  = omegaEff * t + atom.phase + (spin === 1 ? Math.PI : 0);
 
-      const tipX = atom.x + AL * Math.sin(theta) * Math.cos(phi);
+      const tipX = rx + AL * Math.sin(theta) * Math.cos(phi);
       const tipY = atom.y - spin * AL * Math.cos(theta)
                          + AL * Math.sin(theta) * Math.sin(phi) * PERSP;
       const tf   = 0.40;
-      const tlX  = atom.x - AL * tf * Math.sin(theta) * Math.cos(phi);
+      const tlX  = rx - AL * tf * Math.sin(theta) * Math.cos(phi);
       const tlY  = atom.y + spin * AL * tf * Math.cos(theta)
                          - AL * tf * Math.sin(theta) * Math.sin(phi) * PERSP;
 
@@ -220,21 +227,21 @@ window.addEventListener('scroll', onScroll); onScroll();
 
       // Black base sphere
       ctx.beginPath();
-      ctx.arc(atom.x, atom.y, ATOM_R, 0, Math.PI * 2);
+      ctx.arc(rx, atom.y, ATOM_R, 0, Math.PI * 2);
       ctx.fillStyle = 'rgb(4,4,6)';
       ctx.fill();
 
       // Light overlay: full white on lit side, zero on dark side
       const grad = ctx.createLinearGradient(
-        atom.x + lx * ATOM_R, atom.y + ly * ATOM_R,
-        atom.x - lx * ATOM_R, atom.y - ly * ATOM_R
+        rx + lx * ATOM_R, atom.y + ly * ATOM_R,
+        rx - lx * ATOM_R, atom.y - ly * ATOM_R
       );
       grad.addColorStop(0,    'rgba(255,255,255,0.82)');
       grad.addColorStop(0.50, 'rgba(255,255,255,0.08)');
       grad.addColorStop(1,    'rgba(255,255,255,0)');
 
       ctx.beginPath();
-      ctx.arc(atom.x, atom.y, ATOM_R, 0, Math.PI * 2);
+      ctx.arc(rx, atom.y, ATOM_R, 0, Math.PI * 2);
       ctx.fillStyle = grad;
       ctx.fill();
     }
