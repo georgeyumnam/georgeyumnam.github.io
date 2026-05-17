@@ -664,161 +664,218 @@
             label: 'SEQUOIA',
             tag:   'SNS · BL-17 · Fine Resolution DGS',
             info: `<h3>SEQUOIA (SNS)</h3>
-                <span class="info-tag">Time-of-flight · S(Q,ω) · High resolution</span>
-                <p>SEQUOIA is a fine-resolution Fermi chopper spectrometer at SNS, BL-17. The pulsed source produces short neutron bursts. A T₀ chopper blocks γ and fast neutrons; a Fermi chopper selects a narrow incident energy Ei. After the sample, arrival time at the detector encodes Ef and hence ℏω = Ei − Ef.</p>
-                <p>SEQUOIA covers Ei from 10 meV to ~2 eV with energy resolution δE/Ei &lt; 2%, making it ideal for mapping spin-wave dispersions across the full Brillouin zone in single-crystal magnets.</p>
+                <span class="info-tag">Direct geometry · T0 + 3 Fermi pairs · 2π sr cylindrical detector</span>
+                <p>SEQUOIA (Fine Resolution Fermi Chopper Spectrometer, SNS BL-17) has four chopper stages along its 20.0 m primary flight path. The T0 chopper (red, 2.1 m) removes the prompt γ flash and fast neutrons and defines the TOF start. Three Fermi chopper pairs (orange, at 4.5, 8.0, and 11.5 m) successively define Ei, suppress higher-order frame overlap, and optimize energy resolution.</p>
+                <p>After the sample, a cylindrical ³He PSD detector array (2π sr solid angle) records the arrival time of each scattered neutron. Ei − Ef = ℏω and the detector position gives Q, mapping the full excitation spectrum S(Q,ω) simultaneously over a wide angular range.</p>
                 <ul>
-                    <li>Blue = high energy (fast); orange = low energy (after losing energy to sample)</li>
-                    <li>Fermi chopper rotates, gating a narrow incident energy window</li>
-                    <li>Ei range: 10 meV – 2 eV; detector: 3°–60° in-plane, ±18° out-of-plane</li>
+                    <li>T0 chopper (red) removes prompt background; Fermi pairs (orange) select Ei</li>
+                    <li>Ei range: 10 meV – 2 eV; energy resolution δE/Ei &lt; 2%</li>
+                    <li>Cylindrical ³He detector: 2π sr coverage, Q range 0.1–12 Å⁻¹</li>
                     <li>Instrument: SEQUOIA, SNS BL-17</li>
                 </ul>`,
             init() {
                 const signal = new Float32Array(120);
-                // Pre-seed signal with a magnon dispersion feature (Gaussian peak at ω~0.3)
                 for (let b = 0; b < 120; b++) {
-                    const hw = (b / 120) - 0.5; // -0.5 to +0.5
-                    // Phonon/magnon peaks: elastic (hw=0), inelastic gain (hw=-0.22), loss (hw=+0.22)
-                    signal[b] = 0.2 * Math.exp(-0.5 * (hw / 0.04) ** 2)   // elastic
-                              + 0.15 * Math.exp(-0.5 * ((hw + 0.22) / 0.06) ** 2) // energy gain
-                              + 0.25 * Math.exp(-0.5 * ((hw - 0.22) / 0.06) ** 2); // energy loss
+                    const hw = (b / 120) - 0.5;
+                    signal[b] = 0.22 * Math.exp(-0.5 * (hw / 0.04) ** 2)
+                              + 0.16 * Math.exp(-0.5 * ((hw + 0.22) / 0.06) ** 2)
+                              + 0.28 * Math.exp(-0.5 * ((hw - 0.22) / 0.06) ** 2);
                 }
-                return { particles: [], spawnT: 0, pulseT: -99, chopperAngle: 0, detHit: new Array(44).fill(0), signal: signal };
+                return { particles: [], pulseT: -99,
+                         t0A: 0, fc1A: 0, fc2A: 0, fc3A: 0,
+                         detHit: new Array(68).fill(0), signal };
             },
             update(s, t, dt) {
-                s.chopperAngle += dt * 20;
-                s.detHit = s.detHit.map(function (v) { return Math.max(0, v - dt * 0.75); });
-                const CX = 360, SX = 540, SY = LH / 2;
-
-                // Pulse every 1.4s
-                if (t - s.pulseT > 1.4) {
+                s.t0A  += dt * 12;
+                s.fc1A += dt * 28;
+                s.fc2A += dt * 24;
+                s.fc3A += dt * 20;
+                s.detHit = s.detHit.map(function (v) { return Math.max(0, v - dt * 0.65); });
+                const SX = 538, SY = LH / 2;
+                const T0X = 108, FC1X = 165, FC2X = 256, FC3X = 348;
+                if (t - s.pulseT > 1.38) {
                     s.pulseT = t;
-                    for (let k = 0; k < 14; k++) {
+                    for (let k = 0; k < 15; k++) {
                         const lam = sampleLambda();
-                        const spd = 100 + (1 - lam) * 200;
-                        s.particles.push({ x: 90, y: SY + (Math.random() - 0.5) * 12, vx: spd, vy: 0, lam: lam, w: 1, r: 4.5, col: wlCol(lam), en: 1 - lam, state: 'pre', t0: t });
+                        const spd = 100 + (1 - lam) * 210;
+                        s.particles.push({ x: 88, y: SY + (Math.random() - 0.5) * 11,
+                            vx: spd, vy: 0, lam, w: 1, r: 4.5, col: wlCol(lam), en: 1 - lam,
+                            state: 'pre0', dE: 0 });
                     }
                 }
-
                 for (let i = s.particles.length - 1; i >= 0; i--) {
                     const p = s.particles[i];
                     p.x += p.vx * dt; p.y += p.vy * dt;
-
-                    if (p.state === 'pre' && p.x > CX - 5) {
-                        // Fermi chopper gate — selects mid-energy window
-                        const slot = (Math.sin(s.chopperAngle) > 0.65);
-                        if (slot && p.en > 0.32 && p.en < 0.72) {
-                            p.state = 'mono'; p.lam = 0.38; p.col = wlCol(0.38);
-                            const spd = 195;
-                            p.vx = spd; p.vy = (Math.random() - 0.5) * 8;
+                    // T0 gate
+                    if (p.state === 'pre0' && p.x > T0X) {
+                        if (Math.random() < 0.80) { p.state = 'pre1'; }
+                        else { s.particles.splice(i, 1); continue; }
+                    }
+                    // Fermi pair 1 — energy selection
+                    if (p.state === 'pre1' && p.x > FC1X) {
+                        const gate = Math.sin(s.fc1A * 2.2) > 0.60 && p.en > 0.30 && p.en < 0.72;
+                        if (gate) {
+                            p.state = 'pre2'; p.lam = 0.37; p.col = wlCol(0.37);
+                            p.vx = 192; p.vy = (Math.random() - 0.5) * 7;
                         } else { s.particles.splice(i, 1); continue; }
                     }
-                    if (p.state === 'mono' && Math.hypot(p.x - SX, p.y - SY) < 17) {
-                        // Inelastic scatter with Monte Carlo S(Q,ω) sampling
-                        // Phonon creation/annihilation at ω_0 ± random
+                    // Fermi pair 2 — suppression
+                    if (p.state === 'pre2' && p.x > FC2X) {
+                        if (Math.random() < 0.90) { p.state = 'pre3'; }
+                        else { s.particles.splice(i, 1); continue; }
+                    }
+                    // Fermi pair 3 — frame overlap control
+                    if (p.state === 'pre3' && p.x > FC3X) {
+                        if (Math.random() < 0.92) { p.state = 'pre_s'; }
+                        else { s.particles.splice(i, 1); continue; }
+                    }
+                    // Sample scatter
+                    if (p.state === 'pre_s' && Math.hypot(p.x - SX, p.y - SY) < 16) {
                         const r2 = Math.random();
-                        let dE;
-                        if (r2 < 0.35) dE = 0;  // elastic
-                        else if (r2 < 0.6) dE = -(0.2 + Math.random() * 0.06); // energy gain
-                        else dE = 0.2 + Math.random() * 0.06;  // energy loss
+                        let dE = r2 < 0.32 ? 0 : r2 < 0.58 ? -(0.2 + Math.random() * 0.06) : 0.2 + Math.random() * 0.06;
                         dE += (Math.random() - 0.5) * 0.04;
                         const newEn = Math.max(0.05, p.en + dE);
-                        const spd2 = 90 + newEn * 190;
-                        const a = (Math.random() - 0.5) * 2.4;
+                        const spd2 = 85 + newEn * 195;
+                        const a = (Math.random() - 0.5) * Math.PI * 1.9; // wide scatter
                         p.vx = spd2 * Math.cos(a); p.vy = spd2 * Math.sin(a);
                         p.en = newEn; p.lam = 1 - newEn;
                         p.col = wlCol(Math.max(0, Math.min(1, p.lam)));
-                        p.state = 'scattered'; p.dE = dE;
-                    } else if (p.state === 'scattered') {
-                        const d = Math.hypot(p.x - SX, p.y - SY);
-                        if (d > 225) {
-                            const a = Math.atan2(p.y - SY, p.x - SX);
-                            if (a > -1.5 && a < 1.5) {
-                                const idx = Math.floor(((a + 1.5) / 3.0) * 44) % 44;
-                                s.detHit[idx] = Math.max(s.detHit[idx], 0.6 + p.en * 0.4);
-                                // Accumulate S(ω): energy transfer = Ei(0.5) - Ef
-                                const hw = 0.5 - p.en;
-                                const cbin = ((hw + 0.5) * 120);
-                                for (let b = 0; b < 120; b++) {
-                                    s.signal[b] += p.w * Math.exp(-0.5 * ((b - cbin) / 3.5) ** 2) * (0.4 + Math.random() * 0.3);
-                                }
-                            }
+                        p.state = 'out'; p.dE = dE;
+                    }
+                    if (p.state === 'out') {
+                        const dist = Math.hypot(p.x - SX, p.y - SY);
+                        if (dist > 188 && dist < 220) {
+                            const ang = Math.atan2(p.y - SY, p.x - SX);
+                            const bin = Math.min(119, Math.max(0, Math.floor(((p.dE + 0.5) / 1.0) * 120)));
+                            s.signal[bin] = Math.min(1, s.signal[bin] + 0.012);
+                            const di = Math.min(67, Math.max(0, Math.floor(((ang + Math.PI) / (2 * Math.PI)) * 68)));
+                            s.detHit[di] = Math.min(1, s.detHit[di] + 0.82);
                             s.particles.splice(i, 1); continue;
                         }
                     }
-                    if (p.x < -30 || p.x > LW + 30 || p.y < -30 || p.y > LH + 30) s.particles.splice(i, 1);
+                    if (p.x < -40 || p.x > LW + 40 || p.y < -40 || p.y > LH + 40) s.particles.splice(i, 1);
                 }
             },
             plotSignal(sig) {
                 drawSignalPlot(sig, {
-                    xL: '-Ei', xM: '0', xR: '+Ei',
+                    xL: '−Ei', xM: '0', xR: '+Ei',
                     xTitle: 'ℏω  (energy transfer)', yTitle: 'S(Q,ω)',
                     lineCol: 'rgb(80,200,255)',
                     peaks: [
-                        { frac: 0.28, lbl: 'gain' },
-                        { frac: 0.5, lbl: 'elastic' },
-                        { frac: 0.72, lbl: 'loss' }
+                        { frac: 0.28, lbl: 'gain' }, { frac: 0.5, lbl: 'elastic' }, { frac: 0.72, lbl: 'loss' }
                     ]
                 });
             },
             draw(s, t) {
-                const CX = 360, SX = 540, SY = LH / 2;
-                drawSource(80, SY, 'spallation', t);
-                drawGuide(106, SY, CX - 26, SY, 14);
+                const SX = 538, SY = LH / 2;
+                const T0X = 108, FC1X = 165, FC2X = 256, FC3X = 348;
+                const detR = 202, nDet = 68;
 
-                // t₀ chopper (blocks prompt pulse)
-                const t0open = (t % 1.4) > 0.05;
-                ctx.beginPath(); ctx.arc(280, SY, 18, 0, Math.PI * 2);
-                ctx.fillStyle = 'rgba(22,61,86,0.8)'; ctx.fill();
-                ctx.strokeStyle = C.teal; ctx.lineWidth = 1.5; ctx.stroke();
-                if (t0open) {
-                    ctx.beginPath(); ctx.rect(277, SY - 18, 6, 36);
-                    ctx.fillStyle = 'rgba(92,194,210,0.5)'; ctx.fill();
+                drawSource(52, SY, 'spallation', t);
+
+                // Beam tube segments between choppers
+                drawGuide(86,       SY, T0X - 28,  SY, 11);
+                drawGuide(T0X + 28, SY, FC1X - 16, SY, 11);
+                drawGuide(FC1X + 30,SY, FC2X - 16, SY, 11);
+                drawGuide(FC2X + 30,SY, FC3X - 16, SY, 11);
+                drawGuide(FC3X + 30,SY, SX - 18,   SY, 11);
+
+                // Primary flight path annotation
+                ctx.setLineDash([3, 5]);
+                ctx.strokeStyle = 'rgba(0,143,163,0.22)'; ctx.lineWidth = 1;
+                ctx.beginPath(); ctx.moveTo(86, SY - 50); ctx.lineTo(SX, SY - 50); ctx.stroke();
+                ctx.setLineDash([]);
+                label((86 + SX) / 2, SY - 58, 'Primary flight path  20.0 m', { size: 10, color: 'rgba(0,143,163,0.52)' });
+
+                // ── T0 chopper — RED large disc ───────────────────────────────────────
+                (function () {
+                    const R = 40;
+                    ctx.beginPath(); ctx.arc(T0X, SY, R, 0, Math.PI * 2);
+                    ctx.fillStyle = 'rgba(160,30,30,0.82)'; ctx.fill();
+                    ctx.strokeStyle = 'rgba(220,80,60,0.90)'; ctx.lineWidth = 2; ctx.stroke();
+                    // Spokes
+                    for (let k = 0; k < 6; k++) {
+                        const a = s.t0A + k * Math.PI / 3;
+                        ctx.beginPath();
+                        ctx.moveTo(T0X + 11 * Math.cos(a), SY + 11 * Math.sin(a));
+                        ctx.lineTo(T0X + (R - 5) * Math.cos(a), SY + (R - 5) * Math.sin(a));
+                        ctx.strokeStyle = 'rgba(255,120,90,0.40)'; ctx.lineWidth = 1.5; ctx.stroke();
+                    }
+                    // Slot
+                    ctx.save(); ctx.translate(T0X, SY); ctx.rotate(s.t0A);
+                    ctx.beginPath(); ctx.moveTo(0, 0); ctx.arc(0, 0, R, -0.11, 0.11); ctx.closePath();
+                    ctx.fillStyle = 'rgba(255,180,150,0.32)'; ctx.fill(); ctx.restore();
+                    ctx.beginPath(); ctx.arc(T0X, SY, 10, 0, Math.PI * 2);
+                    ctx.fillStyle = 'rgba(100,20,20,0.95)'; ctx.fill();
+                    label(T0X, SY - R - 11, 'T₀', { size: 11 });
+                    label(T0X, SY + R + 14, 'Decoupler', { size: 9, color: 'rgba(220,100,80,0.70)' });
+                }());
+
+                // ── Fermi chopper pair helper ─────────────────────────────────────────
+                function drawFermiPair(cx, angle, idx) {
+                    const R = 32, gap = 17;
+                    [-1, 1].forEach(function (side) {
+                        const cx2 = cx + side * gap / 2;
+                        ctx.beginPath(); ctx.arc(cx2, SY, R, 0, Math.PI * 2);
+                        ctx.fillStyle = 'rgba(175,95,15,0.82)'; ctx.fill();
+                        ctx.strokeStyle = 'rgba(230,140,40,0.90)'; ctx.lineWidth = 1.5; ctx.stroke();
+                        for (let k = 0; k < 6; k++) {
+                            const a = angle + k * Math.PI / 3 + side * 0.18;
+                            ctx.beginPath();
+                            ctx.moveTo(cx2 + 9 * Math.cos(a), SY + 9 * Math.sin(a));
+                            ctx.lineTo(cx2 + (R - 4) * Math.cos(a), SY + (R - 4) * Math.sin(a));
+                            ctx.strokeStyle = 'rgba(255,180,60,0.35)'; ctx.lineWidth = 1; ctx.stroke();
+                        }
+                        ctx.save(); ctx.translate(cx2, SY); ctx.rotate(angle + side * 0.12);
+                        ctx.beginPath(); ctx.moveTo(0, 0); ctx.arc(0, 0, R, -0.10, 0.10); ctx.closePath();
+                        ctx.fillStyle = 'rgba(255,200,100,0.28)'; ctx.fill(); ctx.restore();
+                        ctx.beginPath(); ctx.arc(cx2, SY, 7, 0, Math.PI * 2);
+                        ctx.fillStyle = 'rgba(110,60,10,0.95)'; ctx.fill();
+                    });
+                    label(cx, SY - R - 11, 'FC' + idx, { size: 10 });
+                    label(cx, SY + R + 14, idx === 1 ? 'Ei selector' : idx === 2 ? 'Higher-order' : 'Frame overlap', { size: 9, color: 'rgba(230,150,50,0.65)' });
                 }
-                label(280, SY + 30, 't₀ chopper');
-
-                // Fermi chopper
-                ctx.save(); ctx.translate(CX, SY);
-                ctx.beginPath(); ctx.arc(0, 0, 22, 0, Math.PI * 2);
-                ctx.fillStyle = 'rgba(22,61,86,0.88)'; ctx.fill();
-                ctx.strokeStyle = C.teal; ctx.lineWidth = 2; ctx.stroke();
-                ctx.rotate(s.chopperAngle);
-                ctx.beginPath(); ctx.rect(-3, -22, 6, 44);
-                ctx.fillStyle = 'rgba(92,194,210,0.72)'; ctx.fill();
-                ctx.restore();
-                label(CX, SY + 36, 'Fermi\nchopper');
-
-                // Guide to sample
-                drawGuide(CX + 22, SY, SX - 18, SY, 12);
-
-                // Large detector arc
-                drawDetArc(SX, SY, 225, -1.5, 1.5, 44, s.detHit);
+                drawFermiPair(FC1X, s.fc1A, 1);
+                drawFermiPair(FC2X, s.fc2A, 2);
+                drawFermiPair(FC3X, s.fc3A, 3);
 
                 // Sample
-                drawSample(SX, SY, 'Sample\n(crystal+cryostat)');
+                drawSample(SX, SY);
+                label(SX, SY + 30, 'Sample', { size: 10 });
 
-                // TOF illustration — time ruler at bottom
-                ctx.save();
-                ctx.beginPath(); ctx.moveTo(110, LH - 30); ctx.lineTo(LW - 40, LH - 30);
-                ctx.strokeStyle = 'rgba(22,61,86,0.2)'; ctx.lineWidth = 1; ctx.stroke();
-                [0.12, 0.35, 0.58, 0.82].forEach(function (f, i) {
-                    const x = 110 + f * (LW - 150);
-                    ctx.beginPath(); ctx.moveTo(x, LH - 34); ctx.lineTo(x, LH - 26);
-                    ctx.strokeStyle = 'rgba(22,61,86,0.35)'; ctx.lineWidth = 1; ctx.stroke();
-                    label(x, LH - 18, ['t₀', 'chopper', 'sample', 'detector'][i], { size: 9, color: 'rgba(22,61,86,0.5)' });
-                });
-                label(LW / 2, LH - 8, 'Time-of-flight →', { size: 10, color: 'rgba(22,61,86,0.45)' });
-                ctx.restore();
+                // ── Cylindrical ³He detector (2π sr) — full-wrap arc ──────────────────
+                for (let di = 0; di < nDet; di++) {
+                    const ang = -Math.PI + di * (2 * Math.PI / nDet);
+                    const dx = SX + detR * Math.cos(ang);
+                    const dy = SY + detR * Math.sin(ang);
+                    // Skip pixels that would overlap the primary beam tube on the left
+                    if (dx < SX - detR * 0.72) continue;
+                    const hit = s.detHit[di] || 0;
+                    // Color by 2θ angle (matches the schematic's Qx/Qy map)
+                    const twoTheta = Math.abs(ang) / Math.PI; // 0=forward, 1=backward
+                    const detBase = `rgba(${Math.round(20 + twoTheta * 30)},${Math.round(55 + twoTheta * 35)},${Math.round(120 - twoTheta * 40)},0.65)`;
+                    const detHit2 = `rgba(0,220,180,${0.45 + hit * 0.55})`;
+                    ctx.beginPath(); ctx.arc(dx, dy, 5, 0, Math.PI * 2);
+                    ctx.fillStyle = hit > 0.05 ? detHit2 : detBase; ctx.fill();
+                }
+                // Arc outline (partial – right 3/4 of cylinder)
+                ctx.beginPath(); ctx.arc(SX, SY, detR, -Math.PI * 0.72, Math.PI * 0.72);
+                ctx.strokeStyle = 'rgba(0,143,163,0.30)'; ctx.lineWidth = 1.5; ctx.stroke();
+                label(SX + detR + 10, SY - 20, '³He PSD', { size: 9, color: C.teal, align: 'left' });
+                label(SX + detR + 10, SY - 6,  '2π sr', { size: 9, color: 'rgba(92,194,210,0.5)', align: 'left' });
 
-                // Energy color legend
-                [[wlCol(0.15), 'High E (Ei fast)'], [wlCol(0.38), 'Ei selected'], [wlCol(0.72), 'Low E (Ef slow)']].forEach(function (cl, i) {
-                    const yy = 22 + i * 22;
-                    ctx.beginPath(); ctx.arc(LW - 158, yy, 6, 0, Math.PI * 2); ctx.fillStyle = cl[0]; ctx.fill();
-                    label(LW - 140, yy + 5, cl[1], { align: 'left', size: 11 });
+                // TOF ruler at bottom
+                const rulers = [[T0X, 'T₀'], [FC1X, 'FC 1'], [FC2X, 'FC 2'], [FC3X, 'FC 3'], [SX, 'Sample']];
+                rulers.forEach(function (r) {
+                    ctx.beginPath(); ctx.moveTo(r[0], LH - 38); ctx.lineTo(r[0], LH - 28);
+                    ctx.strokeStyle = 'rgba(0,143,163,0.30)'; ctx.lineWidth = 1; ctx.stroke();
+                    label(r[0], LH - 20, r[1], { size: 9, color: 'rgba(0,143,163,0.45)' });
                 });
+                ctx.beginPath(); ctx.moveTo(T0X, LH - 33); ctx.lineTo(SX, LH - 33);
+                ctx.strokeStyle = 'rgba(0,143,163,0.20)'; ctx.lineWidth = 1; ctx.stroke();
+                label(LW / 2, LH - 10, 'Time-of-flight →  Ei − Ef = ℏω', { size: 10, color: 'rgba(0,143,163,0.38)' });
 
                 s.particles.forEach(function (p) { drawNeutron(p.x, p.y, p.r, p.col, p.w); });
-                label(SX + 20, LH - 40, 'TOF → Ef → ℏω = Ei − Ef · S(Q,ω) spectrum');
             }
         },
 
