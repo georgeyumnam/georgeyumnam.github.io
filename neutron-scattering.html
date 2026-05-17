@@ -220,7 +220,7 @@
     const LW = 900, LH = 506;   // logical canvas dims
 
     let activeKey = null, state = null, prevT = null;
-    const PSIM = 5.0;   // neutron particle speed multiplier
+    const PSIM = 1.667; // neutron particle speed multiplier
 
     // ── Colour helpers ────────────────────────────────────────────────────────
     // λ normalized 0 (fast/hot/short) → 1 (cold/slow/long): maps to blue→green→red
@@ -547,7 +547,7 @@
                 const dMin = 0.3, dMax = 5.0;
                 if (t - s.pulseT > 0.20) {
                     s.pulseT = t;
-                    for (let k = 0; k < 900; k++) {
+                    for (let k = 0; k < 225; k++) {
                         const lam = sampleLambda();
                         const spd = 95 + (1 - lam) * 215;
                         s.particles.push({ x: 60, y: SY + (Math.random() - 0.5) * 10,
@@ -783,7 +783,7 @@
                 const T0X = 108, FC1X = 165, FC2X = 256, FC3X = 348;
                 if (t - s.pulseT > 0.22) {
                     s.pulseT = t;
-                    for (let k = 0; k < 750; k++) {
+                    for (let k = 0; k < 188; k++) {
                         const lam = sampleLambda();
                         const spd = 100 + (1 - lam) * 210;
                         s.particles.push({ x: 88, y: SY + (Math.random() - 0.5) * 11,
@@ -1015,7 +1015,7 @@
                     const thetaC = 0.022 * lam * 2;
                     const reflected = a > thetaC ? (Math.random() < 0.45) : true;
                     const spinUp = Math.random() > 0.5;
-                    for (let _n = 0; _n < 50; _n++) {
+                    for (let _n = 0; _n < 13; _n++) {
                     s.particles.push({ x: 80, y: srcY + (Math.random() - 0.5) * 3,
                         vx: spd * Math.cos(a), vy: spd * Math.sin(a),
                         lam, w: 1, r: 2.5, col: wlCol(lam), state: 'in',
@@ -1284,7 +1284,7 @@
                 const RF3 = 552, M2S = 578, M2E = 754, RF4 = 786;
                 if (t - s.spawnT > 0.06) {
                     s.spawnT = t;
-                    for (let _n = 0; _n < 50; _n++) {
+                    for (let _n = 0; _n < 13; _n++) {
                     s.particles.push({ x: 60, y: SY + (Math.random() - 0.5) * 8,
                         vx: 155, vy: 0, r: 2.5, col: wlCol(0.35), w: 1,
                         phase: 0, state: 'pre', elastic: Math.random() > 0.38, trail: [] }); }
@@ -1496,7 +1496,7 @@
             const T0X = 198, T1X = 306, T2X = 400;
             if (t - s.pulseT > 0.22) {
                 s.pulseT = t;
-                for (let k = 0; k < 650; k++) {
+                for (let k = 0; k < 163; k++) {
                     const lam = sampleLambda();
                     const spd = 100 + (1 - lam) * 220;
                     s.particles.push({ x: 90, y: SY + (Math.random() - 0.5) * 10,
