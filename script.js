@@ -254,7 +254,7 @@ window.addEventListener('scroll', onScroll); onScroll();
         const minD = ATOM_R + NEUTRON_R;
         if (dist < minD && t - n.lastHitT > 5.0) {
           n.lastHitT = t;  // always consume the encounter to prevent re-rolling next frame
-          if (Math.random() < 3/7) {
+          if (Math.random() < Math.min(1, 3/7 + Math.floor(t / 2) / 8)) {
             const nx = dx / dist, ny = dy / dist;
             n.x = atom.x + (minD + 1) * nx;
             n.y = atom.y + (minD + 1) * ny;
