@@ -1,0 +1,1203 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Neutron Scattering Instruments – George Yumnam</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="styles.css?v=5">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        .tool-hero { padding: 64px 24px 40px; position: relative; z-index: 1; }
+        .tool-hero-panel {
+            background: rgba(255,255,255,0.92); backdrop-filter: blur(28px);
+            -webkit-backdrop-filter: blur(28px); border: 1px solid var(--border);
+            border-radius: 20px; padding: 2rem 2.5rem; box-shadow: var(--glow);
+            position: relative; overflow: hidden;
+        }
+        .tool-hero-panel::after {
+            content: ''; position: absolute; inset: 0; border-radius: inherit; pointer-events: none;
+            background: linear-gradient(to bottom,rgba(255,255,255,.48) 0%,transparent 14%,transparent 86%,rgba(116,190,226,.18) 100%),
+                        linear-gradient(to right,rgba(255,255,255,.36) 0%,transparent 8%,transparent 92%,rgba(116,190,226,.14) 100%);
+            mix-blend-mode: screen;
+        }
+        .tool-title { font-size: 3.4rem; font-weight: 800; color: var(--white); letter-spacing: -0.8px; margin-bottom: 0.4rem; }
+        .tool-sub   { font-size: 1.7rem; color: var(--teal); font-weight: 600; margin-bottom: 0.75rem; }
+        .tool-desc  { font-size: 1.615rem; color: var(--text-dim); line-height: 1.75; }
+        .selector-section { padding: 0 24px 32px; position: relative; z-index: 1; }
+        .inst-grid { display: grid; grid-template-columns: repeat(7,1fr); gap: 0.75rem; }
+        .inst-card {
+            background: var(--glass-card); border: 2px solid var(--border); border-radius: 16px;
+            padding: 1rem 0.75rem; cursor: pointer; transition: var(--transition);
+            backdrop-filter: blur(14px); -webkit-backdrop-filter: blur(14px);
+            text-align: center; user-select: none;
+        }
+        .inst-card:hover { border-color: rgba(0,143,163,0.55); transform: translateY(-3px); box-shadow: var(--shadow-md); }
+        .inst-card.active { border-color: var(--teal); background: rgba(0,143,163,0.12); box-shadow: 0 0 0 3px rgba(0,143,163,0.18),var(--shadow-md); }
+        .inst-icon { font-size: 1.8rem; color: var(--teal); margin-bottom: 0.4rem; }
+        .inst-name { font-size: 1.326rem; font-weight: 700; color: var(--white); margin-bottom: 0.2rem; line-height: 1.3; }
+        .inst-hint { font-size: 1.1rem; color: var(--text-dim); line-height: 1.4; }
+        .demo-section { padding: 0 24px 48px; position: relative; z-index: 1; }
+        .demo-wrap { display: grid; grid-template-columns: 1fr; grid-template-rows: auto auto auto; gap: 1.5rem; align-items: start; }
+        .canvas-shell { grid-column:1; grid-row:1; }
+        .signal-shell { grid-column:1; grid-row:2; }
+        .right-col    { grid-column:1; grid-row:3; }
+        .canvas-shell {
+            background: rgba(255,255,255,0.88); border: 1px solid var(--border); border-radius: 20px;
+            overflow: hidden; box-shadow: var(--glow); backdrop-filter: blur(16px);
+            -webkit-backdrop-filter: blur(16px); aspect-ratio: 16/9; position: relative;
+        }
+        .canvas-shell canvas { display: block; width: 100%; height: 100%; }
+        .canvas-placeholder {
+            position: absolute; inset: 0; display: flex; flex-direction: column;
+            align-items: center; justify-content: center; color: rgba(22,61,86,0.35); gap: 0.75rem;
+        }
+        .canvas-placeholder i { font-size: 3rem; }
+        .canvas-placeholder p { font-size: 1.4rem; font-weight: 500; }
+        .right-col { display: block; }
+        .info-panel {
+            background: var(--glass-card); border: 1px solid var(--border); border-radius: 20px;
+            padding: 1.5rem; box-shadow: var(--shadow-sm); backdrop-filter: blur(14px);
+            -webkit-backdrop-filter: blur(14px);
+        }
+        .info-panel h3 { font-size: 1.7rem; font-weight: 700; color: var(--white); margin-bottom: 0.5rem; }
+        .info-panel .info-tag {
+            display: inline-block; font-size: 1.1rem; font-weight: 600; color: var(--teal);
+            background: rgba(0,143,163,0.10); border: 1px solid rgba(0,143,163,0.28);
+            border-radius: 999px; padding: 2px 10px; margin-bottom: 0.9rem;
+        }
+        .info-panel p { font-size: 1.326rem; color: var(--text-dim); line-height: 1.7; margin-bottom: 0.75rem; }
+        .info-panel p:last-child { margin-bottom: 0; }
+        .info-panel ul { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 0.4rem; }
+        .info-panel ul li { font-size: 1.2rem; color: var(--text-dim); padding-left: 1.1rem; position: relative; line-height: 1.55; }
+        .info-panel ul li::before { content: '▸'; position: absolute; left: 0; color: var(--teal); font-size: 1rem; }
+        .info-empty { color: rgba(22,61,86,0.38); font-size: 1.326rem; text-align: center; padding: 2rem 0; }
+        .signal-shell {
+            background: #07111d; border: 1px solid rgba(0,143,163,0.40); border-radius: 16px;
+            overflow: hidden; box-shadow: 0 0 22px rgba(0,143,163,0.14),var(--shadow-md);
+            aspect-ratio: 900/506;
+        }
+        .signal-header {
+            display: flex; align-items: center; justify-content: space-between;
+            padding: 0.45rem 0.9rem; border-bottom: 1px solid rgba(0,143,163,0.22);
+            background: rgba(22,61,86,0.45);
+        }
+        .signal-header-title { font-size: 1.1rem; font-weight: 600; color: rgba(92,194,210,0.9); letter-spacing: 0.04em; }
+        .signal-header-axis  { font-size: 0.95rem; color: rgba(92,194,210,0.45); font-style: italic; }
+        #signal-canvas { display: block; width: 100%; height: 100%; }
+        @media (max-width: 1100px) { .inst-grid { grid-template-columns: repeat(4,1fr); } }
+        @media (max-width: 768px) {
+            .inst-grid { grid-template-columns: repeat(2,1fr); }
+            .tool-title { font-size: 2.2rem; }
+        }
+        @media (max-width: 600px) {
+            .tool-hero { padding: 44px 5% 28px; }
+            .tool-hero-panel { padding: 1.25rem; }
+            .tool-title { font-size: 1.6rem; } .tool-sub { font-size: 1rem; } .tool-desc { font-size: 0.95rem; }
+            .selector-section, .demo-section { padding-left: 5%; padding-right: 5%; }
+            .inst-grid { grid-template-columns: repeat(2,1fr); gap: 0.5rem; }
+            .inst-name { font-size: 1rem; } .inst-hint { font-size: 0.85rem; }
+        }
+    </style>
+</head>
+<body>
+
+    <nav class="navbar">
+        <div class="container">
+            <div class="nav-wrapper">
+                <a href="index.html" class="logo">George Yumnam</a>
+                <ul class="nav-menu">
+                    <li><a href="index.html#about" class="nav-link">About</a></li>
+                    <li><a href="index.html#projects" class="nav-link">Research</a></li>
+                    <li><a href="index.html#publications" class="nav-link">Publications</a></li>
+                    <li><a href="index.html#teaching" class="nav-link">Teaching</a></li>
+                    <li><a href="index.html#mitsna" class="nav-link">MitSna</a></li>
+                    <li><a href="neutron-scattering.html" class="nav-link active" target="_blank" rel="noopener noreferrer">Neutron Scattering</a></li>
+                    <li><a href="index.html#contact" class="nav-link">Contact</a></li>
+                </ul>
+                <div class="hamburger"><span></span><span></span><span></span></div>
+            </div>
+        </div>
+    </nav>
+
+    <div class="tool-hero">
+        <div class="container">
+            <div class="tool-hero-panel">
+                <h1 class="tool-title">Neutron Scattering Instruments</h1>
+                <p class="tool-sub">Physics-accurate Monte Carlo simulations · Select an instrument</p>
+                <p class="tool-desc">Each technique uses a different combination of neutron source, optical elements, sample geometry, and detector to probe a distinct aspect of matter — from crystal structure to spin dynamics to buried interfaces. Neutron colors encode wavelength (blue = short λ, fast; red = long λ, cold).</p>
+            </div>
+        </div>
+    </div>
+
+    <div class="selector-section">
+        <div class="container">
+            <div class="inst-grid">
+                <div class="inst-card" data-inst="powgen">
+                    <div class="inst-icon"><i class="fas fa-th"></i></div>
+                    <div class="inst-name">POWGEN</div>
+                    <div class="inst-hint">SNS · TOF powder diffraction</div>
+                </div>
+                <div class="inst-card" data-inst="powder">
+                    <div class="inst-icon"><i class="fas fa-th"></i></div>
+                    <div class="inst-name">POWDER</div>
+                    <div class="inst-hint">HFIR HB-2A · reactor diffraction</div>
+                </div>
+                <div class="inst-card" data-inst="sequoia">
+                    <div class="inst-icon"><i class="fas fa-bolt"></i></div>
+                    <div class="inst-name">SEQUOIA</div>
+                    <div class="inst-hint">SNS · fine-resolution DGS</div>
+                </div>
+                <div class="inst-card" data-inst="arcs">
+                    <div class="inst-icon"><i class="fas fa-bolt"></i></div>
+                    <div class="inst-name">ARCS</div>
+                    <div class="inst-hint">SNS · wide angular range DGS</div>
+                </div>
+                <div class="inst-card" data-inst="hyspec">
+                    <div class="inst-icon"><i class="fas fa-sliders-h"></i></div>
+                    <div class="inst-name">HYSPEC</div>
+                    <div class="inst-hint">SNS · hybrid focusing DGS</div>
+                </div>
+                <div class="inst-card" data-inst="magref">
+                    <div class="inst-icon"><i class="fas fa-layer-group"></i></div>
+                    <div class="inst-name">MAGREF</div>
+                    <div class="inst-hint">SNS · magnetism reflectometer</div>
+                </div>
+                <div class="inst-card" data-inst="nse">
+                    <div class="inst-icon"><i class="fas fa-wave-square"></i></div>
+                    <div class="inst-name">NSE</div>
+                    <div class="inst-hint">SNS · Larmor precession · ps–ns</div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="demo-section">
+        <div class="container">
+            <div class="demo-wrap">
+                <div class="canvas-shell">
+                    <canvas id="demo-canvas"></canvas>
+                    <div class="canvas-placeholder" id="canvas-placeholder">
+                        <i class="fas fa-atom"></i>
+                        <p>Select an instrument above</p>
+                    </div>
+                </div>
+                <div class="signal-shell">
+                    <div class="signal-header">
+                        <span class="signal-header-title">Detected Signal</span>
+                        <span class="signal-header-axis" id="signal-axis-label">—</span>
+                    </div>
+                    <canvas id="signal-canvas" height="190"></canvas>
+                </div>
+                <div class="right-col">
+                    <div class="info-panel" id="info-panel">
+                        <p class="info-empty">Select an instrument to see details.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <footer class="footer">
+        <div class="container">
+            <p>&copy; 2026 George Yumnam &middot; Stewart Blusson Quantum Matter Institute, UBC</p>
+            <div class="footer-social">
+                <a href="https://scholar.google.com/citations?user=D3v8UV4AAAAJ&hl=en" target="_blank" rel="noopener noreferrer"><i class="fas fa-book-open"></i></a>
+                <a href="https://www.linkedin.com/in/george-yumnam/" target="_blank" rel="noopener noreferrer"><i class="fab fa-linkedin"></i></a>
+                <a href="mailto:georgeyumnam@gmail.com"><i class="fas fa-envelope"></i></a>
+            </div>
+        </div>
+    </footer>
+
+    <script src="script.js?v=5"></script>
+    <script>
+    // ── Neutron Scattering Instrument Demo Engine — Physics-accurate Monte Carlo ──
+    (function () {
+    'use strict';
+    const canvas  = document.getElementById('demo-canvas');
+    const ctx     = canvas.getContext('2d');
+    const sCanvas = document.getElementById('signal-canvas');
+    const sctx    = sCanvas.getContext('2d');
+    const placeholder = document.getElementById('canvas-placeholder');
+    const infoPanel   = document.getElementById('info-panel');
+    const axisLabel   = document.getElementById('signal-axis-label');
+
+    const SW = 320, SH = 190;   // logical signal dims
+    const LW = 900, LH = 506;   // logical canvas dims
+
+    let activeKey = null, state = null, prevT = null;
+
+    // ── Colour helpers ────────────────────────────────────────────────────────
+    // λ normalized 0 (fast/hot/short) → 1 (cold/slow/long): maps to blue→green→red
+    function wlCol(lam, a) {
+        const r = Math.round(255 * Math.min(1, lam * 2.4));
+        const g = Math.round(255 * Math.sin(Math.PI * Math.min(1, lam * 1.1)));
+        const b = Math.round(255 * Math.max(0, 1 - lam * 2.0));
+        return a !== undefined ? `rgba(${r},${g},${b},${a})` : `rgb(${r},${g},${b})`;
+    }
+
+    const C = {
+        navy:'#163d56', teal:'#008fa3', border:'rgba(52,142,190,0.30)',
+        neutron:'rgb(90,240,50)', hi:'rgb(80,180,255)', lo:'rgb(255,130,50)',
+        crystal:'#5cc2d2', sample:'#008fa3', det:'#1a3a50', detHit:'#22d3ee',
+        label:'#163d56',
+    };
+
+    // ── Physics helpers ───────────────────────────────────────────────────────
+    // Maxwell-Boltzmann peak wavelength distribution (simple approximation)
+    function sampleLambda() {
+        // Triangular-ish, peak around 0.3 (thermal)
+        const u = Math.random(), v = Math.random();
+        return Math.max(0.05, Math.min(0.95, (u + v) / 2 * 0.8 + Math.random() * 0.2));
+    }
+
+    // Monte Carlo Gaussian transmission at optical elements
+    function transmit(lam, lamC, dLam) {
+        return Math.exp(-0.5 * ((lam - lamC) / dLam) ** 2);
+    }
+
+    // ── Drawing helpers ───────────────────────────────────────────────────────
+    function glow(x, y, r, col, alpha) {
+        const g = ctx.createRadialGradient(x, y, 0, x, y, r);
+        const base = col.startsWith('rgb(') ? col.replace('rgb(', 'rgba(').replace(')', `,${alpha})`) : col;
+        g.addColorStop(0, base); g.addColorStop(1, 'rgba(0,0,0,0)');
+        ctx.fillStyle = g; ctx.beginPath(); ctx.arc(x, y, r, 0, Math.PI * 2); ctx.fill();
+    }
+
+    function drawSource(x, y, type, t) {
+        if (type === 'reactor') {
+            // Steady glow rings
+            for (let r = 50; r >= 14; r -= 9) {
+                const f = (50 - r) / 36;
+                ctx.beginPath(); ctx.arc(x, y, r, 0, Math.PI * 2);
+                ctx.fillStyle = `rgba(251,191,36,${0.04 + f * 0.1})`; ctx.fill();
+            }
+            ctx.beginPath(); ctx.arc(x, y, 24, 0, Math.PI * 2);
+            ctx.fillStyle = '#f59e0b'; ctx.fill();
+            ctx.strokeStyle = '#fbbf24'; ctx.lineWidth = 2.5; ctx.stroke();
+            // Core cross-hatching
+            ctx.save(); ctx.beginPath(); ctx.arc(x, y, 13, 0, Math.PI * 2); ctx.clip();
+            ctx.strokeStyle = 'rgba(0,0,0,0.18)'; ctx.lineWidth = 1;
+            for (let i = -2; i <= 2; i++) {
+                ctx.beginPath(); ctx.moveTo(x + i * 5, y - 14); ctx.lineTo(x + i * 5, y + 14); ctx.stroke();
+                ctx.beginPath(); ctx.moveTo(x - 14, y + i * 5); ctx.lineTo(x + 14, y + i * 5); ctx.stroke();
+            }
+            ctx.restore();
+            label(x, y + 42, 'Reactor\n(HFIR)');
+        } else {
+            // Spallation — pulsed ripple
+            const ripR = (t % 1.0) * 55;
+            const ripA = 0.4 * (1 - ripR / 55);
+            ctx.beginPath(); ctx.arc(x, y, ripR, 0, Math.PI * 2);
+            ctx.strokeStyle = `rgba(251,191,36,${ripA})`; ctx.lineWidth = 1.5; ctx.stroke();
+            const flash = (Math.sin(t * 6) > 0.65) ? 1 : 0.2;
+            glow(x, y, 52, 'rgb(251,191,36)', 0.08 + 0.1 * flash);
+            ctx.beginPath(); ctx.arc(x, y, 24, 0, Math.PI * 2);
+            ctx.fillStyle = `rgba(245,158,11,${0.4 + 0.5 * flash})`; ctx.fill();
+            ctx.strokeStyle = `rgba(251,191,36,${flash})`; ctx.lineWidth = 2.5; ctx.stroke();
+            ctx.beginPath(); ctx.arc(x, y, 9, 0, Math.PI * 2);
+            ctx.fillStyle = `rgba(254,240,138,${flash})`; ctx.fill();
+            label(x, y + 44, 'Spallation\nsource (SNS)');
+        }
+    }
+
+    function drawGuide(x1, y1, x2, y2, w) {
+        w = w || 10;
+        const ang = Math.atan2(y2 - y1, x2 - x1);
+        const px = Math.sin(ang) * w / 2, py = -Math.cos(ang) * w / 2;
+        ctx.beginPath();
+        ctx.moveTo(x1 + px, y1 + py); ctx.lineTo(x2 + px, y2 + py);
+        ctx.lineTo(x2 - px, y2 - py); ctx.lineTo(x1 - px, y1 - py);
+        ctx.closePath();
+        ctx.fillStyle = 'rgba(22,61,86,0.09)';
+        ctx.strokeStyle = 'rgba(52,142,190,0.42)'; ctx.lineWidth = 1.5;
+        ctx.fill(); ctx.stroke();
+    }
+
+    function drawSample(x, y, lbl) {
+        glow(x, y, 40, 'rgb(0,143,163)', 0.15);
+        ctx.beginPath(); ctx.arc(x, y, 14, 0, Math.PI * 2);
+        ctx.fillStyle = C.sample; ctx.fill();
+        ctx.strokeStyle = '#5cc2d2'; ctx.lineWidth = 2; ctx.stroke();
+        ctx.save(); ctx.beginPath(); ctx.arc(x, y, 13, 0, Math.PI * 2); ctx.clip();
+        ctx.strokeStyle = 'rgba(255,255,255,0.38)'; ctx.lineWidth = 0.9;
+        for (let i = -3; i <= 3; i++) {
+            ctx.beginPath(); ctx.moveTo(x - 14, y + i * 4.5); ctx.lineTo(x + 14, y + i * 4.5); ctx.stroke();
+        }
+        ctx.restore();
+        if (lbl !== false) label(x, y + 28, lbl || 'Sample');
+    }
+
+    function drawCrystal(x, y, angle, lbl) {
+        ctx.save(); ctx.translate(x, y); ctx.rotate(angle);
+        ctx.beginPath();
+        ctx.moveTo(-6, -17); ctx.lineTo(6, -17);
+        ctx.lineTo(10, 17); ctx.lineTo(-10, 17); ctx.closePath();
+        ctx.fillStyle = '#4ab8cc'; ctx.strokeStyle = C.teal; ctx.lineWidth = 2;
+        ctx.fill(); ctx.stroke();
+        ctx.strokeStyle = 'rgba(255,255,255,0.38)'; ctx.lineWidth = 0.8;
+        for (let i = -3; i <= 3; i++) {
+            ctx.beginPath(); ctx.moveTo(-9, i * 6); ctx.lineTo(9, i * 6); ctx.stroke();
+        }
+        ctx.restore();
+        if (lbl) label(x, y + 30, lbl);
+    }
+
+    function drawDetector(x, y, angle, length, lbl) {
+        ctx.save(); ctx.translate(x, y); ctx.rotate(angle);
+        ctx.beginPath(); ctx.rect(-5, -length / 2, 10, length);
+        ctx.fillStyle = C.det; ctx.strokeStyle = '#5cc2d2'; ctx.lineWidth = 1.5;
+        ctx.fill(); ctx.stroke();
+        ctx.strokeStyle = 'rgba(92,194,210,0.28)'; ctx.lineWidth = 0.6;
+        for (let i = -2; i <= 2; i++) {
+            ctx.beginPath(); ctx.moveTo(-5, i * (length / 5)); ctx.lineTo(5, i * (length / 5)); ctx.stroke();
+        }
+        ctx.restore();
+        if (lbl) label(x, y + length / 2 + 14, lbl);
+    }
+
+    function drawDetArc(cx, cy, r, a0, a1, segs, hitArr) {
+        const da = (a1 - a0) / segs;
+        for (let i = 0; i < segs; i++) {
+            const a = a0 + da * i + da / 2;
+            const hit = hitArr ? (hitArr[i] || 0) : 0;
+            const x = cx + r * Math.cos(a), y = cy + r * Math.sin(a);
+            ctx.save(); ctx.translate(x, y); ctx.rotate(a + Math.PI / 2);
+            ctx.beginPath(); ctx.rect(-5, -8, 10, 16);
+            ctx.fillStyle = hit > 0 ? `rgba(34,211,238,${Math.min(1, hit)})` : C.det;
+            ctx.strokeStyle = 'rgba(92,194,210,0.35)'; ctx.lineWidth = 1;
+            ctx.fill(); ctx.stroke();
+            ctx.restore();
+        }
+    }
+
+    function drawBeamLine(x1, y1, x2, y2, col, alpha, dash) {
+        alpha = alpha || 0.3; dash = dash || [];
+        ctx.save(); ctx.setLineDash(dash);
+        ctx.beginPath(); ctx.moveTo(x1, y1); ctx.lineTo(x2, y2);
+        ctx.strokeStyle = `rgba(${col},${alpha})`; ctx.lineWidth = 1.8; ctx.stroke();
+        ctx.setLineDash([]); ctx.restore();
+    }
+
+    function drawNeutron(x, y, r, col, w) {
+        w = w === undefined ? 1 : w;
+        const ng = ctx.createRadialGradient(x - r * 0.3, y - r * 0.3, r * 0.1, x, y, r);
+        ng.addColorStop(0, 'rgb(255,248,80)');
+        ng.addColorStop(0.5, col);
+        ng.addColorStop(1, 'rgba(20,100,10,0.55)');
+        ctx.save(); ctx.globalAlpha = Math.max(0.35, w);
+        ctx.shadowColor = col; ctx.shadowBlur = 7;
+        ctx.beginPath(); ctx.arc(x, y, r, 0, Math.PI * 2);
+        ctx.fillStyle = ng; ctx.fill();
+        ctx.shadowBlur = 0; ctx.globalAlpha = 1; ctx.restore();
+    }
+
+    function label(x, y, text, opts) {
+        opts = opts || {};
+        const lines = text.split('\n');
+        ctx.font = `${opts.weight || 500} ${opts.size || 12}px Inter,sans-serif`;
+        ctx.fillStyle = opts.color || C.label;
+        ctx.textAlign = opts.align || 'center';
+        lines.forEach(function (l, i) { ctx.fillText(l, x, y + i * 15); });
+    }
+
+    function arrowLine(x1, y1, x2, y2, col, lbl) {
+        ctx.beginPath(); ctx.moveTo(x1, y1); ctx.lineTo(x2, y2);
+        ctx.strokeStyle = col; ctx.lineWidth = 1.5; ctx.stroke();
+        const a = Math.atan2(y2 - y1, x2 - x1);
+        ctx.beginPath(); ctx.moveTo(x2, y2);
+        ctx.lineTo(x2 - 10 * Math.cos(a - 0.4), y2 - 10 * Math.sin(a - 0.4));
+        ctx.lineTo(x2 - 10 * Math.cos(a + 0.4), y2 - 10 * Math.sin(a + 0.4));
+        ctx.closePath(); ctx.fillStyle = col; ctx.fill();
+        if (lbl) { const mx = (x1 + x2) / 2, my = (y1 + y2) / 2; label(mx - 8 * Math.sin(a), my + 8 * Math.cos(a), lbl, { color: col, size: 11 }); }
+    }
+
+    function angleArc(cx, cy, r, a1, a2, col, lbl) {
+        ctx.beginPath(); ctx.arc(cx, cy, r, a1, a2);
+        ctx.strokeStyle = col; ctx.lineWidth = 1.2; ctx.stroke();
+        if (lbl) { const a = (a1 + a2) / 2; label(cx + (r + 14) * Math.cos(a), cy + (r + 14) * Math.sin(a), lbl, { color: col, size: 11 }); }
+    }
+
+    function drawBG() {
+        ctx.fillStyle = 'rgba(247,252,255,0.96)';
+        ctx.fillRect(0, 0, LW, LH);
+    }
+
+    // ── Signal panel ─────────────────────────────────────────────────────────
+    function drawSignalPlot(data, opts) {
+        opts = opts || {};
+        const logY = opts.logY || false;
+        const xL = opts.xL || ''; const xM = opts.xM || ''; const xR = opts.xR || '';
+        const xTitle = opts.xTitle || ''; const yTitle = opts.yTitle || 'Counts';
+        const refLine = opts.refLine || null;
+        const lineCol = opts.lineCol || 'rgb(0,220,180)';
+        const peaks = opts.peaks || [];
+        const N = data.length;
+        const scX = sCanvas.width / SW, scY = sCanvas.height / SH;
+        sctx.save(); sctx.scale(scX, scY);
+        sctx.fillStyle = '#07111d'; sctx.fillRect(0, 0, SW, SH);
+        const PL = 44, PR = 10, PT = 16, PB = 30, PW = SW - PL - PR, PH = SH - PT - PB;
+
+        // Grid
+        sctx.strokeStyle = 'rgba(0,143,163,0.12)'; sctx.lineWidth = 0.6;
+        [0, 0.25, 0.5, 0.75, 1].forEach(function (f) {
+            const yg = PT + PH * (1 - f);
+            sctx.beginPath(); sctx.moveTo(PL, yg); sctx.lineTo(PL + PW, yg); sctx.stroke();
+            const xg = PL + PW * f;
+            sctx.beginPath(); sctx.moveTo(xg, PT); sctx.lineTo(xg, PT + PH); sctx.stroke();
+        });
+        sctx.strokeStyle = 'rgba(0,143,163,0.38)'; sctx.lineWidth = 1;
+        sctx.strokeRect(PL, PT, PW, PH);
+
+        // Normalize
+        let norm;
+        if (logY) {
+            const pos = Array.from(data).filter(function (v) { return v > 0; });
+            if (pos.length < 2) { sctx.restore(); return; }
+            const mn = Math.min.apply(null, pos), mx = Math.max.apply(null, pos);
+            const span = Math.log10(mx) - Math.log10(mn) || 1;
+            norm = Array.from(data).map(function (v) { return v <= 0 ? 0 : (Math.log10(v) - Math.log10(mn)) / span; });
+        } else {
+            const mx = Math.max(1, Math.max.apply(null, Array.from(data)));
+            norm = Array.from(data).map(function (v) { return v / mx; });
+        }
+
+        // Reference line
+        if (refLine) {
+            sctx.beginPath();
+            refLine.forEach(function (v, i) { const xr = PL + (i / N) * PW, yr = PT + PH - v * PH; i === 0 ? sctx.moveTo(xr, yr) : sctx.lineTo(xr, yr); });
+            sctx.strokeStyle = 'rgba(255,255,255,0.07)'; sctx.lineWidth = 1; sctx.stroke();
+        }
+
+        // Glow fill
+        const grad = sctx.createLinearGradient(0, PT, 0, PT + PH);
+        const lc0 = lineCol.replace('rgb(', 'rgba(').replace(')', ',0.20)');
+        const lc1 = lineCol.replace('rgb(', 'rgba(').replace(')', ',0)');
+        grad.addColorStop(0, lc0); grad.addColorStop(1, lc1);
+        sctx.beginPath();
+        norm.forEach(function (v, i) { const xn = PL + (i / N) * PW, yn = PT + PH - v * PH; i === 0 ? sctx.moveTo(xn, yn) : sctx.lineTo(xn, yn); });
+        sctx.lineTo(PL + PW, PT + PH); sctx.lineTo(PL, PT + PH); sctx.closePath();
+        sctx.fillStyle = grad; sctx.fill();
+
+        // Signal line
+        sctx.beginPath();
+        norm.forEach(function (v, i) { const xn = PL + (i / N) * PW, yn = PT + PH - v * PH; i === 0 ? sctx.moveTo(xn, yn) : sctx.lineTo(xn, yn); });
+        sctx.save(); sctx.shadowColor = lineCol; sctx.shadowBlur = 5;
+        sctx.strokeStyle = lineCol; sctx.lineWidth = 1.6; sctx.stroke(); sctx.restore();
+
+        // Peak label marks
+        peaks.forEach(function (pk) {
+            const xp = PL + pk.frac * PW;
+            sctx.beginPath(); sctx.moveTo(xp, PT); sctx.lineTo(xp, PT + PH);
+            sctx.strokeStyle = 'rgba(255,255,255,0.1)'; sctx.lineWidth = 0.8; sctx.stroke();
+            sctx.fillStyle = 'rgba(92,194,210,0.65)'; sctx.font = '7.5px Inter'; sctx.textAlign = 'center';
+            sctx.fillText(pk.lbl, xp, PT - 3);
+        });
+
+        // Axis labels
+        sctx.fillStyle = 'rgba(92,194,210,0.6)'; sctx.font = '9px Inter'; sctx.textAlign = 'center';
+        sctx.fillText(xL, PL, PT + PH + 12);
+        sctx.fillText(xM, PL + PW / 2, PT + PH + 12);
+        sctx.fillText(xR, PL + PW, PT + PH + 12);
+        sctx.fillText(xTitle, PL + PW / 2, SH - 2);
+        sctx.save(); sctx.translate(11, PT + PH / 2); sctx.rotate(-Math.PI / 2);
+        sctx.fillText(yTitle, 0, 0); sctx.restore();
+        sctx.restore();
+    }
+
+    // ═════════════════════════════════════════════════════════════════════════
+    // INSTRUMENT DEFINITIONS
+    // ═════════════════════════════════════════════════════════════════════════
+    const INSTRUMENTS = {
+
+        // ── 1. POWGEN ── SNS TOF powder diffractometer ──────────────────────────
+        powgen: {
+            label: 'POWGEN',
+            tag:   'SNS · BL-11A · Time-of-Flight',
+            info: `<h3>POWGEN (SNS)</h3>
+                <span class="info-tag">Bragg's law · 2d sinθ = nλ</span>
+                <p>POWGEN is the general-purpose powder diffractometer at the Spallation Neutron Source (SNS), BL-11A. The pulsed source provides polychromatic neutrons; time-of-flight to the detector encodes wavelength, giving access to a large d-spacing range (0.1–5 Å) simultaneously without scanning the monochromator.</p>
+                <p>In this Monte Carlo simulation, each neutron carries a wavelength sampled from a thermal spectrum. The monochromator transmits only neutrons near λ_mono with a Gaussian probability. Scattered neutrons accumulate the powder diffraction pattern I(2θ) in the detector ring.</p>
+                <ul>
+                    <li>Color = neutron wavelength (blue=fast/short, red=slow/long λ)</li>
+                    <li>Large-solid-angle detector array at 15–168° 2θ; backscattering for high resolution</li>
+                    <li>d-spacing range: 0.1–5 Å in one shot — no wavelength scanning needed</li>
+                    <li>Instrument: POWGEN, SNS BL-11A</li>
+                </ul>`,
+            init() {
+                // d-spacings → 2θ angles (for λ_mono = 0.35, spd-normalized)
+                // 2θ = 2*arcsin(λ/(2d)) — here using fixed visual angles
+                const braggAngles = [32, 58, 88, 118, 148];
+                const signal = new Float32Array(160);  // 10° to 170°
+                return { particles: [], spawnT: 0, detHit: new Array(40).fill(0), braggAngles, signal };
+            },
+            update(s, t, dt) {
+                s.detHit = s.detHit.map(function (v) { return Math.max(0, v - dt * 0.9); });
+                const SX = 490, SY = LH / 2;
+                const MX = 210, MY = LH / 2;
+                const LAM_MONO = 0.35;
+
+                // Spawn polychromatic neutrons from source
+                if (t - s.spawnT > 0.14) {
+                    s.spawnT = t;
+                    const lam = sampleLambda();
+                    const spd = 280 * (1 - lam * 0.65);
+                    s.particles.push({ x: 95, y: SY + (Math.random() - 0.5) * 10, vx: spd, vy: 0, lam: lam, w: 1, r: 4.5, col: wlCol(lam), state: 'toMono' });
+                }
+
+                for (let i = s.particles.length - 1; i >= 0; i--) {
+                    const p = s.particles[i];
+                    p.x += p.vx * dt; p.y += p.vy * dt;
+
+                    if (p.state === 'toMono') {
+                        if (Math.hypot(p.x - MX, p.y - MY) < 17) {
+                            const T = transmit(p.lam, LAM_MONO, 0.07);
+                            if (Math.random() < T) {
+                                const monoSpd = 230;
+                                const div = (Math.random() - 0.5) * 0.05; // beam divergence
+                                p.vx = monoSpd * Math.cos(div); p.vy = monoSpd * Math.sin(div);
+                                p.lam = LAM_MONO + (Math.random() - 0.5) * 0.015;
+                                p.col = wlCol(p.lam); p.w = T; p.state = 'toSample';
+                            } else { s.particles.splice(i, 1); continue; }
+                        }
+                    } else if (p.state === 'toSample') {
+                        if (Math.hypot(p.x - SX, p.y - SY) < 16) {
+                            // Bragg scatter: pick one of the Bragg angles
+                            const ba = s.braggAngles[Math.floor(Math.random() * s.braggAngles.length)];
+                            const sign = Math.random() > 0.5 ? 1 : -1;
+                            const a = ba * Math.PI / 180 * sign;
+                            const spd = 210;
+                            p.vx = spd * Math.cos(a); p.vy = spd * Math.sin(a);
+                            p.braggDeg = ba; p.state = 'out';
+                        }
+                    } else if (p.state === 'out') {
+                        const d = Math.hypot(p.x - SX, p.y - SY);
+                        if (d > 178) {
+                            const a = Math.atan2(p.y - SY, p.x - SX);
+                            const idx = Math.floor(((a + Math.PI) / (2 * Math.PI)) * 40) % 40;
+                            s.detHit[idx] = Math.min(1, (s.detHit[idx] || 0) + p.w * 0.9);
+                            const deg = p.braggDeg || 90;
+                            for (let b = 0; b < 160; b++) {
+                                const d2th = (b / 160) * 160 + 10;
+                                s.signal[b] += p.w * Math.exp(-0.5 * ((d2th - deg) / 2.8) ** 2) * (1.2 + Math.random() * 0.6);
+                            }
+                            s.particles.splice(i, 1); continue;
+                        }
+                    }
+                    if (p.x < -30 || p.x > LW + 30 || p.y < -30 || p.y > LH + 30) s.particles.splice(i, 1);
+                }
+            },
+            plotSignal(sig) {
+                drawSignalPlot(sig, {
+                    xL: '10°', xM: '90°', xR: '170°',
+                    xTitle: '2θ  (degrees)', yTitle: 'Counts',
+                    peaks: [
+                        { frac: 0.138, lbl: '(100)' }, { frac: 0.3, lbl: '(110)' },
+                        { frac: 0.488, lbl: '(111)' }, { frac: 0.675, lbl: '(200)' },
+                        { frac: 0.863, lbl: '(210)' }
+                    ]
+                });
+            },
+            draw(s, t) {
+                const SX = 490, SY = LH / 2;
+                const MX = 210, MY = LH / 2;
+                drawSource(80, SY, 'reactor', t);
+
+                // Polychromatic guide — rainbow gradient
+                const rg = ctx.createLinearGradient(104, SY - 8, 190, SY - 8);
+                rg.addColorStop(0, 'rgba(80,80,255,0.35)'); rg.addColorStop(0.4, 'rgba(50,230,50,0.35)'); rg.addColorStop(1, 'rgba(255,80,50,0.35)');
+                ctx.fillStyle = rg; ctx.fillRect(104, SY - 7, 86, 14);
+                ctx.strokeStyle = 'rgba(52,142,190,0.4)'; ctx.lineWidth = 1.5; ctx.strokeRect(104, SY - 7, 86, 14);
+
+                // Monochromator
+                drawCrystal(MX, MY, -0.42, 'PG(002)\nmono');
+                label(MX, MY - 34, 'λ_mono selected', { size: 10, color: C.teal });
+
+                // Collimator slits
+                [[226, SY - 8, 226, SY - 3], [226, SY + 3, 226, SY + 8],
+                 [242, SY - 8, 242, SY - 3], [242, SY + 3, 242, SY + 8]].forEach(function (c) {
+                    ctx.beginPath(); ctx.moveTo(c[0], c[1]); ctx.lineTo(c[2], c[3]);
+                    ctx.strokeStyle = 'rgba(22,61,86,0.7)'; ctx.lineWidth = 2; ctx.stroke();
+                });
+
+                // Guide (monochromatic — single green)
+                drawGuide(248, SY, SX - 20, SY, 10);
+
+                // Detector ring
+                drawDetArc(SX, SY, 178, 0, 2 * Math.PI, 40, s.detHit);
+
+                // Sample with lattice planes
+                drawSample(SX, SY);
+
+                // Bragg angle guide lines + labels
+                s.braggAngles.forEach(function (ba) {
+                    [-1, 1].forEach(function (sign) {
+                        const a = ba * Math.PI / 180 * sign;
+                        ctx.setLineDash([3, 5]);
+                        ctx.beginPath(); ctx.moveTo(SX, SY); ctx.lineTo(SX + 195 * Math.cos(a), SY + 195 * Math.sin(a));
+                        ctx.strokeStyle = 'rgba(0,143,163,0.15)'; ctx.lineWidth = 1; ctx.stroke();
+                        ctx.setLineDash([]);
+                    });
+                    const a0 = s.braggAngles[0] * Math.PI / 180;
+                    angleArc(SX, SY, 55, 0, a0, C.teal, '2θ');
+                    const xL = SX + 200 * Math.cos(ba * Math.PI / 180);
+                    const yL = SY - 200 * Math.sin(ba * Math.PI / 180);
+                    label(xL, yL - 4, ba * 2 + '°', { size: 9, color: 'rgba(0,143,163,0.55)' });
+                });
+
+                // Wavelength legend
+                [[wlCol(0.08), 'Short λ (fast)'], [wlCol(0.35), 'λ_mono (selected)'], [wlCol(0.75), 'Long λ (slow)']].forEach(function (cl, i) {
+                    const yy = 22 + i * 22;
+                    ctx.beginPath(); ctx.arc(LW - 148, yy, 6, 0, Math.PI * 2); ctx.fillStyle = cl[0]; ctx.fill();
+                    label(LW - 130, yy + 5, cl[1], { align: 'left', size: 11 });
+                });
+
+                s.particles.forEach(function (p) { drawNeutron(p.x, p.y, p.r, p.col, p.w); });
+                label(SX, LH - 12, 'Debye-Scherrer detector ring · Powder diffraction · I(2θ)');
+            }
+        },
+
+        // ── 2. SEQUOIA ── Fine-resolution DGS at SNS ─────────────────────────────
+        sequoia: {
+            label: 'SEQUOIA',
+            tag:   'SNS · BL-17 · Fine Resolution DGS',
+            info: `<h3>SEQUOIA (SNS)</h3>
+                <span class="info-tag">Time-of-flight · S(Q,ω) · High resolution</span>
+                <p>SEQUOIA is a fine-resolution Fermi chopper spectrometer at SNS, BL-17. The pulsed source produces short neutron bursts. A T₀ chopper blocks γ and fast neutrons; a Fermi chopper selects a narrow incident energy Ei. After the sample, arrival time at the detector encodes Ef and hence ℏω = Ei − Ef.</p>
+                <p>SEQUOIA covers Ei from 10 meV to ~2 eV with energy resolution δE/Ei &lt; 2%, making it ideal for mapping spin-wave dispersions across the full Brillouin zone in single-crystal magnets.</p>
+                <ul>
+                    <li>Blue = high energy (fast); orange = low energy (after losing energy to sample)</li>
+                    <li>Fermi chopper rotates, gating a narrow incident energy window</li>
+                    <li>Ei range: 10 meV – 2 eV; detector: 3°–60° in-plane, ±18° out-of-plane</li>
+                    <li>Instrument: SEQUOIA, SNS BL-17</li>
+                </ul>`,
+            init() {
+                const signal = new Float32Array(120);
+                // Pre-seed signal with a magnon dispersion feature (Gaussian peak at ω~0.3)
+                for (let b = 0; b < 120; b++) {
+                    const hw = (b / 120) - 0.5; // -0.5 to +0.5
+                    // Phonon/magnon peaks: elastic (hw=0), inelastic gain (hw=-0.22), loss (hw=+0.22)
+                    signal[b] = 0.2 * Math.exp(-0.5 * (hw / 0.04) ** 2)   // elastic
+                              + 0.15 * Math.exp(-0.5 * ((hw + 0.22) / 0.06) ** 2) // energy gain
+                              + 0.25 * Math.exp(-0.5 * ((hw - 0.22) / 0.06) ** 2); // energy loss
+                }
+                return { particles: [], spawnT: 0, pulseT: -99, chopperAngle: 0, detHit: new Array(44).fill(0), signal: signal };
+            },
+            update(s, t, dt) {
+                s.chopperAngle += dt * 20;
+                s.detHit = s.detHit.map(function (v) { return Math.max(0, v - dt * 0.75); });
+                const CX = 360, SX = 540, SY = LH / 2;
+
+                // Pulse every 1.4s
+                if (t - s.pulseT > 1.4) {
+                    s.pulseT = t;
+                    for (let k = 0; k < 14; k++) {
+                        const lam = sampleLambda();
+                        const spd = 100 + (1 - lam) * 200;
+                        s.particles.push({ x: 90, y: SY + (Math.random() - 0.5) * 12, vx: spd, vy: 0, lam: lam, w: 1, r: 4.5, col: wlCol(lam), en: 1 - lam, state: 'pre', t0: t });
+                    }
+                }
+
+                for (let i = s.particles.length - 1; i >= 0; i--) {
+                    const p = s.particles[i];
+                    p.x += p.vx * dt; p.y += p.vy * dt;
+
+                    if (p.state === 'pre' && p.x > CX - 5) {
+                        // Fermi chopper gate — selects mid-energy window
+                        const slot = (Math.sin(s.chopperAngle) > 0.65);
+                        if (slot && p.en > 0.32 && p.en < 0.72) {
+                            p.state = 'mono'; p.lam = 0.38; p.col = wlCol(0.38);
+                            const spd = 195;
+                            p.vx = spd; p.vy = (Math.random() - 0.5) * 8;
+                        } else { s.particles.splice(i, 1); continue; }
+                    }
+                    if (p.state === 'mono' && Math.hypot(p.x - SX, p.y - SY) < 17) {
+                        // Inelastic scatter with Monte Carlo S(Q,ω) sampling
+                        // Phonon creation/annihilation at ω_0 ± random
+                        const r2 = Math.random();
+                        let dE;
+                        if (r2 < 0.35) dE = 0;  // elastic
+                        else if (r2 < 0.6) dE = -(0.2 + Math.random() * 0.06); // energy gain
+                        else dE = 0.2 + Math.random() * 0.06;  // energy loss
+                        dE += (Math.random() - 0.5) * 0.04;
+                        const newEn = Math.max(0.05, p.en + dE);
+                        const spd2 = 90 + newEn * 190;
+                        const a = (Math.random() - 0.5) * 2.4;
+                        p.vx = spd2 * Math.cos(a); p.vy = spd2 * Math.sin(a);
+                        p.en = newEn; p.lam = 1 - newEn;
+                        p.col = wlCol(Math.max(0, Math.min(1, p.lam)));
+                        p.state = 'scattered'; p.dE = dE;
+                    } else if (p.state === 'scattered') {
+                        const d = Math.hypot(p.x - SX, p.y - SY);
+                        if (d > 225) {
+                            const a = Math.atan2(p.y - SY, p.x - SX);
+                            if (a > -1.5 && a < 1.5) {
+                                const idx = Math.floor(((a + 1.5) / 3.0) * 44) % 44;
+                                s.detHit[idx] = Math.max(s.detHit[idx], 0.6 + p.en * 0.4);
+                                // Accumulate S(ω): energy transfer = Ei(0.5) - Ef
+                                const hw = 0.5 - p.en;
+                                const cbin = ((hw + 0.5) * 120);
+                                for (let b = 0; b < 120; b++) {
+                                    s.signal[b] += p.w * Math.exp(-0.5 * ((b - cbin) / 3.5) ** 2) * (0.4 + Math.random() * 0.3);
+                                }
+                            }
+                            s.particles.splice(i, 1); continue;
+                        }
+                    }
+                    if (p.x < -30 || p.x > LW + 30 || p.y < -30 || p.y > LH + 30) s.particles.splice(i, 1);
+                }
+            },
+            plotSignal(sig) {
+                drawSignalPlot(sig, {
+                    xL: '-Ei', xM: '0', xR: '+Ei',
+                    xTitle: 'ℏω  (energy transfer)', yTitle: 'S(Q,ω)',
+                    lineCol: 'rgb(80,200,255)',
+                    peaks: [
+                        { frac: 0.28, lbl: 'gain' },
+                        { frac: 0.5, lbl: 'elastic' },
+                        { frac: 0.72, lbl: 'loss' }
+                    ]
+                });
+            },
+            draw(s, t) {
+                const CX = 360, SX = 540, SY = LH / 2;
+                drawSource(80, SY, 'spallation', t);
+                drawGuide(106, SY, CX - 26, SY, 14);
+
+                // t₀ chopper (blocks prompt pulse)
+                const t0open = (t % 1.4) > 0.05;
+                ctx.beginPath(); ctx.arc(280, SY, 18, 0, Math.PI * 2);
+                ctx.fillStyle = 'rgba(22,61,86,0.8)'; ctx.fill();
+                ctx.strokeStyle = C.teal; ctx.lineWidth = 1.5; ctx.stroke();
+                if (t0open) {
+                    ctx.beginPath(); ctx.rect(277, SY - 18, 6, 36);
+                    ctx.fillStyle = 'rgba(92,194,210,0.5)'; ctx.fill();
+                }
+                label(280, SY + 30, 't₀ chopper');
+
+                // Fermi chopper
+                ctx.save(); ctx.translate(CX, SY);
+                ctx.beginPath(); ctx.arc(0, 0, 22, 0, Math.PI * 2);
+                ctx.fillStyle = 'rgba(22,61,86,0.88)'; ctx.fill();
+                ctx.strokeStyle = C.teal; ctx.lineWidth = 2; ctx.stroke();
+                ctx.rotate(s.chopperAngle);
+                ctx.beginPath(); ctx.rect(-3, -22, 6, 44);
+                ctx.fillStyle = 'rgba(92,194,210,0.72)'; ctx.fill();
+                ctx.restore();
+                label(CX, SY + 36, 'Fermi\nchopper');
+
+                // Guide to sample
+                drawGuide(CX + 22, SY, SX - 18, SY, 12);
+
+                // Large detector arc
+                drawDetArc(SX, SY, 225, -1.5, 1.5, 44, s.detHit);
+
+                // Sample
+                drawSample(SX, SY, 'Sample\n(crystal+cryostat)');
+
+                // TOF illustration — time ruler at bottom
+                ctx.save();
+                ctx.beginPath(); ctx.moveTo(110, LH - 30); ctx.lineTo(LW - 40, LH - 30);
+                ctx.strokeStyle = 'rgba(22,61,86,0.2)'; ctx.lineWidth = 1; ctx.stroke();
+                [0.12, 0.35, 0.58, 0.82].forEach(function (f, i) {
+                    const x = 110 + f * (LW - 150);
+                    ctx.beginPath(); ctx.moveTo(x, LH - 34); ctx.lineTo(x, LH - 26);
+                    ctx.strokeStyle = 'rgba(22,61,86,0.35)'; ctx.lineWidth = 1; ctx.stroke();
+                    label(x, LH - 18, ['t₀', 'chopper', 'sample', 'detector'][i], { size: 9, color: 'rgba(22,61,86,0.5)' });
+                });
+                label(LW / 2, LH - 8, 'Time-of-flight →', { size: 10, color: 'rgba(22,61,86,0.45)' });
+                ctx.restore();
+
+                // Energy color legend
+                [[wlCol(0.15), 'High E (Ei fast)'], [wlCol(0.38), 'Ei selected'], [wlCol(0.72), 'Low E (Ef slow)']].forEach(function (cl, i) {
+                    const yy = 22 + i * 22;
+                    ctx.beginPath(); ctx.arc(LW - 158, yy, 6, 0, Math.PI * 2); ctx.fillStyle = cl[0]; ctx.fill();
+                    label(LW - 140, yy + 5, cl[1], { align: 'left', size: 11 });
+                });
+
+                s.particles.forEach(function (p) { drawNeutron(p.x, p.y, p.r, p.col, p.w); });
+                label(SX + 20, LH - 40, 'TOF → Ef → ℏω = Ei − Ef · S(Q,ω) spectrum');
+            }
+        },
+
+        // ── 3. MAGREF ── Magnetism Reflectometer at SNS ─────────────────────────
+        magref: {
+            label: 'MAGREF',
+            tag:   'SNS · BL-4A · Polarized Neutron Reflectometry',
+            info: `<h3>MAGREF (SNS)</h3>
+                <span class="info-tag">Polarized reflectometry · magnetic depth profiles</span>
+                <p>MAGREF (Magnetism Reflectometer, SNS BL-4A) specializes in polarized neutron reflectometry (PNR) to probe magnetic depth profiles in thin films and multilayers. Neutrons strike the flat surface at grazing angle θ; below the critical angle θ_c, total external reflection occurs. Above θ_c, reflected intensity R(Q⊥) encodes the depth-resolved scattering-length-density profile ρ(z).</p>
+                <p>By flipping neutron spin between spin-up and spin-down before the sample, PNR separates nuclear and magnetic SLD profiles layer by layer — uniquely sensitive to buried magnetic interfaces invisible to charge-based probes.</p>
+                <ul>
+                    <li>Cyan = specularly reflected; orange = transmitted/refracted below critical angle</li>
+                    <li>Kiessig fringes: period ΔQ = 2π/d gives layer thickness d</li>
+                    <li>Q⊥ range: 0.008–0.25 Å⁻¹; polarization analysis for magnetic vs. nuclear SLD</li>
+                    <li>Instrument: MAGREF, SNS BL-4A</li>
+                </ul>`,
+            init() {
+                const N = 80, sig = new Float32Array(N);
+                // R(Q) with critical edge + Kiessig fringes: two-layer model
+                const QC = 0.022; // critical Q (Å⁻¹)
+                for (let b = 0; b < N; b++) {
+                    const Q = 0.005 + (b / N) * 0.295; // 0.005 to 0.3 Å⁻¹
+                    let R;
+                    if (Q < QC) { R = 1.0; }
+                    else {
+                        const Rfresnel = Math.pow((Q - Math.sqrt(Q * Q - QC * QC)) / (Q + Math.sqrt(Q * Q - QC * QC)), 2);
+                        const fringe1 = 1 + 0.55 * Math.cos(2 * Math.PI * Q * 120);  // 120 Å layer
+                        const fringe2 = 1 + 0.25 * Math.cos(2 * Math.PI * Q * 280);  // 280 Å layer
+                        R = Math.max(1e-6, Rfresnel * fringe1 * fringe2);
+                    }
+                    sig[b] = R;
+                }
+                return { particles: [], spawnT: 0, angle: 5 * Math.PI / 180, signal: sig };
+            },
+            update(s, t, dt) {
+                const SY = 310, a = s.angle;
+                if (t - s.spawnT > 0.28) {
+                    s.spawnT = t;
+                    const lam = 0.2 + Math.random() * 0.5;
+                    const spd = 195;
+                    // Critical angle for this wavelength (λ-dependent)
+                    const thetaC = 0.022 * lam * 2; // simplified
+                    const reflected = a > thetaC ? (Math.random() < 0.45) : true;
+                    s.particles.push({ x: 80, y: SY - 230 * Math.tan(a) + (Math.random() - 0.5) * 4, vx: spd * Math.cos(a), vy: spd * Math.sin(a), lam: lam, w: 1, r: 4.5, col: wlCol(lam), state: 'in', reflected: reflected });
+                }
+                for (let i = s.particles.length - 1; i >= 0; i--) {
+                    const p = s.particles[i];
+                    p.x += p.vx * dt; p.y += p.vy * dt;
+                    if (p.state === 'in' && p.y >= SY && p.x > 155) {
+                        if (p.reflected) {
+                            p.vy = -Math.abs(p.vy); p.col = '#22d3ee'; p.state = 'out';
+                            // Add small perturbation to Kiessig fringe signal
+                            const b = Math.min(79, Math.max(0, Math.floor(Math.random() * 80)));
+                            s.signal[b] = Math.max(1e-6, s.signal[b] * (0.985 + Math.random() * 0.03));
+                        } else {
+                            p.vy = Math.abs(p.vy) * 0.35; p.vx *= 0.45;
+                            p.col = wlCol(Math.min(0.9, p.lam + 0.25)); p.state = 'out';
+                        }
+                    }
+                    if (p.x < -20 || p.x > LW + 20 || p.y < -20 || p.y > LH + 20) s.particles.splice(i, 1);
+                }
+            },
+            plotSignal(sig) {
+                drawSignalPlot(sig, {
+                    logY: true, xL: '0.01', xM: '0.15 Å⁻¹', xR: '0.30',
+                    xTitle: 'Q⊥  (Å⁻¹)', yTitle: 'R(Q⊥)',
+                    lineCol: 'rgb(34,211,238)',
+                    peaks: [{ frac: 0.065, lbl: 'θ_c' }]
+                });
+            },
+            draw(s, t) {
+                const SY = 310, X0 = 155, X1 = 770, a = s.angle;
+                const srcY = SY - 230 * Math.tan(a) - 6;
+                drawSource(80, srcY, 'reactor', t);
+
+                // Layered flat sample — top view
+                const layers = [
+                    { y: SY, h: 12, col: 'rgba(0,143,163,0.22)', lbl: 'Magnetic layer (Co, 120 Å)' },
+                    { y: SY + 12, h: 10, col: 'rgba(0,143,163,0.12)', lbl: 'Buffer (Cu, 280 Å)' },
+                    { y: SY + 22, h: 40, col: 'rgba(22,61,86,0.10)', lbl: 'Substrate (Si)' }
+                ];
+                layers.forEach(function (ly) {
+                    ctx.fillStyle = ly.col; ctx.fillRect(X0, ly.y, X1 - X0, ly.h);
+                    ctx.strokeStyle = 'rgba(0,143,163,0.3)'; ctx.lineWidth = 1;
+                    ctx.setLineDash([4, 4]); ctx.beginPath(); ctx.moveTo(X0, ly.y); ctx.lineTo(X1, ly.y); ctx.stroke();
+                    ctx.setLineDash([]);
+                });
+                ctx.strokeStyle = C.teal; ctx.lineWidth = 2;
+                ctx.beginPath(); ctx.moveTo(X0, SY); ctx.lineTo(X1, SY); ctx.stroke();
+
+                // Incident & reflected dashed guides
+                const hitX = 240;
+                drawBeamLine(80, srcY, hitX, SY, '22,61,86', 0.12, [5, 5]);
+                drawBeamLine(hitX, SY, 780, SY - (780 - hitX) * Math.tan(a), '34,211,238', 0.15, [5, 5]);
+
+                // Angle arcs
+                angleArc(hitX, SY, 50, -Math.PI + a, -Math.PI + a * 2, C.teal, 'θ');
+                angleArc(hitX, SY, 50, -a, a * 0, C.teal);
+
+                // Detector
+                const DX = 820, DY = SY - (DX - hitX) * Math.tan(a);
+                drawDetector(DX - 18, DY, -Math.PI / 2 + a, 34, 'Detector');
+
+                // ── SLD profile inset ───────────────────────────────────────
+                const IX = LW - 195, IY = 18, IW = 185, IH = 155;
+                ctx.fillStyle = 'rgba(22,61,86,0.06)';
+                ctx.strokeStyle = 'rgba(0,143,163,0.35)'; ctx.lineWidth = 1;
+                ctx.fillRect(IX, IY, IW, IH); ctx.strokeRect(IX, IY, IW, IH);
+                label(IX + IW / 2, IY + 11, 'SLD depth profile ρ(z)', { size: 10, color: 'rgba(0,143,163,0.8)' });
+                // SLD steps: air, Co, Cu, Si substrate
+                const sldData = [
+                    { z0: 0, z1: 0.12, rho: 0 },      // air/vacuum
+                    { z0: 0.12, z1: 0.40, rho: 0.82 }, // Co layer
+                    { z0: 0.40, z1: 0.65, rho: 0.65 }, // Cu buffer
+                    { z0: 0.65, z1: 1.00, rho: 0.20 }  // Si
+                ];
+                ctx.beginPath();
+                ctx.moveTo(IX + 14, IY + IH - 14 - 0 * (IH - 30));
+                sldData.forEach(function (seg) {
+                    const x0 = IX + 14 + seg.z0 * (IW - 20);
+                    const x1 = IX + 14 + seg.z1 * (IW - 20);
+                    const y  = IY + IH - 14 - seg.rho * (IH - 30);
+                    ctx.lineTo(x0, y); ctx.lineTo(x1, y);
+                });
+                ctx.strokeStyle = 'rgba(34,211,238,0.75)'; ctx.lineWidth = 1.8; ctx.stroke();
+                // Shade under
+                ctx.lineTo(IX + IW - 6, IY + IH - 14); ctx.lineTo(IX + 14, IY + IH - 14); ctx.closePath();
+                ctx.fillStyle = 'rgba(34,211,238,0.07)'; ctx.fill();
+                label(IX + 8, IY + IH - 3, 'z (depth) →', { align: 'left', size: 9, color: 'rgba(0,143,163,0.5)' });
+                label(IX + IW - 5, IY + IH - 3, 'ρ(z) ↑', { align: 'right', size: 9, color: 'rgba(0,143,163,0.5)' });
+
+                label(455, SY + 68, 'Layered film: Co | Cu | Si substrate');
+                label(hitX + 200, SY - 200 * Math.tan(a) - 16, 'Specular reflection', { size: 11, color: C.teal });
+
+                s.particles.forEach(function (p) { drawNeutron(p.x, p.y, p.r, p.col, p.w); });
+            }
+        },
+
+        // ── 4. NSE ── Neutron Spin Echo at SNS ───────────────────────────────────
+        nse: {
+            label: 'NSE',
+            tag:   'SNS · BL-15 · Larmor precession · ps–ns',
+            info: `<h3>NSE — Neutron Spin Echo (SNS)</h3>
+                <span class="info-tag">Sub-μeV resolution · ps–ns timescales</span>
+                <p>NSE (SNS BL-15) encodes inelastic velocity changes directly in the neutron spin phase via Larmor precession. Coil 1 precesses the spin by φ = γBL/v before the sample; coil 2 applies −B after, rewinding the precession. For elastic scattering φ_net = 0 and a coherent <em>echo</em> forms. Inelastic events break the echo — the echo amplitude S(Q,t)/S(Q,0) is the intermediate scattering function.</p>
+                <p>The spin arrow color shows the Larmor phase: <em>white = elastic (echo intact), orange = inelastic (dephased)</em>. NSE probes dynamics 3–4 orders of magnitude slower than DGS without needing a monochromator — it is the highest-energy-resolution neutron technique available.</p>
+                <ul>
+                    <li>Timescales: 0.1 ps to 500 ns — highest energy resolution in neutrons</li>
+                    <li>Probes dynamics invisible to DGS: polymer reptation, membrane fluctuations, protein motions</li>
+                    <li>Instrument: NSE, SNS BL-15</li>
+                </ul>`,
+            init() {
+                const N = 30, sig = new Float32Array(N);
+                // Stretched exponential F(Q,t) = exp(-(t/τ)^β)
+                for (let b = 0; b < N; b++) {
+                    sig[b] = Math.exp(-Math.pow((b / (N - 1)) * 2.8, 0.72));
+                }
+                return { particles: [], spawnT: 0, signal: sig };
+            },
+            update(s, t, dt) {
+                const C1S = 205, C1E = 370, SX = 460, SY = LH / 2, C2S = 548, C2E = 715;
+                if (t - s.spawnT > 0.30) {
+                    s.spawnT = t;
+                    s.particles.push({ x: 80, y: SY + (Math.random() - 0.5) * 10, vx: 160, vy: 0, r: 5, col: wlCol(0.35), w: 1, phase: 0, state: 'pre', elastic: Math.random() > 0.38, trail: [] });
+                }
+                for (let i = s.particles.length - 1; i >= 0; i--) {
+                    const p = s.particles[i];
+                    // Larmor precession in coils
+                    if (p.x > C1S && p.x < C1E) p.phase += dt * 9.5;
+                    if (p.x > C2S && p.x < C2E) {
+                        p.phase -= dt * 9.5;
+                        if (!p.elastic) p.phase -= dt * 1.8; // dephasing
+                    }
+                    p.x += p.vx * dt; p.y += p.vy * dt;
+                    // Trail for precession visualization (limit length)
+                    if (p.trail.length < 20) p.trail.push({ x: p.x, y: p.y, ph: p.phase });
+                    else { p.trail.shift(); p.trail.push({ x: p.x, y: p.y, ph: p.phase }); }
+                    if (p.state === 'pre' && Math.hypot(p.x - SX, p.y - SY) < 16) {
+                        if (!p.elastic) p.vx *= 0.87;
+                        p.state = 'post';
+                    }
+                    if (p.x > 870) {
+                        const b = Math.min(29, Math.max(0, Math.floor(Math.random() * 30)));
+                        if (p.elastic) {
+                            const echo = Math.cos(p.phase) * 0.004;
+                            s.signal[b] = Math.max(0, Math.min(1, s.signal[b] + echo));
+                        }
+                        s.particles.splice(i, 1); continue;
+                    }
+                    if (p.x < -20 || p.y < -20 || p.y > LH + 20) s.particles.splice(i, 1);
+                }
+            },
+            plotSignal(sig) {
+                drawSignalPlot(sig, {
+                    xL: '0', xM: 'τ/2', xR: 'τ_max',
+                    xTitle: 'Fourier time  t (ns)', yTitle: 'F(Q,t)',
+                    lineCol: 'rgb(160,220,255)',
+                    peaks: [{ frac: 0, lbl: 'F=1' }]
+                });
+            },
+            draw(s, t) {
+                const SX = 460, SY = LH / 2, C1S = 205, C1E = 370, C2S = 548, C2E = 715;
+                drawSource(80, SY, 'reactor', t);
+                drawGuide(106, SY, C1S, SY, 12);
+
+                // Precession coil 1 (B upward)
+                ctx.fillStyle = 'rgba(22,61,86,0.07)';
+                ctx.strokeStyle = 'rgba(0,143,163,0.45)'; ctx.lineWidth = 1.5;
+                ctx.fillRect(C1S, SY - 40, C1E - C1S, 80); ctx.strokeRect(C1S, SY - 40, C1E - C1S, 80);
+                for (let x = C1S + 14; x < C1E; x += 18) {
+                    ctx.beginPath(); ctx.ellipse(x, SY, 5, 40, 0, 0, 2 * Math.PI);
+                    ctx.strokeStyle = 'rgba(0,143,163,0.45)'; ctx.lineWidth = 0.9; ctx.stroke();
+                }
+                // B field arrows
+                for (let xa = C1S + 20; xa < C1E; xa += 30) {
+                    ctx.beginPath(); ctx.moveTo(xa, SY + 28); ctx.lineTo(xa, SY + 10);
+                    ctx.strokeStyle = 'rgba(0,143,163,0.3)'; ctx.lineWidth = 1; ctx.stroke();
+                    ctx.beginPath(); ctx.moveTo(xa - 3, SY + 13); ctx.lineTo(xa, SY + 10); ctx.lineTo(xa + 3, SY + 13);
+                    ctx.stroke();
+                }
+                label((C1S + C1E) / 2, SY - 50, 'Precession coil 1 →', { size: 10 });
+                label((C1S + C1E) / 2, SY + 54, 'B ↑', { size: 10, color: C.teal });
+
+                drawGuide(C1E, SY, SX - 16, SY, 12);
+                drawSample(SX, SY, 'Sample\n(soft matter)');
+                drawGuide(SX + 16, SY, C2S, SY, 12);
+
+                // Precession coil 2 (B reversed)
+                ctx.fillStyle = 'rgba(22,61,86,0.07)';
+                ctx.strokeStyle = 'rgba(232,93,4,0.45)'; ctx.lineWidth = 1.5;
+                ctx.fillRect(C2S, SY - 40, C2E - C2S, 80); ctx.strokeRect(C2S, SY - 40, C2E - C2S, 80);
+                for (let x = C2S + 14; x < C2E; x += 18) {
+                    ctx.beginPath(); ctx.ellipse(x, SY, 5, 40, 0, 0, 2 * Math.PI);
+                    ctx.strokeStyle = 'rgba(232,93,4,0.45)'; ctx.lineWidth = 0.9; ctx.stroke();
+                }
+                for (let xa = C2S + 20; xa < C2E; xa += 30) {
+                    ctx.beginPath(); ctx.moveTo(xa, SY - 10); ctx.lineTo(xa, SY - 28);
+                    ctx.strokeStyle = 'rgba(232,93,4,0.3)'; ctx.lineWidth = 1; ctx.stroke();
+                    ctx.beginPath(); ctx.moveTo(xa - 3, SY - 13); ctx.lineTo(xa, SY - 10); ctx.lineTo(xa + 3, SY - 13);
+                    ctx.stroke();
+                }
+                label((C2S + C2E) / 2, SY - 50, '← Precession coil 2', { size: 10 });
+                label((C2S + C2E) / 2, SY + 54, 'B ↓ (reversed)', { size: 10, color: '#e85d04' });
+
+                drawGuide(C2E, SY, 830, SY, 12);
+                drawDetector(845, SY, 0, 34, 'Detector\n+ analyzer');
+
+                // Particles with spin arrows and helix trail
+                s.particles.forEach(function (p) {
+                    // Draw trail as fading dots showing phase
+                    if (p.trail.length > 2) {
+                        for (let ti = Math.max(0, p.trail.length - 12); ti < p.trail.length; ti++) {
+                            const tr = p.trail[ti];
+                            const alpha = (ti - (p.trail.length - 12)) / 12 * 0.4;
+                            const trCol = p.elastic ? `rgba(255,255,255,${alpha})` : `rgba(255,140,60,${alpha})`;
+                            ctx.beginPath(); ctx.arc(tr.x, tr.y + Math.sin(tr.ph) * 8, 2, 0, Math.PI * 2);
+                            ctx.fillStyle = trCol; ctx.fill();
+                        }
+                    }
+                    drawNeutron(p.x, p.y, p.r, p.col, p.w);
+                    // Spin arrow
+                    const sl = 14, sa = p.phase;
+                    ctx.save(); ctx.translate(p.x, p.y);
+                    ctx.strokeStyle = p.elastic ? 'rgba(255,255,255,0.9)' : 'rgba(255,140,60,0.9)';
+                    ctx.lineWidth = 1.5;
+                    ctx.beginPath(); ctx.moveTo(0, 0); ctx.lineTo(sl * Math.cos(sa), sl * Math.sin(sa)); ctx.stroke();
+                    ctx.restore();
+                });
+                label(460, LH - 14, 'Echo amplitude = ⟨cos Δφ⟩ = F(Q,t) — Intermediate scattering function');
+            }
+        },
+
+    };
+
+    // Derived instruments — share animation code, different label/tag/info
+    INSTRUMENTS.powder = Object.assign({}, INSTRUMENTS.powgen, {
+        label: 'POWDER (HB-2A)',
+        tag:   'HFIR · HB-2A · Reactor Monochromatic',
+        info: `<h3>POWDER / HB-2A (HFIR)</h3>
+            <span class="info-tag">Bragg's law · 2d sinθ = nλ · reactor source</span>
+            <p>HB-2A is the POWDER diffractometer at the High Flux Isotope Reactor (HFIR), a constant-wavelength reactor instrument. A Ge or Si monochromator Bragg-selects a single wavelength (typically 1.54 Å) from the reactor's continuous white beam, producing a truly monochromatic beam with no time-of-flight ambiguity.</p>
+            <p>High flux from the reactor combined with a large vertically focusing monochromator gives excellent counting statistics. The instrument excels at high-resolution magnetic structure determination and temperature-dependent studies of phase transitions where continuous data collection (no pulsed timing) is an advantage.</p>
+            <ul>
+                <li>Color = neutron wavelength (blue=fast/short, red=slow/long λ)</li>
+                <li>Constant wavelength: resolution depends on monochromator geometry, not time-of-flight</li>
+                <li>Optimized for nuclear and magnetic structure determination at low temperature and field</li>
+                <li>Instrument: HB-2A, HFIR (ORNL)</li>
+            </ul>`
+    });
+    INSTRUMENTS.arcs = Object.assign({}, INSTRUMENTS.sequoia, {
+        label: 'ARCS',
+        tag:   'SNS · BL-18 · Wide Angular Range',
+        info: `<h3>ARCS (SNS)</h3>
+            <span class="info-tag">Time-of-flight · S(Q,ω) · High count rate</span>
+            <p>ARCS (Wide Angular-Range Chopper Spectrometer, SNS BL-18) is designed for high count-rate measurements with large detector area covering 3°–140° in-plane and ±30° out-of-plane. The pulsed SNS source produces short neutron bursts; a Fermi chopper selects Ei; arrival time at the detector encodes Ef and ℏω = Ei − Ef.</p>
+            <p>ARCS's large solid-angle coverage makes it especially powerful for mapping phonon dispersions and spin excitations in polycrystalline samples over a wide Q range in a single measurement, and for survey measurements of single crystals at elevated temperatures or under applied field.</p>
+            <ul>
+                <li>Detector: 3°–140°; 2.5 m sample-to-detector distance</li>
+                <li>Ei range: 10 meV – 2 eV; optimized for wide Q coverage</li>
+                <li>Instrument: ARCS, SNS BL-18</li>
+            </ul>`
+    });
+    INSTRUMENTS.hyspec = Object.assign({}, INSTRUMENTS.sequoia, {
+        label: 'HYSPEC',
+        tag:   'SNS · BL-14B · Focusing Optics',
+        info: `<h3>HYSPEC (SNS)</h3>
+            <span class="info-tag">Time-of-flight · S(Q,ω) · Focusing Bragg optics</span>
+            <p>HYSPEC (Hybrid Spectrometer, SNS BL-14B) combines pulsed-source time-of-flight with a focusing Bragg crystal monochromator to deliver high flux onto small single-crystal samples. The focusing geometry dramatically increases neutron intensity at the sample compared to a conventional Fermi chopper, making HYSPEC ideal for small or dilute samples.</p>
+            <p>HYSPEC is especially suited for mapping low-energy magnetic excitations (Ei: 3.5–150 meV) in milligram-scale single crystals — the regime where spin-wave gaps, zone-center modes, and crystal-field excitations in correlated magnets are most informative.</p>
+            <ul>
+                <li>Focusing Bragg optics: 10–100× flux gain at sample vs. Fermi chopper instruments</li>
+                <li>Ei range: 3.5–150 meV; ideal for magnetic excitations and crystal-field spectroscopy</li>
+                <li>Instrument: HYSPEC, SNS BL-14B</li>
+            </ul>`
+    });
+
+    // ── Resize canvases ────────────────────────────────────────────────────────
+    function resize() {
+        const shell = canvas.parentElement;
+        canvas.width  = shell.clientWidth  || 900;
+        canvas.height = shell.clientHeight || 506;
+        sCanvas.width  = sCanvas.clientWidth  || SW;
+        sCanvas.height = sCanvas.clientHeight || SH;
+    }
+    window.addEventListener('resize', resize);
+    resize();
+
+    // ── Main render loop ───────────────────────────────────────────────────────
+    function loop(ts) {
+        requestAnimationFrame(loop);
+        if (!activeKey) return;
+        const t  = ts * 0.001;
+        const dt = Math.min(t - (prevT || t), 0.05);
+        prevT = t;
+        const inst = INSTRUMENTS[activeKey];
+        const scaleX = canvas.width  / LW;
+        const scaleY = canvas.height / LH;
+        const scale  = Math.min(scaleX, scaleY);
+        const offX   = (canvas.width  - LW * scale) / 2;
+        const offY   = (canvas.height - LH * scale) / 2;
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+        ctx.save();
+        ctx.translate(offX, offY);
+        ctx.scale(scale, scale);
+        drawBG();
+        inst.update(state, t, dt);
+        inst.draw(state, t);
+        ctx.restore();
+        if (inst.plotSignal && state.signal) inst.plotSignal(state.signal);
+    }
+    requestAnimationFrame(loop);
+
+    // ── Instrument selection ───────────────────────────────────────────────────
+    const SIG_AXIS = {
+        powgen:   'x: 2θ  |  y: Counts',
+        powder:   'x: 2θ  |  y: Counts',
+        sequoia:  'x: ℏω  |  y: S(Q,ω)',
+        arcs:     'x: ℏω  |  y: S(Q,ω)',
+        hyspec:   'x: ℏω  |  y: S(Q,ω)',
+        magref:   'x: Q⊥ (Å⁻¹)  |  y: R(Q⊥)',
+        nse:      'x: t (ns)  |  y: F(Q,t)',
+    };
+
+    function selectInstrument(key) {
+        activeKey = key;
+        prevT = null;
+        state = INSTRUMENTS[key].init();
+        placeholder.style.display = 'none';
+        infoPanel.innerHTML = INSTRUMENTS[key].info;
+        axisLabel.textContent = SIG_AXIS[key] || '—';
+        resize();
+        document.querySelectorAll('.inst-card').forEach(function (c) { c.classList.toggle('active', c.dataset.inst === key); });
+    }
+
+    document.querySelectorAll('.inst-card').forEach(function (card) {
+        card.addEventListener('click', function () { selectInstrument(card.dataset.inst); });
+    });
+    })();
+    </script>
+</body>
+</html>
