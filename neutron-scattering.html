@@ -358,10 +358,10 @@
             const hit = hitArr ? (hitArr[i] || 0) : 0;
             const x = cx + r * Math.cos(a), y = cy + r * Math.sin(a);
             ctx.save(); ctx.translate(x, y); ctx.rotate(a + Math.PI / 2);
-            ctx.beginPath(); ctx.rect(-5, -8, 10, 16);
-            ctx.fillStyle = hit > 0 ? `rgba(34,211,238,${Math.min(1, hit)})` : C.det;
-            ctx.strokeStyle = 'rgba(92,194,210,0.35)'; ctx.lineWidth = 1;
-            ctx.fill(); ctx.stroke();
+            ctx.beginPath(); ctx.rect(-4, -8, 8, 16);
+            ctx.fillStyle = hit > 0.05 ? 'rgba(34,211,238,0.90)' : 'rgba(18,52,95,0.80)';
+            ctx.fill();
+            ctx.strokeStyle = 'rgba(92,194,210,0.20)'; ctx.lineWidth = 0.5; ctx.stroke();
             ctx.restore();
         }
     }
@@ -712,11 +712,12 @@
                     const dx = SX + detR * Math.cos(ang);
                     const dy = SY + detR * Math.sin(ang);
                     const hit = s.detHit[di] || 0;
-                    const dNorm2 = Math.abs(ang) / Math.PI;
-                    const baseCol = wlCol(dNorm2, 0.55);
-                    const hitCol = `rgba(0,220,180,${0.45 + hit * 0.55})`;
-                    ctx.beginPath(); ctx.arc(dx, dy, 5, 0, Math.PI * 2);
-                    ctx.fillStyle = hit > 0.05 ? hitCol : baseCol; ctx.fill();
+                    ctx.save(); ctx.translate(dx, dy); ctx.rotate(ang + Math.PI / 2);
+                    ctx.beginPath(); ctx.rect(-4, -8, 8, 16);
+                    ctx.fillStyle = hit > 0.08 ? 'rgba(34,211,238,0.90)' : 'rgba(18,52,95,0.80)';
+                    ctx.fill();
+                    ctx.strokeStyle = 'rgba(92,194,210,0.20)'; ctx.lineWidth = 0.5; ctx.stroke();
+                    ctx.restore();
                 }
                 ctx.beginPath(); ctx.arc(SX, SY, detR, 5 * Math.PI / 180, 168 * Math.PI / 180);
                 ctx.strokeStyle = 'rgba(0,143,163,0.30)'; ctx.lineWidth = 1.5; ctx.stroke();
@@ -935,15 +936,14 @@
                     const ang = -Math.PI + di * (2 * Math.PI / nDet);
                     const dx = SX + detR * Math.cos(ang);
                     const dy = SY + detR * Math.sin(ang);
-                    // Skip pixels that would overlap the primary beam tube on the left
                     if (dx < SX - detR * 0.72) continue;
                     const hit = s.detHit[di] || 0;
-                    // Color by 2θ angle (matches the schematic's Qx/Qy map)
-                    const twoTheta = Math.abs(ang) / Math.PI; // 0=forward, 1=backward
-                    const detBase = `rgba(${Math.round(20 + twoTheta * 30)},${Math.round(55 + twoTheta * 35)},${Math.round(120 - twoTheta * 40)},0.65)`;
-                    const detHit2 = `rgba(0,220,180,${0.45 + hit * 0.55})`;
-                    ctx.beginPath(); ctx.arc(dx, dy, 5, 0, Math.PI * 2);
-                    ctx.fillStyle = hit > 0.05 ? detHit2 : detBase; ctx.fill();
+                    ctx.save(); ctx.translate(dx, dy); ctx.rotate(ang + Math.PI / 2);
+                    ctx.beginPath(); ctx.rect(-4, -8, 8, 16);
+                    ctx.fillStyle = hit > 0.08 ? 'rgba(34,211,238,0.90)' : 'rgba(18,52,95,0.80)';
+                    ctx.fill();
+                    ctx.strokeStyle = 'rgba(92,194,210,0.20)'; ctx.lineWidth = 0.5; ctx.stroke();
+                    ctx.restore();
                 }
                 // Arc outline (partial – right 3/4 of cylinder)
                 ctx.beginPath(); ctx.arc(SX, SY, detR, -Math.PI * 0.72, Math.PI * 0.72);
@@ -1316,7 +1316,7 @@
 
                 // ── Sample ─────────────────────────────────────────────────────────────
                 drawGuide(RF2 + 8, SY, SX - 16, SY, 8);
-                drawSample(SX, SY, 'Sample\n(soft matter)');
+                drawSample(SX, SY, 'Sample');
                 drawGuide(SX + 16, SY, RF3 - 8, SY, 8);
 
                 drawRFFlip(RF3, 'RF₃', 'π/2');
@@ -1544,12 +1544,12 @@
                 const dx = SX + detR * Math.cos(ang);
                 const dy = SY + detR * Math.sin(ang);
                 const hit = s.detHit[di] || 0;
-                const col = hit > 0.05
-                    ? `rgba(0,220,180,${0.45 + hit * 0.50})`
-                    : 'rgba(20,70,110,0.65)';
-                ctx.beginPath(); ctx.arc(dx, dy, 5.5, 0, Math.PI * 2);
-                ctx.fillStyle = col; ctx.fill();
-                if (hit > 0.1) { ctx.strokeStyle = `rgba(0,220,180,${hit * 0.35})`; ctx.lineWidth = 1; ctx.stroke(); }
+                ctx.save(); ctx.translate(dx, dy); ctx.rotate(ang + Math.PI / 2);
+                ctx.beginPath(); ctx.rect(-4, -9, 8, 18);
+                ctx.fillStyle = hit > 0.08 ? 'rgba(34,211,238,0.90)' : 'rgba(18,52,95,0.80)';
+                ctx.fill();
+                ctx.strokeStyle = 'rgba(92,194,210,0.20)'; ctx.lineWidth = 0.5; ctx.stroke();
+                ctx.restore();
             }
             // Arc outline
             ctx.beginPath(); ctx.arc(SX, SY, detR, -detSpan, detSpan);
