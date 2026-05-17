@@ -603,7 +603,7 @@
             draw(s, t) {
                 const SX = 490, SY = LH / 2;
                 const MX = 210, MY = LH / 2;
-                drawSource(80, SY, 'spallation', t);
+                drawSource(80, SY, this._sourceType || 'spallation', t);
 
                 // Polychromatic guide — rainbow gradient
                 const rg = ctx.createLinearGradient(104, SY - 8, 190, SY - 8);
@@ -1095,7 +1095,7 @@
     };
 
     // Derived instruments — share animation code, different label/tag/info
-    INSTRUMENTS.powder = Object.assign({}, INSTRUMENTS.powgen, {
+    INSTRUMENTS.powder = Object.assign({}, INSTRUMENTS.powgen, { _sourceType: 'reactor' }, {
         label: 'POWDER (HB-2A)',
         tag:   'HFIR · HB-2A · Reactor Monochromatic',
         info: `<h3>POWDER / HB-2A (HFIR)</h3>
@@ -1122,19 +1122,193 @@
                 <li>Instrument: ARCS, SNS BL-18</li>
             </ul>`
     });
-    INSTRUMENTS.hyspec = Object.assign({}, INSTRUMENTS.sequoia, {
+    INSTRUMENTS.hyspec = {
         label: 'HYSPEC',
-        tag:   'SNS · BL-14B · Focusing Optics',
+        tag:   'SNS · BL-14B · Direct Geometry · Three Choppers',
         info: `<h3>HYSPEC (SNS)</h3>
-            <span class="info-tag">Time-of-flight · S(Q,ω) · Focusing Bragg optics</span>
-            <p>HYSPEC (Hybrid Spectrometer, SNS BL-14B) combines pulsed-source time-of-flight with a focusing Bragg crystal monochromator to deliver high flux onto small single-crystal samples. The focusing geometry dramatically increases neutron intensity at the sample compared to a conventional Fermi chopper, making HYSPEC ideal for small or dilute samples.</p>
-            <p>HYSPEC is especially suited for mapping low-energy magnetic excitations (Ei: 3.5–150 meV) in milligram-scale single crystals — the regime where spin-wave gaps, zone-center modes, and crystal-field excitations in correlated magnets are most informative.</p>
+            <span class="info-tag">Direct geometry · T0/T1/T2 choppers · S(Q,ω)</span>
+            <p>HYSPEC (High Resolution Chopper Spectrometer, SNS BL-14B) is a direct-geometry chopper spectrometer with three disc choppers along the 19.2 m primary flight path. T0 (Decoupler, 4.0 m) suppresses prompt γ and fast neutrons. T1 (Moderator Chopper, 7.7 m) selects the incident energy Ei. T2 (Pre-sample Chopper, 11.1 m) removes frame-overlap neutrons.</p>
+            <p>After the sample, scattered neutrons travel ~2.0 m to a curved bank of ³He position-sensitive detectors (3.0 m dia.) spanning a wide angular range. Energy transfer ℏω = Ei − Ef is measured by the neutron's arrival time at the detector.</p>
             <ul>
-                <li>Focusing Bragg optics: 10–100× flux gain at sample vs. Fermi chopper instruments</li>
-                <li>Ei range: 3.5–150 meV; ideal for magnetic excitations and crystal-field spectroscopy</li>
+                <li>T0 · T1 · T2 disc choppers in sequence along the primary flight path</li>
+                <li>Ei range: 3.5–150 meV; resolution δE/Ei &lt; 2% at low Ei</li>
+                <li>³He position-sensitive detector arc: 3.0 m dia., wide Q coverage</li>
                 <li>Instrument: HYSPEC, SNS BL-14B</li>
-            </ul>`
-    });
+            </ul>`,
+        init() {
+            const signal = new Float32Array(120);
+            for (let b = 0; b < 120; b++) {
+                const hw = (b / 120) - 0.5;
+                signal[b] = 0.18 * Math.exp(-0.5 * (hw / 0.025) ** 2)
+                          + 0.12 * Math.exp(-0.5 * ((hw + 0.18) / 0.04) ** 2)
+                          + 0.20 * Math.exp(-0.5 * ((hw - 0.18) / 0.04) ** 2);
+            }
+            return { particles: [], spawnT: 0, pulseT: -99, t0A: 0, t1A: 0, t2A: 0,
+                     detHit: new Array(56).fill(0), signal };
+        },
+        update(s, t, dt) {
+            s.t0A += dt * 22;
+            s.t1A += dt * 13;
+            s.t2A += dt * 13;
+            s.detHit = s.detHit.map(function (v) { return Math.max(0, v - dt * 0.65); });
+            const SX = 530, SY = LH / 2;
+            const T0X = 198, T1X = 306, T2X = 400;
+            if (t - s.pulseT > 1.35) {
+                s.pulseT = t;
+                for (let k = 0; k < 13; k++) {
+                    const lam = sampleLambda();
+                    const spd = 100 + (1 - lam) * 220;
+                    s.particles.push({ x: 90, y: SY + (Math.random() - 0.5) * 10,
+                        vx: spd, vy: 0, lam, w: 1, r: 4.5, col: wlCol(lam), en: 1 - lam,
+                        state: 'pre0', t0: t, dE: 0 });
+                }
+            }
+            for (let i = s.particles.length - 1; i >= 0; i--) {
+                const p = s.particles[i];
+                p.x += p.vx * dt; p.y += p.vy * dt;
+                if (p.state === 'pre0' && p.x > T0X) {
+                    if (Math.random() < 0.78) { p.state = 'pre1'; }
+                    else { s.particles.splice(i, 1); continue; }
+                }
+                if (p.state === 'pre1' && p.x > T1X) {
+                    const gate = Math.sin(s.t1A * 1.8) > 0.58 && p.en > 0.28 && p.en < 0.72;
+                    if (gate) {
+                        p.state = 'pre2'; p.lam = 0.40; p.col = wlCol(0.40);
+                        p.vx = 185; p.vy = (Math.random() - 0.5) * 7;
+                    } else { s.particles.splice(i, 1); continue; }
+                }
+                if (p.state === 'pre2' && p.x > T2X) {
+                    if (Math.random() < 0.88) { p.state = 'pre_s'; }
+                    else { s.particles.splice(i, 1); continue; }
+                }
+                if (p.state === 'pre_s' && Math.hypot(p.x - SX, p.y - SY) < 16) {
+                    const r2 = Math.random();
+                    let dE = r2 < 0.28 ? 0 : r2 < 0.54 ? -(0.15 + Math.random() * 0.06) : 0.15 + Math.random() * 0.06;
+                    dE += (Math.random() - 0.5) * 0.03;
+                    const newEn = Math.max(0.05, p.en + dE);
+                    const spd2 = 75 + newEn * 180;
+                    const a = (Math.random() - 0.5) * 2.6;
+                    p.vx = spd2 * Math.cos(a); p.vy = spd2 * Math.sin(a);
+                    p.en = newEn; p.lam = 1 - newEn;
+                    p.col = wlCol(Math.max(0, Math.min(1, p.lam)));
+                    p.state = 'out'; p.dE = dE;
+                }
+                if (p.state === 'out') {
+                    const dist = Math.hypot(p.x - SX, p.y - SY);
+                    const ang = Math.atan2(p.y - SY, p.x - SX);
+                    if (dist > 195 && dist < 235 && Math.abs(ang) < 1.35) {
+                        const bin = Math.min(119, Math.max(0, Math.floor(((p.dE + 0.5) / 1.0) * 120)));
+                        s.signal[bin] = Math.min(1, s.signal[bin] + 0.014);
+                        const di = Math.min(55, Math.max(0, Math.floor(((ang + 1.35) / 2.7) * 56)));
+                        s.detHit[di] = Math.min(1, s.detHit[di] + 0.85);
+                        s.particles.splice(i, 1); continue;
+                    }
+                }
+                if (p.x > LW + 50 || p.x < -50 || p.y < -50 || p.y > LH + 50) s.particles.splice(i, 1);
+            }
+        },
+        draw(s, t) {
+            const SX = 530, SY = LH / 2;
+            const T0X = 198, T1X = 306, T2X = 400;
+            const detR = 212, detSpan = 1.35;
+            const nDet = 56;
+
+            drawSource(55, SY, 'spallation', t);
+
+            // Beam tube from source to T2, then guide section to sample
+            drawGuide(90, SY, T0X - 22, SY, 10);
+            drawGuide(T0X + 22, SY, T1X - 22, SY, 10);
+            drawGuide(T1X + 22, SY, T2X - 22, SY, 10);
+            drawGuide(T2X + 22, SY, SX - 18, SY, 9);
+
+            // Draw beam axis dashes
+            ctx.setLineDash([4, 6]);
+            ctx.strokeStyle = 'rgba(0,143,163,0.12)'; ctx.lineWidth = 1;
+            ctx.beginPath(); ctx.moveTo(90, SY); ctx.lineTo(SX - 18, SY); ctx.stroke();
+            ctx.setLineDash([]);
+
+            // Primary flight path brace
+            ctx.beginPath(); ctx.moveTo(90, SY - 48); ctx.lineTo(SX, SY - 48);
+            ctx.strokeStyle = 'rgba(0,143,163,0.28)'; ctx.lineWidth = 1;
+            ctx.setLineDash([3, 5]); ctx.stroke(); ctx.setLineDash([]);
+            label((90 + SX) / 2, SY - 56, 'Primary flight path  19.2 m', { size: 10, color: 'rgba(0,143,163,0.55)' });
+
+            // Three disc choppers
+            function drawDisc(cx, t_label, b_label, angle) {
+                const R = 42;
+                ctx.beginPath(); ctx.arc(cx, SY, R, 0, Math.PI * 2);
+                ctx.fillStyle = 'rgba(30,60,80,0.80)'; ctx.fill();
+                ctx.strokeStyle = 'rgba(80,130,160,0.80)'; ctx.lineWidth = 1.5; ctx.stroke();
+                // Slot opening
+                ctx.save(); ctx.translate(cx, SY); ctx.rotate(angle);
+                ctx.beginPath(); ctx.moveTo(0, 0); ctx.arc(0, 0, R, -0.13, 0.13); ctx.closePath();
+                ctx.fillStyle = 'rgba(100,220,240,0.28)'; ctx.fill(); ctx.restore();
+                // Spokes
+                for (let k = 0; k < 4; k++) {
+                    const a = angle + k * Math.PI / 2;
+                    ctx.beginPath();
+                    ctx.moveTo(cx + 10 * Math.cos(a), SY + 10 * Math.sin(a));
+                    ctx.lineTo(cx + (R - 4) * Math.cos(a), SY + (R - 4) * Math.sin(a));
+                    ctx.strokeStyle = 'rgba(80,130,160,0.30)'; ctx.lineWidth = 1; ctx.stroke();
+                }
+                // Hub
+                ctx.beginPath(); ctx.arc(cx, SY, 9, 0, Math.PI * 2);
+                ctx.fillStyle = 'rgba(20,50,70,0.95)'; ctx.fill();
+                ctx.strokeStyle = 'rgba(80,130,160,0.65)'; ctx.lineWidth = 1; ctx.stroke();
+                label(cx, SY - R - 11, t_label, { size: 11 });
+                label(cx, SY + R + 14, b_label, { size: 9, color: 'rgba(92,194,210,0.55)' });
+            }
+            drawDisc(T0X, 'T₀', 'Decoupler', s.t0A);
+            drawDisc(T1X, 'T₁', 'Ei selector', s.t1A);
+            drawDisc(T2X, 'T₂', 'Frame overlap', s.t2A);
+
+            // Sample
+            drawSample(SX, SY);
+            label(SX, SY + 30, 'Sample', { size: 10 });
+
+            // Secondary flight path L₂ indicator
+            ctx.setLineDash([3, 4]);
+            ctx.strokeStyle = 'rgba(0,143,163,0.22)'; ctx.lineWidth = 1;
+            ctx.beginPath();
+            ctx.arc(SX, SY, detR - 15, -0.38, 0.38); ctx.stroke();
+            ctx.setLineDash([]);
+            label(SX + detR - 60, SY - 22, 'L₂ ≈ 2.0 m', { size: 9, color: 'rgba(0,143,163,0.45)' });
+
+            // Curved ³He PSD detector bank (the 3 m dia arc)
+            for (let di = 0; di < nDet; di++) {
+                const ang = -detSpan + di * (2 * detSpan / (nDet - 1));
+                const dx = SX + detR * Math.cos(ang);
+                const dy = SY + detR * Math.sin(ang);
+                const hit = s.detHit[di] || 0;
+                const col = hit > 0.05
+                    ? `rgba(0,220,180,${0.45 + hit * 0.50})`
+                    : 'rgba(20,70,110,0.65)';
+                ctx.beginPath(); ctx.arc(dx, dy, 5.5, 0, Math.PI * 2);
+                ctx.fillStyle = col; ctx.fill();
+                if (hit > 0.1) { ctx.strokeStyle = `rgba(0,220,180,${hit * 0.35})`; ctx.lineWidth = 1; ctx.stroke(); }
+            }
+            // Arc outline
+            ctx.beginPath(); ctx.arc(SX, SY, detR, -detSpan, detSpan);
+            ctx.strokeStyle = 'rgba(0,143,163,0.38)'; ctx.lineWidth = 1.5; ctx.stroke();
+
+            // Detector label
+            label(SX + detR * Math.cos(0) + 24, SY - 26, '³He PSD', { size: 9, color: C.teal, align: 'left' });
+            label(SX + detR * Math.cos(0) + 24, SY - 12, '3.0 m dia.', { size: 9, color: 'rgba(92,194,210,0.5)', align: 'left' });
+
+            // Instrument label bottom
+            label(SX / 2 + 50, LH - 12, 'T₀ · T₁ · T₂ disc choppers → sample → curved ³He detector bank');
+
+            // Neutrons
+            s.particles.forEach(function (p) { drawNeutron(p.x, p.y, p.r, p.col, p.w); });
+        },
+        plotSignal(sig) {
+            drawSignalPlot(sig, {
+                xL: '−Ei', xM: '0', xR: '+Ei',
+                xTitle: 'ℏω  (energy transfer)', yTitle: 'S(Q,ω)',
+                lineCol: 'rgb(0,200,170)'
+            });
+        }
+    };
 
     // ── Resize canvases ────────────────────────────────────────────────────────
     function resize() {
