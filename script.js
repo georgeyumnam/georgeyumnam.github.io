@@ -52,9 +52,9 @@ window.addEventListener('scroll', onScroll); onScroll();
 
   const NEUTRON_R      = 9;
   const NEUTRON_SPEED  = 260;  // px/s, all fly left → right
-  const NEUTRON_WINDOW = 3.0;  // seconds per spawn window
-  const NEUTRON_MAX    = 10;   // neutrons per window
-  const ANGLE          = 0;                    // entry angle from horizontal (rad) — horizontal propagation, vertical wavefronts
+  const NEUTRON_WINDOW = 60.0; // seconds between bunches
+  const NEUTRON_MAX    = 10;   // neutrons per bunch
+  const ANGLE          = 0;                    // entry angle from horizontal (rad)
   const REFLECT_ANGLE  = -20 * Math.PI / 180; // fixed outgoing angle after collision (rad)
   const A              = D / 2;               // perpendicular lane spacing (half honeycomb lattice)
 
@@ -250,7 +250,7 @@ window.addEventListener('scroll', onScroll); onScroll();
     const dt = Math.min(t - prevT, 0.05);
     prevT = t;
     if (t - nWindowStart >= NEUTRON_WINDOW) { nWindowStart = t; nCountInWindow = 0; }
-    if (nCountInWindow < NEUTRON_MAX && t - nLastSpawn >= NEUTRON_WINDOW / NEUTRON_MAX) {
+    if (nCountInWindow < NEUTRON_MAX && t - nLastSpawn >= 0.25) {
       spawnNeutron(t); nCountInWindow++; nLastSpawn = t;
     }
     for (let i = neutrons.length - 1; i >= 0; i--) {
