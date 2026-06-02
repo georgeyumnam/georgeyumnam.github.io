@@ -193,8 +193,9 @@
             <div class="demo-wrap">
                 <div class="canvas-shell">
                     <canvas id="demo-canvas"></canvas>
-                    <div id="pol-toggle-wrap" style="position:absolute;top:10px;left:10px;z-index:10;display:none;">
+                    <div id="pol-toggle-wrap" style="position:absolute;top:10px;left:10px;z-index:10;display:none;display:flex;flex-direction:column;gap:6px;">
                         <button id="pol-toggle-canvas" style="background:rgba(22,61,86,0.72);backdrop-filter:blur(8px);border:1.5px solid var(--teal);color:#d8f3ff;border-radius:8px;padding:0.3rem 0.85rem;font-size:1.05rem;font-weight:600;cursor:pointer;transition:all 0.2s;">◯ Unpolarized</button>
+                        <button id="mag-toggle-canvas" style="background:rgba(22,61,86,0.72);backdrop-filter:blur(8px);border:1.5px solid var(--teal);color:#d8f3ff;border-radius:8px;padding:0.3rem 0.85rem;font-size:1.05rem;font-weight:600;cursor:pointer;transition:all 0.2s;display:none;">◯ Non-magnetic</button>
                     </div>
                     <div class="canvas-placeholder" id="canvas-placeholder">
                         <i class="fas fa-atom"></i>
@@ -1613,7 +1614,7 @@
             }
             return { particles: [], spawnT: 0, pulseT: -99, t0A: 0, t1A: 0, t2A: 0,
                      detHit: new Array(56).fill(0), detHitDown: new Array(56).fill(0),
-                     polarized: false, pulseNum: 0, signal };
+                     polarized: false, magnetic: false, pulseNum: 0, signal };
         },
         update(s, t, dt) {
             s.t0A += dt * 22;
@@ -1669,8 +1670,9 @@
                     p.vx = spd2 * Math.cos(a); p.vy = spd2 * Math.sin(a);
                     p.en = newEn; p.lam = 1 - newEn;
                     p.col = wlCol(Math.max(0, Math.min(1, p.lam)));
-                    // Spin-flip scattering: ~40% probability in polarized mode
-                    if (s.polarized && Math.random() < 0.40) p.spinUp = !p.spinUp;
+                    // Spin-flip: magnetic → ~60% SF (strong magnetic signal); non-magnetic → ~8% SF (nuclear incoherent only)
+                    const sfProb = s.polarized ? (s.magnetic ? 0.60 : 0.08) : 0;
+                    if (sfProb > 0 && Math.random() < sfProb) p.spinUp = !p.spinUp;
                     p.state = 'out'; p.dE = dE;
                 }
                 if (p.state === 'out') {
@@ -1764,8 +1766,26 @@
                 label(POL_X, SY - 40, 'SM Pol.', { size: 9, color: 'rgba(180,100,255,0.85)' });
             }
 
-            // Sample
-            drawSample(SX, SY);
+            // Sample — magnetic or non-magnetic
+            if (s.polarized && s.magnetic) {
+                glow(SX, SY, 50, 'rgb(220,60,60)', 0.20);
+                ctx.beginPath(); ctx.arc(SX, SY, 14, 0, Math.PI * 2);
+                ctx.fillStyle = '#a03050'; ctx.fill();
+                ctx.strokeStyle = '#ff7070'; ctx.lineWidth = 2; ctx.stroke();
+                ctx.save(); ctx.beginPath(); ctx.arc(SX, SY, 13, 0, Math.PI * 2); ctx.clip();
+                ctx.strokeStyle = 'rgba(255,255,255,0.25)'; ctx.lineWidth = 0.9;
+                for (let i = -3; i <= 3; i++) { ctx.beginPath(); ctx.moveTo(SX-14, SY+i*4.5); ctx.lineTo(SX+14, SY+i*4.5); ctx.stroke(); }
+                ctx.restore();
+                // Ordered antiferromagnetic moments around sample
+                for (let mi = 0; mi < 8; mi++) {
+                    const ma = mi * Math.PI / 4;
+                    const mx = SX + 28 * Math.cos(ma), my = SY + 28 * Math.sin(ma);
+                    drawSpinArrow(mx, my, mi % 2 === 0, 0.80);
+                }
+                label(SX, SY + 32, 'Magnetic sample', { color: 'rgba(255,120,120,0.85)' });
+            } else {
+                drawSample(SX, SY, s.polarized ? 'Non-magnetic' : undefined);
+            }
 
             // Secondary flight path L₂ indicator
             ctx.setLineDash([3, 4]);
@@ -1884,14 +1904,31 @@
         const wrap = document.getElementById('pol-toggle-wrap');
         if (wrap) wrap.style.display = (key === 'hyspec') ? 'block' : 'none';
         if (key === 'hyspec') {
-            const btn = document.getElementById('pol-toggle-canvas');
+            const btn    = document.getElementById('pol-toggle-canvas');
+            const magBtn = document.getElementById('mag-toggle-canvas');
             if (btn) { btn.onclick = null; btn.addEventListener('click', function () {
                 state.polarized = !state.polarized;
                 state.particles = [];
                 state.pulseNum  = 0;
-                btn.textContent      = state.polarized ? '⬤ Polarized' : '◯ Unpolarized';
-                btn.style.background = state.polarized ? 'rgba(0,143,163,0.55)' : 'rgba(22,61,86,0.72)';
+                if (!state.polarized) { state.magnetic = false; }
+                btn.textContent       = state.polarized ? '⬤ Polarized' : '◯ Unpolarized';
+                btn.style.background  = state.polarized ? 'rgba(0,143,163,0.55)' : 'rgba(22,61,86,0.72)';
                 btn.style.borderColor = state.polarized ? 'rgba(180,100,255,0.90)' : 'var(--teal)';
+                if (magBtn) {
+                    magBtn.style.display = state.polarized ? 'block' : 'none';
+                    if (!state.polarized) {
+                        magBtn.textContent       = '◯ Non-magnetic';
+                        magBtn.style.background  = 'rgba(22,61,86,0.72)';
+                        magBtn.style.borderColor = 'var(--teal)';
+                    }
+                }
+            }); }
+            if (magBtn) { magBtn.onclick = null; magBtn.addEventListener('click', function () {
+                state.magnetic = !state.magnetic;
+                state.particles = [];
+                magBtn.textContent       = state.magnetic ? '⬤ Magnetic'    : '◯ Non-magnetic';
+                magBtn.style.background  = state.magnetic ? 'rgba(180,40,40,0.60)' : 'rgba(22,61,86,0.72)';
+                magBtn.style.borderColor = state.magnetic ? 'rgba(255,100,100,0.90)' : 'var(--teal)';
             }); }
         }
     }
