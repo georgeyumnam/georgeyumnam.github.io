@@ -382,8 +382,8 @@
         const dir = spinUp ? -1 : 1;
         ctx.save(); ctx.translate(x, y);
         ctx.strokeStyle = col; ctx.lineWidth = 1.5;
-        ctx.beginPath(); ctx.moveTo(0, dir * 4); ctx.lineTo(0, dir * 12); ctx.stroke();
-        ctx.beginPath(); ctx.moveTo(-3, dir * 8); ctx.lineTo(0, dir * 12); ctx.lineTo(3, dir * 8); ctx.stroke();
+        ctx.beginPath(); ctx.moveTo(0, 0); ctx.lineTo(0, dir * 11); ctx.stroke();
+        ctx.beginPath(); ctx.moveTo(-3, dir * 7); ctx.lineTo(0, dir * 11); ctx.lineTo(3, dir * 7); ctx.stroke();
         ctx.restore();
     }
 
@@ -1717,13 +1717,14 @@
 
             // ── Supermirror polarizer (polarized mode only) ───────────────────────
             if (s.polarized) {
-                const POL_X = 112;
+                const POL_X = 118;
+                ctx.save(); ctx.translate(POL_X, SY);
                 ctx.fillStyle = 'rgba(120,50,200,0.75)';
-                ctx.fillRect(POL_X - 6, SY - 34, 12, 68);
+                ctx.fillRect(-6, -28, 12, 56);
                 ctx.strokeStyle = 'rgba(180,100,255,0.90)'; ctx.lineWidth = 1.5;
-                ctx.strokeRect(POL_X - 6, SY - 34, 12, 68); ctx.restore && ctx.restore();
-                label(POL_X, SY - 46, 'SM', { size: 9, color: 'rgba(180,100,255,0.85)' });
-                label(POL_X, SY - 34, 'Pol.', { size: 9, color: 'rgba(180,100,255,0.85)' });
+                ctx.strokeRect(-6, -28, 12, 56);
+                ctx.restore();
+                label(POL_X, SY - 40, 'SM Pol.', { size: 9, color: 'rgba(180,100,255,0.85)' });
             }
 
             // Sample
@@ -1737,13 +1738,21 @@
             ctx.setLineDash([]);
             label(SX + detR - 60, SY - 22, 'L₂ ≈ 2.0 m', { size: 9, color: 'rgba(0,143,163,0.45)' });
 
-            // ── ³He Analyzer arc (polarized mode only) ────────────────────────────
+            // ── ³He Analyzer arc tiles (polarized mode only) ─────────────────────
             if (s.polarized) {
-                const anaR = Math.round(detR * 0.62);
-                ctx.beginPath(); ctx.arc(SX, SY, anaR, -detSpan * 0.88, detSpan * 0.88);
-                ctx.strokeStyle = 'rgba(180,100,255,0.65)'; ctx.lineWidth = 2.5; ctx.stroke();
-                label(SX + anaR + 6, SY - 14, '³He', { size: 9, color: 'rgba(180,100,255,0.80)', align: 'left' });
-                label(SX + anaR + 6, SY,      'Ana.', { size: 9, color: 'rgba(180,100,255,0.80)', align: 'left' });
+                const anaR = Math.round(detR * 0.65);
+                const anaSpan = detSpan * 0.90, nAna = 28;
+                for (let ai = 0; ai < nAna; ai++) {
+                    const ang = -anaSpan + ai * (2 * anaSpan / (nAna - 1));
+                    const ax = SX + anaR * Math.cos(ang), ay = SY + anaR * Math.sin(ang);
+                    ctx.save(); ctx.translate(ax, ay); ctx.rotate(ang + Math.PI / 2);
+                    ctx.fillStyle = 'rgba(120,50,200,0.62)';
+                    ctx.fillRect(-3, -7, 6, 14);
+                    ctx.strokeStyle = 'rgba(180,100,255,0.55)'; ctx.lineWidth = 0.5;
+                    ctx.strokeRect(-3, -7, 6, 14);
+                    ctx.restore();
+                }
+                label(SX + anaR + 8, SY - 8,  '³He Ana.', { size: 9, color: 'rgba(180,100,255,0.80)', align: 'left' });
             }
 
             // Curved ³He PSD detector bank (the 3 m dia arc)
