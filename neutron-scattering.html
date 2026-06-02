@@ -774,7 +774,7 @@
                 s.detHit = s.detHit.map(function (v) { return Math.max(0, v - dt * 0.20); });
                 const SX = 538, SY = LH / 2;
                 const T0X = 108, FC1X = 165, FC2X = 256, FC3X = 348;
-                if (t - s.pulseT > 1.50 && s.particles.length < 350) {
+                if (t - s.pulseT > 3.75 && s.particles.length < 350) {
                     s.pulseT = t;
                     for (let k = 0; k < 188; k++) {
                         const lam = sampleLambda();
@@ -1571,7 +1571,7 @@
             s.detHit = s.detHit.map(function (v) { return Math.max(0, v - dt * 0.20); });
             const SX = 530, SY = LH / 2;
             const T0X = 198, T1X = 306, T2X = 400;
-            if (t - s.pulseT > 1.50 && s.particles.length < 350) {
+            if (t - s.pulseT > 3.75 && s.particles.length < 350) {
                 s.pulseT = t;
                 for (let k = 0; k < 163; k++) {
                     const lam = sampleLambda();
