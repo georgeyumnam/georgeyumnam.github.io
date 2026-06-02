@@ -1035,7 +1035,7 @@
                             p.qBin = Math.min(79, Math.max(0, Math.floor((0.7 - p.lam) / 0.5 * 79)));
                             s.signal = s.sigPlus;
                         } else {
-                            p.vy = Math.abs(p.vy) * 0.30; p.vx *= 0.40;
+                            p.vx *= 0.95; p.vy *= 0.95;
                             p.col = wlCol(Math.min(0.9, p.lam + 0.25)); p.state = 'out';
                         }
                     }
