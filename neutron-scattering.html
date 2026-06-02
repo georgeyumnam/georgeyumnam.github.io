@@ -171,6 +171,9 @@
             <div class="demo-wrap">
                 <div class="canvas-shell">
                     <canvas id="demo-canvas"></canvas>
+                    <div id="pol-toggle-wrap" style="position:absolute;top:10px;left:10px;z-index:10;display:none;">
+                        <button id="pol-toggle-canvas" style="background:rgba(22,61,86,0.72);backdrop-filter:blur(8px);border:1.5px solid var(--teal);color:#d8f3ff;border-radius:8px;padding:0.3rem 0.85rem;font-size:1.05rem;font-weight:600;cursor:pointer;transition:all 0.2s;">◯ Unpolarized</button>
+                    </div>
                     <div class="canvas-placeholder" id="canvas-placeholder">
                         <i class="fas fa-atom"></i>
                         <p>Select an instrument above</p>
@@ -377,13 +380,15 @@
     }
 
     function drawSpinArrow(x, y, spinUp, alpha) {
-        alpha = alpha === undefined ? 0.85 : alpha;
+        alpha = alpha === undefined ? 0.95 : alpha;
         const col = spinUp ? `rgba(92,194,210,${alpha})` : `rgba(255,140,60,${alpha})`;
         const dir = spinUp ? -1 : 1;
+        const tip = dir * 17;
         ctx.save(); ctx.translate(x, y);
-        ctx.strokeStyle = col; ctx.lineWidth = 1.5;
-        ctx.beginPath(); ctx.moveTo(0, 0); ctx.lineTo(0, dir * 11); ctx.stroke();
-        ctx.beginPath(); ctx.moveTo(-3, dir * 7); ctx.lineTo(0, dir * 11); ctx.lineTo(3, dir * 7); ctx.stroke();
+        ctx.strokeStyle = col; ctx.lineWidth = 2;
+        ctx.beginPath(); ctx.moveTo(0, 0); ctx.lineTo(0, tip); ctx.stroke();
+        ctx.fillStyle = col;
+        ctx.beginPath(); ctx.moveTo(0, tip); ctx.lineTo(-4.5, tip - dir * 7); ctx.lineTo(4.5, tip - dir * 7); ctx.closePath(); ctx.fill();
         ctx.restore();
     }
 
@@ -1575,10 +1580,7 @@
                 <li>Instrument: HYSPEC, SNS BL-14B</li>
             </ul>
             <p style="margin-top:0.6rem"><a href="https://neutrons.ornl.gov/hyspec" target="_blank" rel="noopener noreferrer" style="color:var(--teal);font-size:1.1rem">↗ ORNL/SNS HYSPEC instrument page</a></p>
-            <div style="margin-top:0.9rem;display:flex;align-items:center;gap:0.7rem;flex-wrap:wrap;">
-                <button id="pol-toggle" style="background:rgba(0,143,163,0.10);border:1.5px solid var(--teal);color:var(--teal);border-radius:8px;padding:0.35rem 1rem;font-size:1.1rem;font-weight:600;cursor:pointer;transition:all 0.2s;">◯ Unpolarized mode</button>
-                <span style="font-size:1.05rem;color:var(--text-dim);">Toggle full polarization analysis</span>
-            </div>`,
+            <p style="margin-top:0.5rem;font-size:1.05rem;color:var(--text-dim);">Use the <strong style="color:var(--teal)">Unpolarized / Polarized</strong> toggle in the top-left of the animation to switch between modes. Polarized mode cycles: ++ → +− → −+ → −− (NSF/SF channels, cyan/orange detector tiles).</p>`,
         init() {
             const signal = new Float32Array(120);
             for (let b = 0; b < 120; b++) {
@@ -1589,7 +1591,7 @@
             }
             return { particles: [], spawnT: 0, pulseT: -99, t0A: 0, t1A: 0, t2A: 0,
                      detHit: new Array(56).fill(0), detHitDown: new Array(56).fill(0),
-                     polarized: false, signal };
+                     polarized: false, pulseNum: 0, signal };
         },
         update(s, t, dt) {
             s.t0A += dt * 22;
@@ -1601,13 +1603,20 @@
             const T0X = 198, T1X = 306, T2X = 400;
             if (t - s.pulseT > 3.75 && s.particles.length < 350) {
                 s.pulseT = t;
+                // Polarization cycle: ++ / +- / -+ / -- (pulseNum % 4)
+                const pm       = s.polarized ? (s.pulseNum % 4) : 0;
+                const incUp    = pm < 2;           // pulses 0,1 → incident ↑; 2,3 → incident ↓
+                const anaUp    = (pm % 2 === 0);   // pulses 0,2 → analyze ↑;  1,3 → analyze ↓
+                if (s.polarized) s.pulseNum++;
                 for (let k = 0; k < 163; k++) {
                     const lam = sampleLambda();
                     const spd = 100 + (1 - lam) * 220;
                     s.particles.push({ x: 90, y: SY + (Math.random() - 0.5) * 10,
                         vx: spd, vy: 0, lam, w: 1, r: 2.5, col: wlCol(lam), en: 1 - lam,
                         state: 'pre0', t0: t, dE: 0,
-                        spinUp: s.polarized ? true : Math.random() > 0.5 });
+                        spinUp:       s.polarized ? incUp : Math.random() > 0.5,
+                        incidentSpin: s.polarized ? incUp : null,
+                        anaUp:        s.polarized ? anaUp : null });
                 }
             }
             for (let i = s.particles.length - 1; i >= 0; i--) {
@@ -1638,18 +1647,24 @@
                     p.vx = spd2 * Math.cos(a); p.vy = spd2 * Math.sin(a);
                     p.en = newEn; p.lam = 1 - newEn;
                     p.col = wlCol(Math.max(0, Math.min(1, p.lam)));
-                    // In polarized mode assign post-scatter spin (some spin-flip events)
-                    if (s.polarized) p.spinUp = Math.random() > 0.42;
+                    // Spin-flip scattering: ~40% probability in polarized mode
+                    if (s.polarized && Math.random() < 0.40) p.spinUp = !p.spinUp;
                     p.state = 'out'; p.dE = dE;
                 }
                 if (p.state === 'out') {
                     const dist = Math.hypot(p.x - SX, p.y - SY);
-                    const ang = Math.atan2(p.y - SY, p.x - SX);
+                    const ang  = Math.atan2(p.y - SY, p.x - SX);
+                    // Analyzer absorption: only pass neutrons whose spin matches anaUp
+                    if (s.polarized && p.anaUp !== null && dist > 127 && dist < 147 && Math.abs(ang) < 1.35) {
+                        if (p.spinUp !== p.anaUp) { s.particles.splice(i, 1); continue; }
+                    }
                     if (dist > 195 && dist < 235 && Math.abs(ang) < 1.35) {
                         const bin = Math.min(119, Math.max(0, Math.floor(((p.dE + 0.5) / 1.0) * 120)));
                         s.signal[bin] += 0.014;
                         const di = Math.min(55, Math.max(0, Math.floor(((ang + 1.35) / 2.7) * 56)));
-                        if (s.polarized && !p.spinUp) {
+                        // Spin-flip (incidentSpin ≠ scattered spin) → orange; else cyan
+                        const isFlip = s.polarized && p.incidentSpin !== null && p.incidentSpin !== p.spinUp;
+                        if (isFlip) {
                             s.detHitDown[di] = Math.min(1, s.detHitDown[di] + 0.85);
                         } else {
                             s.detHit[di] = Math.min(1, s.detHit[di] + 0.85);
@@ -1740,19 +1755,23 @@
 
             // ── ³He Analyzer arc tiles (polarized mode only) ─────────────────────
             if (s.polarized) {
-                const anaR = Math.round(detR * 0.65);
-                const anaSpan = detSpan * 0.90, nAna = 28;
+                const anaR = 138, anaSpan = detSpan, nAna = 36;
                 for (let ai = 0; ai < nAna; ai++) {
                     const ang = -anaSpan + ai * (2 * anaSpan / (nAna - 1));
                     const ax = SX + anaR * Math.cos(ang), ay = SY + anaR * Math.sin(ang);
                     ctx.save(); ctx.translate(ax, ay); ctx.rotate(ang + Math.PI / 2);
-                    ctx.fillStyle = 'rgba(120,50,200,0.62)';
+                    ctx.fillStyle = 'rgba(120,50,200,0.65)';
                     ctx.fillRect(-3, -7, 6, 14);
                     ctx.strokeStyle = 'rgba(180,100,255,0.55)'; ctx.lineWidth = 0.5;
                     ctx.strokeRect(-3, -7, 6, 14);
                     ctx.restore();
                 }
-                label(SX + anaR + 8, SY - 8,  '³He Ana.', { size: 9, color: 'rgba(180,100,255,0.80)', align: 'left' });
+                label(SX + anaR + 8, SY - 8, '³He Ana.', { size: 9, color: 'rgba(180,100,255,0.80)', align: 'left' });
+                // Current polarization channel label
+                const polCh = ['++ (NSF)', '+− (SF)', '−+ (SF)', '−− (NSF)'];
+                const polCol = ['rgba(34,211,238,0.85)', 'rgba(255,140,60,0.85)', 'rgba(255,140,60,0.85)', 'rgba(34,211,238,0.85)'];
+                const pm = ((s.pulseNum - 1) % 4 + 4) % 4;
+                label(SX - 60, SY - detR - 14, 'Channel: ' + polCh[pm], { size: 10, color: polCol[pm] });
             }
 
             // Curved ³He PSD detector bank (the 3 m dia arc)
@@ -1840,14 +1859,18 @@
         infoPanel.innerHTML = INSTRUMENTS[key].info;
         resize();
         document.querySelectorAll('.inst-card').forEach(function (c) { c.classList.toggle('active', c.dataset.inst === key); });
+        const wrap = document.getElementById('pol-toggle-wrap');
+        if (wrap) wrap.style.display = (key === 'hyspec') ? 'block' : 'none';
         if (key === 'hyspec') {
-            const btn = document.getElementById('pol-toggle');
-            if (btn) btn.addEventListener('click', function () {
+            const btn = document.getElementById('pol-toggle-canvas');
+            if (btn) { btn.onclick = null; btn.addEventListener('click', function () {
                 state.polarized = !state.polarized;
                 state.particles = [];
-                btn.textContent   = state.polarized ? '⬤ Polarized mode' : '◯ Unpolarized mode';
-                btn.style.background = state.polarized ? 'rgba(0,143,163,0.25)' : 'rgba(0,143,163,0.10)';
-            });
+                state.pulseNum  = 0;
+                btn.textContent      = state.polarized ? '⬤ Polarized' : '◯ Unpolarized';
+                btn.style.background = state.polarized ? 'rgba(0,143,163,0.55)' : 'rgba(22,61,86,0.72)';
+                btn.style.borderColor = state.polarized ? 'rgba(180,100,255,0.90)' : 'var(--teal)';
+            }); }
         }
     }
 
