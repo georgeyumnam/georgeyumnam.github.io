@@ -1056,19 +1056,20 @@
                 s.chopA += dt * 11;
                 const SY = 318, a = s.angle;
                 const HIT_X = 460, DX = 800;
+                const P_X = 125;   // SM polarizer x
+                const AN_X = 680;  // ³He analyzer x (on reflected beam side)
                 const srcY = SY - (HIT_X - 80) * Math.tan(a);
                 if (t - s.pulseT > 1.50 && s.particles.length < 350) {
                     s.pulseT = t;
                     for (let k = 0; k < 160; k++) {
                         const lam = 0.2 + Math.random() * 0.5;
-                        const spd = 310;
-                        const thetaC = 0.022 * lam * 2;
-                        const reflected = a > thetaC ? (Math.random() < 0.45) : true;
-                        const spinUp = Math.random() > 0.5;
+                        // TOF: shorter λ = faster neutron (v ∝ 1/λ)
+                        const spd = 140 + (1 - (lam - 0.2) / 0.5) * 170;
                         s.particles.push({ x: 80, y: srcY + (Math.random() - 0.5) * 3,
                             vx: spd * Math.cos(a), vy: spd * Math.sin(a),
                             lam, w: 1, r: 2.5, col: wlCol(lam), state: 'in',
-                            reflected, spinUp });
+                            spinUp: Math.random() > 0.5,   // random spin before polarizer
+                            polPassed: false, anaPassed: false, qBin: null });
                     }
                 }
                 if (s.sigPlus0) {
@@ -1080,21 +1081,47 @@
                 for (let i = s.particles.length - 1; i >= 0; i--) {
                     const p = s.particles[i];
                     p.x += p.vx * dt * PSIM; p.y += p.vy * dt * PSIM;
+
+                    // ── SM Polarizer: only spin-up passes ────────────────────────────────
+                    if (p.state === 'in' && !p.polPassed && p.x > P_X) {
+                        if (!p.spinUp) { s.particles.splice(i, 1); continue; }
+                        p.polPassed = true;
+                    }
+
+                    // ── Sample scatter ────────────────────────────────────────────────────
                     if (p.state === 'in' && p.y >= SY && p.x > HIT_X - 12) {
-                        if (p.reflected) {
+                        // Q = 4π sinθ / λ; reflectivity falls off as (Qc/Q)^4 above Qc
+                        const Qc = s.magnetic
+                            ? (p.spinUp ? 0.048 : 0.039)   // magnetic: spin-split Qc (Å⁻¹ units scaled)
+                            : 0.044;                        // non-magnetic: same Qc both spins
+                        const Q  = 4 * Math.PI * Math.sin(a) / p.lam;
+                        const reflProb = Q < Qc ? 0.95 : Math.min(0.95, 0.95 * Math.pow(Qc / Q, 4));
+
+                        if (Math.random() < reflProb) {
+                            // ── Reflected ────────────────────────────────────────────────
                             p.vy = -Math.abs(p.vy);
-                            // Magnetic: spin-colored beams (R++ cyan, R-- orange); non-magnetic: same reflectivity both spins
-                            p.col = s.magnetic ? (p.spinUp ? '#22d3ee' : '#ff8040') : '#a0e8b0';
-                            p.state = 'out';
+                            // Spin-flip scattering: magnetic → ~35% SF; non-magnetic → 0%
+                            const sfProb = s.magnetic ? 0.35 : 0.0;
+                            if (Math.random() < sfProb) p.spinUp = !p.spinUp;
+                            p.col = p.spinUp ? '#22d3ee' : '#ff8040';
                             p.qBin = Math.min(79, Math.max(0, Math.floor((0.7 - p.lam) / 0.5 * 79)));
-                            s.signal = s.sigPlus;
+                            p.state = 'reflected';
                         } else {
-                            // Transmitted: absorbed into substrate — remove immediately
-                            s.particles.splice(i, 1); continue;
+                            // ── Transmitted / refracted — 0.95× speed ────────────────────
+                            p.vx *= 0.95; p.vy *= 0.95;
+                            p.col = wlCol(Math.min(0.95, p.lam + 0.12));
+                            p.state = 'transmitted';
                         }
                     }
-                    // Visible signal update when reflected neutron reaches PSD detector
-                    if (p.state === 'out' && p.qBin !== undefined && !p.hitCounted && p.x >= DX - 12) {
+
+                    // ── ³He Analyzer: only spin-up passes (NSF channel) ──────────────────
+                    if (p.state === 'reflected' && !p.anaPassed && p.x > AN_X && p.y < SY) {
+                        if (!p.spinUp) { s.particles.splice(i, 1); continue; } // SF absorbed
+                        p.anaPassed = true;
+                    }
+
+                    // ── Detector hit ──────────────────────────────────────────────────────
+                    if (p.state === 'reflected' && p.qBin !== null && !p.hitCounted && p.x >= DX - 12) {
                         p.hitCounted = true;
                         const arr = p.spinUp ? s.sigPlus : s.sigMinus;
                         arr[p.qBin] = Math.min(1.0, Math.max(1e-6, arr[p.qBin] * (0.86 + Math.random() * 0.30)));
@@ -1326,21 +1353,27 @@
                 }());
 
                 s.particles.forEach(function (p) {
+                    // Transmitted neutrons slightly dimmer
+                    const alpha = p.state === 'transmitted' ? 0.45 : 1.0;
+                    ctx.globalAlpha = alpha;
                     drawNeutron(p.x, p.y, p.r, p.col, p.w);
-                    // Canted 3D spin arrow on all neutrons (perspective view of spin axis)
-                    const col = p.spinUp ? 'rgba(92,194,210,0.95)' : 'rgba(255,140,60,0.95)';
-                    const tx = p.spinUp ? -7 : 7, ty = p.spinUp ? -16 : 16;
-                    const len = Math.hypot(tx, ty);
-                    const ux = tx/len, uy = ty/len, px2 = -uy, py2 = ux;
-                    ctx.save(); ctx.translate(p.x, p.y);
-                    ctx.strokeStyle = col; ctx.lineWidth = 2;
-                    ctx.beginPath(); ctx.moveTo(0, 0); ctx.lineTo(tx, ty); ctx.stroke();
-                    ctx.fillStyle = col;
-                    ctx.beginPath(); ctx.moveTo(tx, ty);
-                    ctx.lineTo(tx - 6*ux + 4*px2, ty - 6*uy + 4*py2);
-                    ctx.lineTo(tx - 6*ux - 4*px2, ty - 6*uy - 4*py2);
-                    ctx.closePath(); ctx.fill();
-                    ctx.restore();
+                    ctx.globalAlpha = 1.0;
+                    // Canted 3D spin arrow — only on incident and reflected (not transmitted)
+                    if (p.state !== 'transmitted') {
+                        const col = p.spinUp ? 'rgba(92,194,210,0.95)' : 'rgba(255,140,60,0.95)';
+                        const tx = p.spinUp ? -7 : 7, ty = p.spinUp ? -16 : 16;
+                        const len = Math.hypot(tx, ty);
+                        const ux = tx/len, uy = ty/len, px2 = -uy, py2 = ux;
+                        ctx.save(); ctx.translate(p.x, p.y);
+                        ctx.strokeStyle = col; ctx.lineWidth = 2;
+                        ctx.beginPath(); ctx.moveTo(0, 0); ctx.lineTo(tx, ty); ctx.stroke();
+                        ctx.fillStyle = col;
+                        ctx.beginPath(); ctx.moveTo(tx, ty);
+                        ctx.lineTo(tx - 6*ux + 4*px2, ty - 6*uy + 4*py2);
+                        ctx.lineTo(tx - 6*ux - 4*px2, ty - 6*uy - 4*py2);
+                        ctx.closePath(); ctx.fill();
+                        ctx.restore();
+                    }
                 });
             }
         },
