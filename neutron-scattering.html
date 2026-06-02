@@ -1115,8 +1115,8 @@
                         }
                     }
 
-                    // ── ³He Analyzer: only spin-up passes (NSF channel) ──────────────────
-                    if (p.state === 'reflected' && !p.anaPassed && p.x > AN_X && p.y < SY) {
+                    // ── ³He Analyzer: only spin-up passes (magnetic mode only) ───────────
+                    if (s.magnetic && p.state === 'reflected' && !p.anaPassed && p.x > AN_X && p.y < SY) {
                         if (!p.spinUp) { s.particles.splice(i, 1); continue; } // SF absorbed
                         p.anaPassed = true;
                     }
@@ -1285,13 +1285,15 @@
                 ctx.strokeStyle = 'rgba(34,211,238,0.20)'; ctx.lineWidth = 1; ctx.stroke();
                 ctx.setLineDash([]);
 
-                // ── Optional ³He Analyzer (purple) ───────────────────────────────────
+                // ── ³He Analyzer — only in magnetic (polarized) mode ─────────────────
                 const AN_X = 680, AN_Y = SY - (AN_X - HIT_X) * Math.tan(a);
-                ctx.fillStyle = 'rgba(120,50,200,0.70)';
-                ctx.save(); ctx.translate(AN_X, AN_Y); ctx.rotate(-a);
-                ctx.fillRect(-6, -28, 12, 56); ctx.strokeStyle = 'rgba(180,100,255,0.85)'; ctx.lineWidth = 1.5; ctx.strokeRect(-6, -28, 12, 56); ctx.restore();
-                label(AN_X, AN_Y - 36, '³He', { size: 9, color: 'rgba(180,100,255,0.85)' });
-                label(AN_X, AN_Y - 24, 'Ana.', { size: 9, color: 'rgba(180,100,255,0.85)' });
+                if (s.magnetic) {
+                    ctx.fillStyle = 'rgba(120,50,200,0.70)';
+                    ctx.save(); ctx.translate(AN_X, AN_Y); ctx.rotate(-a);
+                    ctx.fillRect(-6, -28, 12, 56); ctx.strokeStyle = 'rgba(180,100,255,0.85)'; ctx.lineWidth = 1.5; ctx.strokeRect(-6, -28, 12, 56); ctx.restore();
+                    label(AN_X, AN_Y - 36, '³He', { size: 9, color: 'rgba(180,100,255,0.85)' });
+                    label(AN_X, AN_Y - 24, 'Ana.', { size: 9, color: 'rgba(180,100,255,0.85)' });
+                }
 
                 // ── PSD Detector ──────────────────────────────────────────────────────
                 ctx.fillStyle = 'rgba(10,30,70,0.88)';
@@ -1332,26 +1334,17 @@
                 label(HIT_X, SY + 64, s.magnetic ? 'Magnetic film: Co | Cu | Si' : 'Non-magnetic film: Cu | Si');
                 label(HIT_X + 160, DY - 24, 'Specular reflection', { size: 11, color: C.teal });
 
-                // ── R++/R-- channel labels ────────────────────────────────────────────
-                (function () {
-                    const channels = s.magnetic
-                        ? [{ lbl: 'R⁺⁺  (↑↑  NSF)', col: 'rgba(34,211,238,0.92)' }, { lbl: 'R⁻⁻  (↓↓  NSF)', col: 'rgba(255,140,60,0.92)' }]
-                        : [{ lbl: 'R⁺⁺ = R⁻⁻  (no spin contrast)', col: 'rgba(160,232,176,0.92)' }];
-                    const bx = LW - 240, by = 22, bw = 224, bh = 18 + channels.length * 22;
-                    ctx.fillStyle = 'rgba(22,61,86,0.70)';
-                    ctx.beginPath(); ctx.rect(bx, by, bw, bh); ctx.fill();
-                    ctx.strokeStyle = 'rgba(52,142,190,0.45)'; ctx.lineWidth = 1; ctx.strokeRect(bx, by, bw, bh);
-                    ctx.font = '600 11px Inter,sans-serif'; ctx.textAlign = 'left';
-                    ctx.fillStyle = 'rgba(200,230,255,0.70)'; ctx.fillText('Polarization channels', bx + 8, by + 13);
-                    channels.forEach(function (ch, ci) {
-                        const cy = by + 28 + ci * 22;
-                        ctx.fillStyle = ch.col;
-                        ctx.fillRect(bx + 8, cy - 6, 18, 4);
-                        ctx.font = '600 13px Inter,sans-serif';
-                        ctx.fillStyle = ch.col; ctx.fillText(ch.lbl, bx + 32, cy);
-                    });
-                    ctx.textAlign = 'center';
-                }());
+                // ── Channel indicator (HYSPEC-style highlighted box) ──────────────────
+                const chTxt = s.magnetic ? 'R⁺⁺  (↑↑  NSF)' : 'R (unpolarized)';
+                const chCol = s.magnetic ? 'rgba(34,211,238,0.95)' : 'rgba(160,232,176,0.95)';
+                ctx.font = '700 15px Inter,sans-serif'; ctx.textAlign = 'center';
+                const chW = ctx.measureText(chTxt).width + 24;
+                const chX = LW - 130, chY = 36;
+                ctx.fillStyle = 'rgba(22,61,86,0.75)';
+                ctx.fillRect(chX - chW / 2, chY - 14, chW, 26);
+                ctx.strokeStyle = chCol.replace('0.95', '0.50');
+                ctx.lineWidth = 1.5; ctx.strokeRect(chX - chW / 2, chY - 14, chW, 26);
+                ctx.fillStyle = chCol; ctx.fillText(chTxt, chX, chY + 5);
 
                 s.particles.forEach(function (p) {
                     // Transmitted neutrons slightly dimmer
