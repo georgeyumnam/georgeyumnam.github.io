@@ -1623,7 +1623,7 @@
             s.detHitDown = s.detHitDown.map(function (v) { return Math.max(0, v - dt * 0.20); });
             const SX = 530, SY = LH / 2;
             const T0X = 198, T1X = 306, T2X = 400;
-            if (t - s.pulseT > 3.75 && s.particles.length < 350) {
+            if (t - s.pulseT > 7.50 && s.particles.length < 350) {
                 s.pulseT = t;
                 // Polarization cycle: ++ / +- / -+ / -- (pulseNum % 4)
                 const pm       = s.polarized ? (s.pulseNum % 4) : 0;
