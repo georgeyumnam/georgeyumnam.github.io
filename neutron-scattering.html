@@ -376,6 +376,17 @@
         ctx.shadowBlur = 0; ctx.globalAlpha = 1; ctx.restore();
     }
 
+    function drawSpinArrow(x, y, spinUp, alpha) {
+        alpha = alpha === undefined ? 0.85 : alpha;
+        const col = spinUp ? `rgba(92,194,210,${alpha})` : `rgba(255,140,60,${alpha})`;
+        const dir = spinUp ? -1 : 1;
+        ctx.save(); ctx.translate(x, y);
+        ctx.strokeStyle = col; ctx.lineWidth = 1.5;
+        ctx.beginPath(); ctx.moveTo(0, dir * 4); ctx.lineTo(0, dir * 12); ctx.stroke();
+        ctx.beginPath(); ctx.moveTo(-3, dir * 8); ctx.lineTo(0, dir * 12); ctx.lineTo(3, dir * 8); ctx.stroke();
+        ctx.restore();
+    }
+
     function label(x, y, text, opts) {
         opts = opts || {};
         const lines = text.split('\n');
@@ -546,7 +557,7 @@
                         const spd = 95 + (1 - lam) * 215;
                         s.particles.push({ x: 60, y: SY + (Math.random() - 0.5) * 10,
                             vx: spd, vy: 0, lam, w: 1, r: 2.5, col: wlCol(lam),
-                            state: 'pre0', dVal: null });
+                            state: 'pre0', dVal: null, spinUp: Math.random() > 0.5 });
                     }
                 }
                 for (let i = s.particles.length - 1; i >= 0; i--) {
@@ -738,7 +749,10 @@
                 ctx.strokeStyle = 'rgba(0,143,163,0.18)'; ctx.lineWidth = 1; ctx.stroke();
                 label(LW / 2, LH - 10, 'Time-of-flight → λ → d = λ / (2 sinθ)', { size: 10, color: 'rgba(0,143,163,0.38)' });
 
-                s.particles.forEach(function (p) { drawNeutron(p.x, p.y, p.r, p.col, p.w); });
+                s.particles.forEach(function (p) {
+                    drawNeutron(p.x, p.y, p.r, p.col, p.w);
+                    drawSpinArrow(p.x, p.y, p.spinUp);
+                });
             }
         },
         // ── 2. SEQUOIA ── Fine-resolution DGS at SNS ─────────────────────────────
@@ -783,7 +797,7 @@
                         const spd = 100 + (1 - lam) * 210;
                         s.particles.push({ x: 88, y: SY + (Math.random() - 0.5) * 11,
                             vx: spd, vy: 0, lam, w: 1, r: 2.5, col: wlCol(lam), en: 1 - lam,
-                            state: 'pre0', dE: 0 });
+                            state: 'pre0', dE: 0, spinUp: Math.random() > 0.5 });
                     }
                 }
                 for (let i = s.particles.length - 1; i >= 0; i--) {
@@ -955,7 +969,10 @@
                 ctx.strokeStyle = 'rgba(0,143,163,0.20)'; ctx.lineWidth = 1; ctx.stroke();
                 label(LW / 2, LH - 10, 'Time-of-flight →  Ei − Ef = ℏω', { size: 10, color: 'rgba(0,143,163,0.38)' });
 
-                s.particles.forEach(function (p) { drawNeutron(p.x, p.y, p.r, p.col, p.w); });
+                s.particles.forEach(function (p) {
+                    drawNeutron(p.x, p.y, p.r, p.col, p.w);
+                    drawSpinArrow(p.x, p.y, p.spinUp);
+                });
             }
         },
 
@@ -1557,7 +1574,11 @@
                 <li>³He position-sensitive detector arc: 3.0 m dia., wide Q coverage</li>
                 <li>Instrument: HYSPEC, SNS BL-14B</li>
             </ul>
-            <p style="margin-top:0.6rem"><a href="https://neutrons.ornl.gov/hyspec" target="_blank" rel="noopener noreferrer" style="color:var(--teal);font-size:1.1rem">↗ ORNL/SNS HYSPEC instrument page</a></p>`,
+            <p style="margin-top:0.6rem"><a href="https://neutrons.ornl.gov/hyspec" target="_blank" rel="noopener noreferrer" style="color:var(--teal);font-size:1.1rem">↗ ORNL/SNS HYSPEC instrument page</a></p>
+            <div style="margin-top:0.9rem;display:flex;align-items:center;gap:0.7rem;flex-wrap:wrap;">
+                <button id="pol-toggle" style="background:rgba(0,143,163,0.10);border:1.5px solid var(--teal);color:var(--teal);border-radius:8px;padding:0.35rem 1rem;font-size:1.1rem;font-weight:600;cursor:pointer;transition:all 0.2s;">◯ Unpolarized mode</button>
+                <span style="font-size:1.05rem;color:var(--text-dim);">Toggle full polarization analysis</span>
+            </div>`,
         init() {
             const signal = new Float32Array(120);
             for (let b = 0; b < 120; b++) {
@@ -1567,13 +1588,15 @@
                           + 0.20 * Math.exp(-0.5 * ((hw - 0.18) / 0.04) ** 2);
             }
             return { particles: [], spawnT: 0, pulseT: -99, t0A: 0, t1A: 0, t2A: 0,
-                     detHit: new Array(56).fill(0), signal };
+                     detHit: new Array(56).fill(0), detHitDown: new Array(56).fill(0),
+                     polarized: false, signal };
         },
         update(s, t, dt) {
             s.t0A += dt * 22;
             s.t1A += dt * 13;
             s.t2A += dt * 13;
-            s.detHit = s.detHit.map(function (v) { return Math.max(0, v - dt * 0.20); });
+            s.detHit    = s.detHit.map(function (v) { return Math.max(0, v - dt * 0.20); });
+            s.detHitDown = s.detHitDown.map(function (v) { return Math.max(0, v - dt * 0.20); });
             const SX = 530, SY = LH / 2;
             const T0X = 198, T1X = 306, T2X = 400;
             if (t - s.pulseT > 3.75 && s.particles.length < 350) {
@@ -1583,7 +1606,8 @@
                     const spd = 100 + (1 - lam) * 220;
                     s.particles.push({ x: 90, y: SY + (Math.random() - 0.5) * 10,
                         vx: spd, vy: 0, lam, w: 1, r: 2.5, col: wlCol(lam), en: 1 - lam,
-                        state: 'pre0', t0: t, dE: 0 });
+                        state: 'pre0', t0: t, dE: 0,
+                        spinUp: s.polarized ? true : Math.random() > 0.5 });
                 }
             }
             for (let i = s.particles.length - 1; i >= 0; i--) {
@@ -1614,6 +1638,8 @@
                     p.vx = spd2 * Math.cos(a); p.vy = spd2 * Math.sin(a);
                     p.en = newEn; p.lam = 1 - newEn;
                     p.col = wlCol(Math.max(0, Math.min(1, p.lam)));
+                    // In polarized mode assign post-scatter spin (some spin-flip events)
+                    if (s.polarized) p.spinUp = Math.random() > 0.42;
                     p.state = 'out'; p.dE = dE;
                 }
                 if (p.state === 'out') {
@@ -1623,7 +1649,11 @@
                         const bin = Math.min(119, Math.max(0, Math.floor(((p.dE + 0.5) / 1.0) * 120)));
                         s.signal[bin] += 0.014;
                         const di = Math.min(55, Math.max(0, Math.floor(((ang + 1.35) / 2.7) * 56)));
-                        s.detHit[di] = Math.min(1, s.detHit[di] + 0.85);
+                        if (s.polarized && !p.spinUp) {
+                            s.detHitDown[di] = Math.min(1, s.detHitDown[di] + 0.85);
+                        } else {
+                            s.detHit[di] = Math.min(1, s.detHit[di] + 0.85);
+                        }
                         s.particles.splice(i, 1); continue;
                     }
                 }
@@ -1685,6 +1715,17 @@
             drawDisc(T1X, 'T₁', 'Ei selector', s.t1A);
             drawDisc(T2X, 'T₂', 'Frame overlap', s.t2A);
 
+            // ── Supermirror polarizer (polarized mode only) ───────────────────────
+            if (s.polarized) {
+                const POL_X = 112;
+                ctx.fillStyle = 'rgba(120,50,200,0.75)';
+                ctx.fillRect(POL_X - 6, SY - 34, 12, 68);
+                ctx.strokeStyle = 'rgba(180,100,255,0.90)'; ctx.lineWidth = 1.5;
+                ctx.strokeRect(POL_X - 6, SY - 34, 12, 68); ctx.restore && ctx.restore();
+                label(POL_X, SY - 46, 'SM', { size: 9, color: 'rgba(180,100,255,0.85)' });
+                label(POL_X, SY - 34, 'Pol.', { size: 9, color: 'rgba(180,100,255,0.85)' });
+            }
+
             // Sample
             drawSample(SX, SY);
 
@@ -1696,15 +1737,26 @@
             ctx.setLineDash([]);
             label(SX + detR - 60, SY - 22, 'L₂ ≈ 2.0 m', { size: 9, color: 'rgba(0,143,163,0.45)' });
 
+            // ── ³He Analyzer arc (polarized mode only) ────────────────────────────
+            if (s.polarized) {
+                const anaR = Math.round(detR * 0.62);
+                ctx.beginPath(); ctx.arc(SX, SY, anaR, -detSpan * 0.88, detSpan * 0.88);
+                ctx.strokeStyle = 'rgba(180,100,255,0.65)'; ctx.lineWidth = 2.5; ctx.stroke();
+                label(SX + anaR + 6, SY - 14, '³He', { size: 9, color: 'rgba(180,100,255,0.80)', align: 'left' });
+                label(SX + anaR + 6, SY,      'Ana.', { size: 9, color: 'rgba(180,100,255,0.80)', align: 'left' });
+            }
+
             // Curved ³He PSD detector bank (the 3 m dia arc)
             for (let di = 0; di < nDet; di++) {
                 const ang = -detSpan + di * (2 * detSpan / (nDet - 1));
                 const dx = SX + detR * Math.cos(ang);
                 const dy = SY + detR * Math.sin(ang);
-                const hit = s.detHit[di] || 0;
+                const hit     = s.detHit[di]     || 0;
+                const hitDown = s.detHitDown ? (s.detHitDown[di] || 0) : 0;
                 ctx.save(); ctx.translate(dx, dy); ctx.rotate(ang + Math.PI / 2);
                 ctx.beginPath(); ctx.rect(-4, -9, 8, 18);
-                ctx.fillStyle = hit > 0.08 ? 'rgba(34,211,238,0.95)' : 'rgba(30,100,220,0.80)';
+                ctx.fillStyle = hitDown > 0.08 ? 'rgba(255,140,60,0.95)' :
+                                hit     > 0.08 ? 'rgba(34,211,238,0.95)' : 'rgba(30,100,220,0.80)';
                 ctx.fill();
                 ctx.strokeStyle = 'rgba(92,194,210,0.20)'; ctx.lineWidth = 0.5; ctx.stroke();
                 ctx.restore();
@@ -1715,13 +1767,18 @@
 
             // Detector label
             label(SX + detR * Math.cos(0) + 24, SY - 26, '³He PSD', { size: 9, color: C.teal, align: 'left' });
-            label(SX + detR * Math.cos(0) + 24, SY - 12, '3.0 m dia.', { size: 9, color: 'rgba(92,194,210,0.5)', align: 'left' });
+            label(SX + detR * Math.cos(0) + 24, SY - 12, s.polarized ? '↑ cyan  ↓ orange' : '3.0 m dia.', { size: 9, color: 'rgba(92,194,210,0.5)', align: 'left' });
 
             // Instrument label bottom
-            label(SX / 2 + 50, LH - 12, 'T₀ · T₁ · T₂ disc choppers → sample → curved ³He detector bank');
+            label(SX / 2 + 50, LH - 12, s.polarized
+                ? 'SM Polarizer → T₀ · T₁ · T₂ → sample → ³He Analyzer → detector  |  full polarization analysis'
+                : 'T₀ · T₁ · T₂ disc choppers → sample → curved ³He detector bank');
 
-            // Neutrons
-            s.particles.forEach(function (p) { drawNeutron(p.x, p.y, p.r, p.col, p.w); });
+            // Neutrons with spin arrows
+            s.particles.forEach(function (p) {
+                drawNeutron(p.x, p.y, p.r, p.col, p.w);
+                drawSpinArrow(p.x, p.y, p.spinUp);
+            });
         },
         plotSignal(sig) {
             drawSignalPlot(sig, {
@@ -1774,6 +1831,15 @@
         infoPanel.innerHTML = INSTRUMENTS[key].info;
         resize();
         document.querySelectorAll('.inst-card').forEach(function (c) { c.classList.toggle('active', c.dataset.inst === key); });
+        if (key === 'hyspec') {
+            const btn = document.getElementById('pol-toggle');
+            if (btn) btn.addEventListener('click', function () {
+                state.polarized = !state.polarized;
+                state.particles = [];
+                btn.textContent   = state.polarized ? '⬤ Polarized mode' : '◯ Unpolarized mode';
+                btn.style.background = state.polarized ? 'rgba(0,143,163,0.25)' : 'rgba(0,143,163,0.10)';
+            });
+        }
     }
 
     document.querySelectorAll('.inst-card').forEach(function (card) {
