@@ -1088,9 +1088,8 @@
                     const p = s.particles[i];
                     p.x += p.vx * dt * PSIM; p.y += p.vy * dt * PSIM;
 
-                    // ── SM Polarizer: only spin-up passes (polarized mode only) ──────────
+                    // ── SM Flipper: spin already set correctly at spawn — just mark passage ─
                     if (p.state === 'in' && !p.polPassed && p.x > P_X) {
-                        if (s.polarized && !p.spinUp) { s.particles.splice(i, 1); continue; }
                         p.polPassed = true;
                     }
 
