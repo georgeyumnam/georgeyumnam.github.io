@@ -1059,7 +1059,7 @@
                 const P_X = 125;   // SM polarizer x
                 const AN_X = 680;  // ³He analyzer x (on reflected beam side)
                 const srcY = SY - (HIT_X - 80) * Math.tan(a);
-                if (t - s.pulseT > 1.50 && s.particles.length < 350) {
+                if (t - s.pulseT > 6.00 && s.particles.length < 350) {
                     s.pulseT = t;
                     for (let k = 0; k < 160; k++) {
                         const lam = 0.2 + Math.random() * 0.5;
@@ -1090,12 +1090,13 @@
 
                     // ── Sample scatter ────────────────────────────────────────────────────
                     if (p.state === 'in' && p.y >= SY && p.x > HIT_X - 12) {
-                        // Q = 4π sinθ / λ; reflectivity falls off as (Qc/Q)^4 above Qc
+                        // Map simulation lam (0.2–0.7) to physical Q (0.005–0.15 Å⁻¹), same as qBin
+                        const Q  = 0.005 + (0.7 - p.lam) / 0.5 * 0.145;
                         const Qc = s.magnetic
-                            ? (p.spinUp ? 0.048 : 0.039)   // magnetic: spin-split Qc (Å⁻¹ units scaled)
-                            : 0.044;                        // non-magnetic: same Qc both spins
-                        const Q  = 4 * Math.PI * Math.sin(a) / p.lam;
-                        const reflProb = Q < Qc ? 0.95 : Math.min(0.95, 0.95 * Math.pow(Qc / Q, 4));
+                            ? (p.spinUp ? 0.048 : 0.039)   // spin-split critical Q (magnetic)
+                            : 0.044;                        // same Qc both spins (non-magnetic)
+                        // Below Qc: total reflection; above Qc: Fresnel (Qc/Q)^4 fall-off
+                        const reflProb = Q < Qc ? 0.95 : Math.min(0.90, 0.95 * Math.pow(Qc / Q, 4));
 
                         if (Math.random() < reflProb) {
                             // ── Reflected ────────────────────────────────────────────────
