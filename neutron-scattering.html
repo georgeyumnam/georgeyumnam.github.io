@@ -1776,12 +1776,6 @@
                 ctx.strokeStyle = 'rgba(255,255,255,0.25)'; ctx.lineWidth = 0.9;
                 for (let i = -3; i <= 3; i++) { ctx.beginPath(); ctx.moveTo(SX-14, SY+i*4.5); ctx.lineTo(SX+14, SY+i*4.5); ctx.stroke(); }
                 ctx.restore();
-                // Ordered antiferromagnetic moments around sample
-                for (let mi = 0; mi < 8; mi++) {
-                    const ma = mi * Math.PI / 4;
-                    const mx = SX + 28 * Math.cos(ma), my = SY + 28 * Math.sin(ma);
-                    drawSpinArrow(mx, my, mi % 2 === 0, 0.80);
-                }
                 label(SX, SY + 32, 'Magnetic sample', { color: 'rgba(255,120,120,0.85)' });
             } else {
                 drawSample(SX, SY, s.polarized ? 'Non-magnetic' : undefined);
