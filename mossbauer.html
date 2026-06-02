@@ -1,0 +1,1190 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mössbauer Spectroscopy – George Yumnam</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="styles.css?v=13">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        .tool-hero { padding: 64px 24px 40px; position: relative; z-index: 1; }
+        .tool-hero-panel {
+            background: rgba(255,255,255,0.92); backdrop-filter: blur(28px);
+            -webkit-backdrop-filter: blur(28px); border: 1px solid var(--border);
+            border-radius: 20px; padding: 2rem 2.5rem; box-shadow: var(--glow);
+            position: relative; overflow: hidden;
+        }
+        .tool-hero-panel::after {
+            content: ''; position: absolute; inset: 0; border-radius: inherit; pointer-events: none;
+            background: linear-gradient(to bottom,rgba(255,255,255,.48) 0%,transparent 14%,transparent 86%,rgba(116,190,226,.18) 100%),
+                        linear-gradient(to right,rgba(255,255,255,.36) 0%,transparent 8%,transparent 92%,rgba(116,190,226,.14) 100%);
+            mix-blend-mode: screen;
+        }
+        .tool-title { font-size: 3.4rem; font-weight: 800; color: var(--white); letter-spacing: -0.8px; margin-bottom: 0.4rem; }
+        .tool-sub   { font-size: 1.7rem; color: var(--teal); font-weight: 600; margin-bottom: 0.75rem; }
+        .tool-desc  { font-size: 1.615rem; color: var(--text-dim); line-height: 1.75; }
+        .selector-section { padding: 0 24px 32px; position: relative; z-index: 1; }
+        .inst-grid { display: grid; grid-template-columns: repeat(4,1fr); gap: 0.75rem; }
+        .inst-card {
+            background: var(--glass-card); border: 2px solid var(--border); border-radius: 16px;
+            padding: 1rem 0.75rem; cursor: pointer; transition: var(--transition);
+            backdrop-filter: blur(14px); -webkit-backdrop-filter: blur(14px);
+            text-align: center; user-select: none;
+        }
+        .inst-card:hover { border-color: rgba(0,143,163,0.55); transform: translateY(-3px); box-shadow: var(--shadow-md); }
+        .inst-card.active { border-color: var(--teal); background: rgba(0,143,163,0.12); box-shadow: 0 0 0 3px rgba(0,143,163,0.18),var(--shadow-md); }
+        .inst-icon { font-size: 1.8rem; color: var(--teal); margin-bottom: 0.4rem; }
+        .inst-name { font-size: 1.326rem; font-weight: 700; color: var(--white); margin-bottom: 0.2rem; line-height: 1.3; }
+        .inst-hint { font-size: 1.1rem; color: var(--text-dim); line-height: 1.4; }
+        .demo-section { padding: 0 24px 48px; position: relative; z-index: 1; }
+        .demo-wrap { display: grid; grid-template-columns: 1fr; grid-template-rows: auto auto; gap: 1.5rem; align-items: start; }
+        .canvas-shell { grid-column:1; grid-row:1; }
+        .right-col    { grid-column:1; grid-row:2; }
+        .canvas-shell {
+            background: rgba(255,255,255,0.88); border: 1px solid var(--border); border-radius: 20px;
+            overflow: hidden; box-shadow: var(--glow); backdrop-filter: blur(16px);
+            -webkit-backdrop-filter: blur(16px); aspect-ratio: 16/9; position: relative;
+        }
+        .canvas-shell canvas { display: block; width: 100%; height: 100%; }
+        .canvas-placeholder {
+            position: absolute; inset: 0; display: flex; flex-direction: column;
+            align-items: center; justify-content: center; color: rgba(22,61,86,0.35); gap: 0.75rem;
+        }
+        .canvas-placeholder i { font-size: 3rem; }
+        .canvas-placeholder p { font-size: 1.4rem; font-weight: 500; }
+        .right-col { display: block; }
+        .info-panel {
+            background: var(--glass-card); border: 1px solid var(--border); border-radius: 20px;
+            padding: 1.5rem; box-shadow: var(--shadow-sm); backdrop-filter: blur(14px);
+            -webkit-backdrop-filter: blur(14px);
+        }
+        .info-panel h3 { font-size: 1.7rem; font-weight: 700; color: var(--white); margin-bottom: 0.5rem; }
+        .info-panel .info-tag {
+            display: inline-block; font-size: 1.1rem; font-weight: 600; color: var(--teal);
+            background: rgba(0,143,163,0.10); border: 1px solid rgba(0,143,163,0.28);
+            border-radius: 999px; padding: 2px 10px; margin-bottom: 0.9rem;
+        }
+        .info-panel p { font-size: 1.326rem; color: var(--text-dim); line-height: 1.7; margin-bottom: 0.75rem; }
+        .info-panel p:last-child { margin-bottom: 0; }
+        .info-panel ul { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 0.4rem; }
+        .info-panel ul li { font-size: 1.2rem; color: var(--text-dim); padding-left: 1.1rem; position: relative; line-height: 1.55; }
+        .info-panel ul li::before { content: '▸'; position: absolute; left: 0; color: var(--teal); font-size: 1rem; }
+        .info-empty { color: rgba(22,61,86,0.38); font-size: 1.326rem; text-align: center; padding: 2rem 0; }
+        /* Navbar dropdown */
+        .nav-dropdown { position: relative; }
+        .nav-dropdown-menu {
+            display: none; position: absolute; top: calc(100% + 6px); left: 50%;
+            transform: translateX(-50%);
+            background: rgba(255,255,255,0.95); backdrop-filter: blur(16px);
+            border: 1px solid var(--border); border-radius: 12px; padding: 0.4rem 0;
+            min-width: 210px; box-shadow: var(--shadow-md); z-index: 200;
+        }
+        .nav-dropdown:hover .nav-dropdown-menu { display: block; }
+        .nav-dropdown-menu a {
+            display: block; padding: 0.55rem 1.1rem; color: var(--white);
+            text-decoration: none; font-size: 1rem; font-weight: 500;
+            transition: var(--transition);
+        }
+        .nav-dropdown-menu a:hover, .nav-dropdown-menu a.active { color: var(--teal); background: var(--teal-light); }
+        @media (max-width: 900px) { .inst-grid { grid-template-columns: repeat(2,1fr); } }
+        @media (max-width: 768px) {
+            .inst-grid { grid-template-columns: repeat(2,1fr); }
+            .tool-title { font-size: 2.2rem; }
+        }
+        @media (max-width: 600px) {
+            .tool-hero { padding: 44px 5% 28px; }
+            .tool-hero-panel { padding: 1.25rem; }
+            .tool-title { font-size: 1.6rem; } .tool-sub { font-size: 1rem; } .tool-desc { font-size: 0.95rem; }
+            .selector-section, .demo-section { padding-left: 5%; padding-right: 5%; }
+            .inst-grid { grid-template-columns: repeat(2,1fr); gap: 0.5rem; }
+            .inst-name { font-size: 1rem; } .inst-hint { font-size: 0.85rem; }
+        }
+    </style>
+</head>
+<body>
+
+    <nav class="navbar">
+        <div class="container">
+            <div class="nav-wrapper">
+                <a href="index.html" class="logo">George Yumnam</a>
+                <ul class="nav-menu">
+                    <li><a href="index.html#about" class="nav-link">About</a></li>
+                    <li><a href="index.html#projects" class="nav-link">Research</a></li>
+                    <li><a href="index.html#publications" class="nav-link">Publications</a></li>
+                    <li><a href="index.html#teaching" class="nav-link">Teaching</a></li>
+                    <li><a href="index.html#mitsna" class="nav-link">MitSna</a></li>
+                    <li class="nav-dropdown">
+                        <a href="#" class="nav-link">Experiments <i class="fas fa-chevron-down" style="font-size:0.65em;margin-left:3px;"></i></a>
+                        <div class="nav-dropdown-menu">
+                            <a href="neutron-scattering.html" target="_blank" rel="noopener noreferrer">Neutron Scattering</a>
+                            <a href="mossbauer.html" class="active" target="_blank" rel="noopener noreferrer">Mössbauer Spectroscopy</a>
+                        </div>
+                    </li>
+                    <li><a href="index.html#contact" class="nav-link">Contact</a></li>
+                </ul>
+                <div class="hamburger"><span></span><span></span><span></span></div>
+            </div>
+        </div>
+    </nav>
+
+    <div class="tool-hero">
+        <div class="container">
+            <div class="tool-hero-panel">
+                <h1 class="tool-title">Mössbauer Spectroscopy</h1>
+                <p class="tool-sub">Physics-accurate simulations · Select a technique</p>
+                <p class="tool-desc">Mössbauer spectroscopy probes nuclear hyperfine interactions via recoil-free gamma-ray emission and absorption (¹⁴.4 keV for ⁵⁷Fe). Each technique — from conventional transmission to synchrotron nuclear forward scattering — reveals magnetic order, valence state, local symmetry, and phonon dynamics with meV-to-neV energy resolution. Gamma / X-ray colors encode energy relative to the nuclear resonance.</p>
+            </div>
+        </div>
+    </div>
+
+    <div class="selector-section">
+        <div class="container">
+            <div class="inst-grid">
+                <div class="inst-card" data-inst="tms">
+                    <div class="inst-icon"><i class="fas fa-circle-radiation"></i></div>
+                    <div class="inst-name">TMS</div>
+                    <div class="inst-hint">Lab · ⁵⁷Co source · velocity drive</div>
+                </div>
+                <div class="inst-card" data-inst="nfs">
+                    <div class="inst-icon"><i class="fas fa-bolt"></i></div>
+                    <div class="inst-name">NFS</div>
+                    <div class="inst-hint">APS / ESRF · synchrotron · time-domain</div>
+                </div>
+                <div class="inst-card" data-inst="nrixs">
+                    <div class="inst-icon"><i class="fas fa-wave-square"></i></div>
+                    <div class="inst-name">NRIXS</div>
+                    <div class="inst-hint">APS HERIX · phonon DOS</div>
+                </div>
+                <div class="inst-card" data-inst="sms">
+                    <div class="inst-icon"><i class="fas fa-satellite-dish"></i></div>
+                    <div class="inst-name">SMS</div>
+                    <div class="inst-hint">ESRF ID18 · meV bandwidth</div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="demo-section">
+        <div class="container">
+            <div class="demo-wrap">
+                <div class="canvas-shell">
+                    <canvas id="demo-canvas"></canvas>
+                    <div class="canvas-placeholder" id="canvas-placeholder">
+                        <i class="fas fa-atom"></i>
+                        <p>Select a technique above</p>
+                    </div>
+                </div>
+                <div class="right-col">
+                    <div class="info-panel" id="info-panel">
+                        <p class="info-empty">Select a technique to see details.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <footer class="footer">
+        <div class="container">
+            <p>&copy; 2026 George Yumnam &middot; Stewart Blusson Quantum Matter Institute, UBC</p>
+            <div class="footer-social">
+                <a href="https://scholar.google.com/citations?user=D3v8UV4AAAAJ&hl=en" target="_blank" rel="noopener noreferrer"><i class="fas fa-book-open"></i></a>
+                <a href="https://www.linkedin.com/in/george-yumnam/" target="_blank" rel="noopener noreferrer"><i class="fab fa-linkedin"></i></a>
+                <a href="mailto:georgeyumnam@gmail.com"><i class="fas fa-envelope"></i></a>
+            </div>
+        </div>
+    </footer>
+
+    <script src="script.js?v=13"></script>
+    <script>
+    // ── Mössbauer Spectroscopy Demo Engine ──
+    (function () {
+    'use strict';
+    const canvas      = document.getElementById('demo-canvas');
+    const ctx         = canvas.getContext('2d');
+    const placeholder = document.getElementById('canvas-placeholder');
+    const infoPanel   = document.getElementById('info-panel');
+
+    const LW = 900, LH = 506;
+    const PSIM = 0.417;
+    let activeKey = null, state = null, prevT = null;
+
+    // ── Color helpers ──────────────────────────────────────────────────────
+    // detuning: -1 = red-shifted (low E), 0 = resonance (white-yellow), +1 = blue-shifted (high E)
+    function gammaCol(detuning, a) {
+        const d = Math.max(-1, Math.min(1, detuning));
+        let r, g, b;
+        if (d < 0) {
+            // Red side: interpolate resonance→red
+            const f = -d;
+            r = Math.round(255 * 1.0);
+            g = Math.round(255 * (1.0 - f * 0.37));
+            b = Math.round(255 * (0.706 - f * 0.314));
+        } else {
+            // Blue side: interpolate resonance→blue
+            const f = d;
+            r = Math.round(255 * (1.0 - f * 0.451));
+            g = Math.round(255 * (1.0 - f * 0.216));
+            b = Math.round(255 * (0.706 + f * 0.294));
+        }
+        return a !== undefined
+            ? `rgba(${r},${g},${b},${a})`
+            : `rgb(${r},${g},${b})`;
+    }
+
+    const C = {
+        navy:   '#163d56',
+        teal:   '#008fa3',
+        border: 'rgba(52,142,190,0.30)',
+        crystal:'#5cc2d2',
+        sample: '#008fa3',
+        det:    '#1a3a50',
+        detHit: '#22d3ee',
+        label:  '#163d56',
+    };
+
+    // ── Drawing helpers ────────────────────────────────────────────────────
+    function glow(x, y, r, col, alpha) {
+        const g = ctx.createRadialGradient(x, y, 0, x, y, r);
+        const base = col.startsWith('rgb(') ? col.replace('rgb(', 'rgba(').replace(')', `,${alpha})`) : col;
+        g.addColorStop(0, base); g.addColorStop(1, 'rgba(0,0,0,0)');
+        ctx.fillStyle = g; ctx.beginPath(); ctx.arc(x, y, r, 0, Math.PI * 2); ctx.fill();
+    }
+
+    function drawSource(x, y, type, t) {
+        if (type === 'radioactive') {
+            // Pulsing radioactive source
+            const pulse = 0.5 + 0.5 * Math.sin(t * 3.5);
+            for (let r = 48; r >= 12; r -= 9) {
+                const f = (48 - r) / 36;
+                ctx.beginPath(); ctx.arc(x, y, r, 0, Math.PI * 2);
+                ctx.fillStyle = `rgba(220,80,30,${(0.03 + f * 0.08) * (0.7 + 0.3 * pulse)})`;
+                ctx.fill();
+            }
+            ctx.beginPath(); ctx.arc(x, y, 22, 0, Math.PI * 2);
+            ctx.fillStyle = `rgba(200,60,20,${0.55 + 0.4 * pulse})`; ctx.fill();
+            ctx.strokeStyle = `rgba(255,120,50,${0.7 + 0.3 * pulse})`; ctx.lineWidth = 2.5; ctx.stroke();
+            // Radiation trefoil symbol
+            ctx.save(); ctx.translate(x, y);
+            ctx.fillStyle = `rgba(255,220,180,${0.6 + 0.3 * pulse})`;
+            for (let k = 0; k < 3; k++) {
+                ctx.save(); ctx.rotate(k * Math.PI * 2 / 3);
+                ctx.beginPath();
+                ctx.moveTo(0, 0);
+                ctx.arc(0, -9, 6, Math.PI * 0.5, Math.PI * 1.5, true);
+                ctx.closePath(); ctx.fill();
+                ctx.restore();
+            }
+            ctx.beginPath(); ctx.arc(0, 0, 4, 0, Math.PI * 2);
+            ctx.fillStyle = `rgba(200,60,20,${0.55 + 0.4 * pulse})`; ctx.fill();
+            ctx.restore();
+            label(x, y + 40, '⁵⁷Co(Rh)', { size: 10 });
+            label(x, y + 53, 'source', { size: 9, color: 'rgba(220,100,60,0.65)' });
+        } else {
+            // Synchrotron — pulsed ripple (yellow)
+            const ripR = (t % 1.0) * 55;
+            const ripA = 0.4 * (1 - ripR / 55);
+            ctx.beginPath(); ctx.arc(x, y, ripR, 0, Math.PI * 2);
+            ctx.strokeStyle = `rgba(251,191,36,${ripA})`; ctx.lineWidth = 1.5; ctx.stroke();
+            const flash = (Math.sin(t * 6) > 0.65) ? 1 : 0.2;
+            glow(x, y, 52, 'rgb(251,191,36)', 0.08 + 0.1 * flash);
+            ctx.beginPath(); ctx.arc(x, y, 24, 0, Math.PI * 2);
+            ctx.fillStyle = `rgba(245,158,11,${0.4 + 0.5 * flash})`; ctx.fill();
+            ctx.strokeStyle = `rgba(251,191,36,${flash})`; ctx.lineWidth = 2.5; ctx.stroke();
+            ctx.beginPath(); ctx.arc(x, y, 9, 0, Math.PI * 2);
+            ctx.fillStyle = `rgba(254,240,138,${flash})`; ctx.fill();
+            label(x, y + 44, 'Synchrotron', { size: 10 });
+            label(x, y + 57, 'source', { size: 9, color: 'rgba(251,191,36,0.60)' });
+        }
+    }
+
+    function drawCrystal(x, y, angle, lbl) {
+        ctx.save(); ctx.translate(x, y); ctx.rotate(angle);
+        ctx.beginPath();
+        ctx.moveTo(-6, -17); ctx.lineTo(6, -17);
+        ctx.lineTo(10, 17); ctx.lineTo(-10, 17); ctx.closePath();
+        ctx.fillStyle = '#4ab8cc'; ctx.strokeStyle = C.teal; ctx.lineWidth = 2;
+        ctx.fill(); ctx.stroke();
+        ctx.strokeStyle = 'rgba(255,255,255,0.38)'; ctx.lineWidth = 0.8;
+        for (let i = -3; i <= 3; i++) {
+            ctx.beginPath(); ctx.moveTo(-9, i * 6); ctx.lineTo(9, i * 6); ctx.stroke();
+        }
+        ctx.restore();
+        if (lbl) label(x, y + 30, lbl);
+    }
+
+    function drawDetector(x, y, angle, length, lbl) {
+        ctx.save(); ctx.translate(x, y); ctx.rotate(angle);
+        ctx.beginPath(); ctx.rect(-5, -length / 2, 10, length);
+        ctx.fillStyle = C.det; ctx.strokeStyle = '#5cc2d2'; ctx.lineWidth = 1.5;
+        ctx.fill(); ctx.stroke();
+        ctx.strokeStyle = 'rgba(92,194,210,0.28)'; ctx.lineWidth = 0.6;
+        for (let i = -2; i <= 2; i++) {
+            ctx.beginPath(); ctx.moveTo(-5, i * (length / 5)); ctx.lineTo(5, i * (length / 5)); ctx.stroke();
+        }
+        ctx.restore();
+        if (lbl) label(x, y + length / 2 + 14, lbl);
+    }
+
+    function drawSample(x, y, lbl) {
+        glow(x, y, 40, 'rgb(0,143,163)', 0.15);
+        ctx.beginPath(); ctx.arc(x, y, 14, 0, Math.PI * 2);
+        ctx.fillStyle = C.sample; ctx.fill();
+        ctx.strokeStyle = '#5cc2d2'; ctx.lineWidth = 2; ctx.stroke();
+        ctx.save(); ctx.beginPath(); ctx.arc(x, y, 13, 0, Math.PI * 2); ctx.clip();
+        ctx.strokeStyle = 'rgba(255,255,255,0.38)'; ctx.lineWidth = 0.9;
+        for (let i = -3; i <= 3; i++) {
+            ctx.beginPath(); ctx.moveTo(-14 + x, y + i * 4.5); ctx.lineTo(14 + x, y + i * 4.5); ctx.stroke();
+        }
+        ctx.restore();
+        if (lbl !== false) label(x, y + 28, lbl || 'Sample');
+    }
+
+    function drawFeSample(x, y, lbl) {
+        // Thin vertical rectangle for ⁵⁷Fe sample (TMS style)
+        glow(x, y, 32, 'rgb(0,143,163)', 0.12);
+        ctx.beginPath(); ctx.rect(x - 4, y - 30, 8, 60);
+        ctx.fillStyle = 'rgba(0,143,163,0.75)'; ctx.fill();
+        ctx.strokeStyle = '#5cc2d2'; ctx.lineWidth = 1.5; ctx.stroke();
+        if (lbl !== false) label(x, y + 44, lbl || '⁵⁷Fe sample', { size: 9 });
+    }
+
+    function drawPhoton(x, y, r, col) {
+        const ng = ctx.createRadialGradient(x, y, 0, x, y, r);
+        ng.addColorStop(0, 'rgb(255,255,255)');
+        ng.addColorStop(0.4, col);
+        ng.addColorStop(1, 'rgba(200,200,100,0)');
+        ctx.save();
+        ctx.shadowColor = col; ctx.shadowBlur = 8;
+        ctx.beginPath(); ctx.arc(x, y, r, 0, Math.PI * 2);
+        ctx.fillStyle = ng; ctx.fill();
+        ctx.shadowBlur = 0; ctx.restore();
+    }
+
+    function drawSpinArrow(x, y, spinUp, alpha) {
+        alpha = alpha === undefined ? 0.95 : alpha;
+        const col = spinUp ? `rgba(92,194,210,${alpha})` : `rgba(255,140,60,${alpha})`;
+        const dir = spinUp ? -1 : 1;
+        const tip = dir * 17;
+        ctx.save(); ctx.translate(x, y);
+        ctx.strokeStyle = col; ctx.lineWidth = 2;
+        ctx.beginPath(); ctx.moveTo(0, 0); ctx.lineTo(0, tip); ctx.stroke();
+        ctx.fillStyle = col;
+        ctx.beginPath(); ctx.moveTo(0, tip); ctx.lineTo(-4.5, tip - dir * 7); ctx.lineTo(4.5, tip - dir * 7); ctx.closePath(); ctx.fill();
+        ctx.restore();
+    }
+
+    function label(x, y, text, opts) {
+        opts = opts || {};
+        const lines = text.split('\n');
+        ctx.font = `${opts.weight || 500} ${opts.size || 12}px Inter,sans-serif`;
+        ctx.fillStyle = opts.color || C.label;
+        ctx.textAlign = opts.align || 'center';
+        lines.forEach(function (l, i) { ctx.fillText(l, x, y + i * 15); });
+    }
+
+    function drawBG() {
+        ctx.fillStyle = 'rgba(247,252,255,0.96)';
+        ctx.fillRect(0, 0, LW, LH);
+    }
+
+    // Lorentzian function
+    function lorentzian(v, v0, gamma) {
+        const g2 = gamma * gamma;
+        return g2 / ((v - v0) * (v - v0) + g2);
+    }
+
+    // ══════════════════════════════════════════════════════════════════════════
+    // INSTRUMENT DEFINITIONS
+    // ══════════════════════════════════════════════════════════════════════════
+    const INSTRUMENTS = {
+
+        // ── 1. TMS — Transmission Mössbauer Spectroscopy ──────────────────────
+        tms: {
+            label: 'TMS',
+            tag:   'Lab · Transmission Mössbauer Spectroscopy',
+            info: `<h3>TMS — Transmission Mössbauer Spectroscopy</h3>
+                <span class="info-tag">Lab-based · ⁵⁷Co(Rh) source · velocity drive ±10 mm/s</span>
+                <p>Transmission Mössbauer spectroscopy is the cornerstone lab technique for probing hyperfine interactions in ⁵⁷Fe-containing materials. A ⁵⁷Co(Rh) radioactive source emits 14.4 keV gamma rays. The source is mounted on a constant-acceleration velocity drive that Doppler-shifts the gamma energy across the ±10 mm/s window, scanning through the nuclear resonance of the absorber.</p>
+                <p>Transmitted counts are recorded as a function of velocity, yielding a spectrum with dips at resonance velocities. The isomer shift (center), quadrupole splitting (doublet), and magnetic hyperfine field (sextet pattern) encode valence state, local symmetry, and magnetic order respectively.</p>
+                <ul>
+                    <li>Source: ⁵⁷Co diffused into Rh matrix; 270-day half-life; 14.4 keV gamma</li>
+                    <li>Velocity drive: constant-acceleration triangular waveform, ±10 mm/s</li>
+                    <li>Detector: proportional counter or NaI(Tl) scintillator</li>
+                    <li>Spectra: isomer shift, quadrupole splitting (doublet), magnetic sextet</li>
+                    <li>Lab-based technique · no external facility required</li>
+                </ul>
+                <p style="margin-top:0.6rem;font-size:1.1rem;color:var(--text-dim);">Lab-based technique · ⁵⁷Co(Rh) source · velocity drive ±10 mm/s</p>`,
+            init() {
+                const N = 120;
+                const spectrum = new Float32Array(N);
+                for (let b = 0; b < N; b++) {
+                    const v = -10 + (b / N) * 20;
+                    // Doublet: two Lorentzian dips at v=-3 and v=+3 mm/s
+                    const abs1 = 0.35 * lorentzian(v, -3.0, 0.25);
+                    const abs2 = 0.35 * lorentzian(v,  3.0, 0.25);
+                    spectrum[b] = 1.0 - abs1 - abs2 + 0.005 * Math.random();
+                }
+                return {
+                    particles: [], spawnT: -99, sourceX: 80, sourcePhase: 0,
+                    detHit: 0, spectrum,
+                    currentVel: 0
+                };
+            },
+            update(s, t, dt) {
+                const SY = LH / 2;
+                s.sourcePhase += dt * 1.2;
+                s.sourceX = 80 + 12 * Math.sin(s.sourcePhase);
+                s.currentVel = 10 * Math.sin(s.sourcePhase);
+                s.detHit = Math.max(0, s.detHit * 0.98);
+
+                // Spawn photons
+                if (t - s.spawnT > 0.15 && s.particles.length < 120) {
+                    s.spawnT = t;
+                    s.particles.push({
+                        x: s.sourceX + 20, y: SY + (Math.random() - 0.5) * 6,
+                        vx: 380, vy: 0,
+                        col: gammaCol(s.currentVel / 10),
+                        vel: s.currentVel,
+                        absorbed: false
+                    });
+                }
+
+                const SAMPLE_X = 450;
+                for (let i = s.particles.length - 1; i >= 0; i--) {
+                    const p = s.particles[i];
+                    p.x += p.vx * dt * PSIM;
+
+                    // Check absorption at sample
+                    if (!p.absorbed && p.x > SAMPLE_X && p.x < SAMPLE_X + 20) {
+                        const v = p.vel;
+                        const L1 = lorentzian(v, -3.0, 0.25);
+                        const L2 = lorentzian(v,  3.0, 0.25);
+                        const prob = 0.4 * (L1 + L2);
+                        if (Math.random() < prob) {
+                            // Absorbed
+                            const bin = Math.min(119, Math.max(0, Math.floor(((v + 10) / 20) * 120)));
+                            s.spectrum[bin] = Math.max(0.55, s.spectrum[bin] - 0.006);
+                            s.particles.splice(i, 1); continue;
+                        }
+                        p.absorbed = true;
+                    }
+
+                    // Hit detector
+                    if (p.x > 820) {
+                        s.detHit = Math.min(1, s.detHit + 0.5);
+                        s.particles.splice(i, 1); continue;
+                    }
+                    if (p.x > LW + 40 || p.x < -40) { s.particles.splice(i, 1); }
+                }
+            },
+            draw(s, t) {
+                const SY = LH / 2;
+                const SAMPLE_X = 450;
+                const DET_X = 820;
+
+                // Velocity drive box
+                ctx.beginPath();
+                ctx.roundRect(s.sourceX - 34, SY - 42, 68, 84, 8);
+                ctx.fillStyle = 'rgba(22,61,86,0.10)';
+                ctx.strokeStyle = 'rgba(0,143,163,0.40)'; ctx.lineWidth = 1.5;
+                ctx.fill(); ctx.stroke();
+                label(s.sourceX, SY - 52, 'Velocity Drive', { size: 9, color: 'rgba(0,143,163,0.70)' });
+                // Velocity position indicator bar
+                const barW = 56, barX = s.sourceX - barW / 2, barY = SY + 52;
+                ctx.fillStyle = 'rgba(22,61,86,0.12)';
+                ctx.fillRect(barX, barY, barW, 6);
+                const markerX = barX + ((s.currentVel + 10) / 20) * barW;
+                ctx.fillStyle = gammaCol(s.currentVel / 10);
+                ctx.beginPath(); ctx.arc(markerX, barY + 3, 4, 0, Math.PI * 2); ctx.fill();
+                label(s.sourceX, barY + 16, 'v = ' + s.currentVel.toFixed(1) + ' mm/s', { size: 9, color: 'rgba(0,143,163,0.70)' });
+
+                // Draw source
+                drawSource(s.sourceX, SY, 'radioactive', t);
+
+                // Collimator slits at x=200
+                const SL_X = 200;
+                [[-10, -3], [3, 10]].forEach(function (off) {
+                    ctx.beginPath();
+                    ctx.moveTo(SL_X - 3, SY + off[0]);
+                    ctx.lineTo(SL_X + 3, SY + off[0]);
+                    ctx.lineTo(SL_X + 3, SY + off[1]);
+                    ctx.lineTo(SL_X - 3, SY + off[1]);
+                    ctx.fillStyle = 'rgba(22,61,86,0.80)'; ctx.fill();
+                });
+                label(SL_X, SY - 22, 'Collimator', { size: 9 });
+
+                // Beam line dashes
+                ctx.setLineDash([4, 6]);
+                ctx.strokeStyle = 'rgba(0,143,163,0.15)'; ctx.lineWidth = 1;
+                ctx.beginPath(); ctx.moveTo(s.sourceX + 22, SY); ctx.lineTo(DET_X - 14, SY); ctx.stroke();
+                ctx.setLineDash([]);
+
+                // Sample
+                drawFeSample(SAMPLE_X, SY, '⁵⁷Fe sample');
+
+                // Detector (proportional counter)
+                const detLit = s.detHit > 0.1;
+                ctx.beginPath(); ctx.roundRect(DET_X - 6, SY - 36, 24, 72, 6);
+                ctx.fillStyle = detLit ? 'rgba(34,211,238,0.25)' : 'rgba(22,61,86,0.30)';
+                ctx.strokeStyle = detLit ? '#22d3ee' : '#5cc2d2'; ctx.lineWidth = 1.5;
+                ctx.fill(); ctx.stroke();
+                if (detLit) {
+                    glow(DET_X + 6, SY, 28, 'rgb(34,211,238)', 0.22);
+                }
+                label(DET_X + 6, SY + 48, 'Proportional', { size: 9 });
+                label(DET_X + 6, SY + 60, 'Counter', { size: 9 });
+
+                // Draw spectrum inset (bottom-left)
+                const IX = 18, IY = LH - 130, IW = 200, IH = 110;
+                ctx.fillStyle = 'rgba(22,61,86,0.06)'; ctx.strokeStyle = 'rgba(0,143,163,0.30)'; ctx.lineWidth = 1;
+                ctx.fillRect(IX, IY, IW, IH); ctx.strokeRect(IX, IY, IW, IH);
+                label(IX + IW / 2, IY + 12, 'Mössbauer Spectrum', { size: 10, color: 'rgba(0,143,163,0.85)' });
+                const N = s.spectrum.length;
+                const PL = IX + 8, PT = IY + 18, PW = IW - 16, PH = IH - 26;
+                ctx.beginPath();
+                for (let b = 0; b < N; b++) {
+                    const xn = PL + (b / N) * PW;
+                    const yn = PT + PH - s.spectrum[b] * PH;
+                    b === 0 ? ctx.moveTo(xn, yn) : ctx.lineTo(xn, yn);
+                }
+                ctx.strokeStyle = 'rgba(0,143,163,0.80)'; ctx.lineWidth = 1.4; ctx.stroke();
+                label(PL, IY + IH + 2, '-10', { size: 8, color: 'rgba(22,61,86,0.50)', align: 'left' });
+                label(PL + PW / 2, IY + IH + 2, '0 mm/s', { size: 8, color: 'rgba(22,61,86,0.50)' });
+                label(PL + PW, IY + IH + 2, '+10', { size: 8, color: 'rgba(22,61,86,0.50)', align: 'right' });
+
+                // Draw photons
+                s.particles.forEach(function (p) {
+                    drawPhoton(p.x, p.y, 2.2, p.col);
+                });
+
+                label(LW / 2, LH - 14, 'Doppler-velocity scan → nuclear resonance absorption → isomer shift · quadrupole splitting · hyperfine field', { size: 10, color: 'rgba(0,143,163,0.42)' });
+            }
+        },
+
+        // ── 2. NFS — Nuclear Forward Scattering ───────────────────────────────
+        nfs: {
+            label: 'NFS',
+            tag:   'APS / ESRF · Nuclear Forward Scattering · time-domain',
+            info: `<h3>NFS — Nuclear Forward Scattering</h3>
+                <span class="info-tag">Synchrotron · time-resolved · quantum beats · hyperfine</span>
+                <p>Nuclear Forward Scattering (NFS) uses a synchrotron X-ray beam monochromatized to ~meV bandwidth by a Si high-heat-load monochromator, then to sub-meV by a high-resolution monochromator (HRM). The pulsed beam excites the ⁵⁷Fe nuclear resonance in the sample. Prompt electronic scattering decays within nanoseconds; the delayed nuclear resonant re-emission (the "nuclear response") is then time-gated using fast APD detectors.</p>
+                <p>Quantum beats in the time spectrum encode hyperfine splittings: the beat frequency is directly proportional to the hyperfine energy difference ΔE_hf. This provides the same information as a Mössbauer spectrum but in the time domain, often with superior sensitivity for small samples, high pressures (DAC), or extreme conditions.</p>
+                <ul>
+                    <li>Si monochromator → HRM → ~meV bandwidth; time window 10–200 ns</li>
+                    <li>Quantum beat frequency: Δf = ΔE_hf / h (magnetic or quadrupole splitting)</li>
+                    <li>APD detectors gated off during prompt flash (t &lt; 5 ns)</li>
+                    <li>Instruments: APS 3-ID-B (Chicago) · ESRF ID18 (Grenoble)</li>
+                </ul>
+                <p style="margin-top:0.6rem"><a href="https://www.esrf.fr/UsersAndScience/Experiments/HRRS/ID18" target="_blank" rel="noopener noreferrer" style="color:var(--teal);font-size:1.1rem">↗ ESRF ID18 Nuclear Resonance beamline</a></p>`,
+            init() {
+                const N = 80;
+                const timeSpec = new Float32Array(N);
+                const tau = 0.42; // decay constant (normalized)
+                const omega = 3.5 * Math.PI; // gives ~3 oscillation cycles over window
+                for (let b = 0; b < N; b++) {
+                    const tb = b / N;
+                    timeSpec[b] = Math.exp(-tb / tau) * Math.pow(Math.cos(omega * tb), 2) + 0.01 * Math.random();
+                }
+                return {
+                    particles: [], pulseT: -99, delayedPhotons: [], detHit: 0,
+                    timeSpec,
+                    spawnDelayT: -99
+                };
+            },
+            update(s, t, dt) {
+                const SY = LH / 2;
+                const SAMPLE_X = 500;
+                const DET_X = 820;
+                s.detHit = Math.max(0, s.detHit * 0.97);
+
+                // Main pulse every 2s
+                if (t - s.pulseT > 2.0) {
+                    s.pulseT = t;
+                    for (let k = 0; k < 40; k++) {
+                        s.particles.push({
+                            x: 100, y: SY + (Math.random() - 0.5) * 6,
+                            vx: 600, vy: 0,
+                            col: gammaCol(0), r: 2,
+                            state: 'incoming', isPrompt: null
+                        });
+                    }
+                }
+
+                // Spawn delayed re-emissions
+                if (s.spawnDelayT > 0 && t - s.spawnDelayT < 0.5 && Math.random() < 0.15) {
+                    const angle = (Math.random() - 0.5) * 0.3; // near-forward
+                    const spd = 300;
+                    s.delayedPhotons.push({
+                        x: SAMPLE_X, y: SY + (Math.random() - 0.5) * 8,
+                        vx: spd * Math.cos(angle), vy: spd * Math.sin(angle),
+                        col: gammaCol(0, 1), age: 0, maxAge: 0.5 + Math.random() * 0.3
+                    });
+                }
+
+                // Update main particles
+                for (let i = s.particles.length - 1; i >= 0; i--) {
+                    const p = s.particles[i];
+                    p.x += p.vx * dt * PSIM;
+                    p.y += p.vy * dt * PSIM;
+
+                    if (p.state === 'incoming' && p.x >= SAMPLE_X) {
+                        if (Math.random() < 0.60) {
+                            // Prompt pass-through
+                            p.state = 'prompt';
+                        } else {
+                            // Nuclear excitation → delayed emission
+                            s.spawnDelayT = t;
+                            s.particles.splice(i, 1); continue;
+                        }
+                    }
+
+                    if (p.x > DET_X) {
+                        s.detHit = Math.min(1, s.detHit + 0.4);
+                        s.particles.splice(i, 1); continue;
+                    }
+                    if (p.x > LW + 40 || p.y < -40 || p.y > LH + 40) { s.particles.splice(i, 1); }
+                }
+
+                // Update delayed photons
+                for (let i = s.delayedPhotons.length - 1; i >= 0; i--) {
+                    const p = s.delayedPhotons[i];
+                    p.x += p.vx * dt * PSIM;
+                    p.y += p.vy * dt * PSIM;
+                    p.age += dt;
+                    if (p.x > DET_X && Math.abs(p.y - SY) < 30) {
+                        s.detHit = Math.min(1, s.detHit + 0.6);
+                    }
+                    if (p.age > p.maxAge || p.x > LW + 40 || p.y < -40 || p.y > LH + 40) {
+                        s.delayedPhotons.splice(i, 1);
+                    }
+                }
+            },
+            draw(s, t) {
+                const SY = LH / 2;
+                const SAMPLE_X = 500;
+                const DET_X = 820;
+
+                // Synchrotron source
+                drawSource(60, SY, 'synchrotron', t);
+
+                // Si monochromator
+                drawCrystal(180, SY - 10, -0.3, 'Si HRM');
+
+                // Beam guide dashes
+                ctx.setLineDash([4, 6]);
+                ctx.strokeStyle = 'rgba(0,143,163,0.15)'; ctx.lineWidth = 1;
+                ctx.beginPath(); ctx.moveTo(90, SY); ctx.lineTo(DET_X - 14, SY); ctx.stroke();
+                ctx.setLineDash([]);
+
+                // Sample (glowing)
+                glow(SAMPLE_X, SY, 28, 'rgb(255,255,160)', 0.18);
+                drawSample(SAMPLE_X, SY, '⁵⁷Fe sample');
+
+                // APD Detector
+                const detLit = s.detHit > 0.1;
+                ctx.beginPath(); ctx.roundRect(DET_X - 6, SY - 32, 22, 64, 5);
+                ctx.fillStyle = detLit ? 'rgba(34,211,238,0.25)' : 'rgba(22,61,86,0.30)';
+                ctx.strokeStyle = detLit ? '#22d3ee' : '#5cc2d2'; ctx.lineWidth = 1.5;
+                ctx.fill(); ctx.stroke();
+                if (detLit) { glow(DET_X + 5, SY, 24, 'rgb(34,211,238)', 0.22); }
+                label(DET_X + 5, SY + 44, 'APD', { size: 9 });
+                label(DET_X + 5, SY + 56, 'Detector', { size: 9 });
+
+                // Time-gating annotation
+                label(DET_X + 5, SY - 50, 'Time gate', { size: 9, color: 'rgba(0,143,163,0.60)' });
+                label(DET_X + 5, SY - 38, 't > 10 ns', { size: 9, color: 'rgba(0,143,163,0.50)' });
+
+                // Quantum beat label near sample
+                label(SAMPLE_X, SY - 56, 'Nuclear resonance', { size: 9, color: 'rgba(200,150,20,0.80)' });
+                label(SAMPLE_X, SY - 44, '⁵⁷Fe · 14.4 keV', { size: 9, color: 'rgba(200,150,20,0.65)' });
+                label(SAMPLE_X + 80, SY - 20, 'Δt ∝ 1/ΔE_hf', { size: 10, color: 'rgba(0,143,163,0.65)' });
+
+                // Draw time spectrum inset
+                const IX = 18, IY = LH - 136, IW = 210, IH = 116;
+                ctx.fillStyle = 'rgba(0,0,0,0.75)'; ctx.strokeStyle = 'rgba(0,143,163,0.30)'; ctx.lineWidth = 1;
+                ctx.fillRect(IX, IY, IW, IH); ctx.strokeRect(IX, IY, IW, IH);
+                label(IX + IW / 2, IY + 12, 'Time Spectrum (quantum beats)', { size: 9, color: 'rgba(200,230,255,0.85)' });
+                const N = s.timeSpec.length;
+                const PL = IX + 8, PT = IY + 18, PW = IW - 16, PH = IH - 26;
+                ctx.beginPath();
+                for (let b = 0; b < N; b++) {
+                    const xn = PL + (b / N) * PW;
+                    const yn = PT + PH - Math.max(0, Math.min(1, s.timeSpec[b])) * PH;
+                    b === 0 ? ctx.moveTo(xn, yn) : ctx.lineTo(xn, yn);
+                }
+                ctx.strokeStyle = 'rgba(255,220,80,0.85)'; ctx.lineWidth = 1.4; ctx.stroke();
+                label(PL, IY + IH + 2, '0', { size: 8, color: 'rgba(200,200,200,0.55)', align: 'left' });
+                label(PL + PW / 2, IY + IH + 2, 'Time →', { size: 8, color: 'rgba(200,200,200,0.45)' });
+                label(PL + PW, IY + IH + 2, '150 ns', { size: 8, color: 'rgba(200,200,200,0.55)', align: 'right' });
+
+                // Draw main beam photons
+                s.particles.forEach(function (p) {
+                    drawPhoton(p.x, p.y, 2, p.col);
+                });
+                // Draw delayed re-emitted photons (fading yellow)
+                s.delayedPhotons.forEach(function (p) {
+                    const frac = 1 - p.age / p.maxAge;
+                    drawPhoton(p.x, p.y, 1.8, gammaCol(0, frac));
+                });
+
+                label(LW / 2, LH - 14, 'Synchrotron pulse → nuclear excitation → delayed re-emission → quantum beats encode ΔE_hf', { size: 10, color: 'rgba(0,143,163,0.42)' });
+            }
+        },
+
+        // ── 3. NRIXS — Nuclear Resonant Inelastic X-ray Scattering ────────────
+        nrixs: {
+            label: 'NRIXS',
+            tag:   'APS HERIX / 3-ID · Partial Phonon DOS',
+            info: `<h3>NRIXS — Nuclear Resonant Inelastic X-ray Scattering</h3>
+                <span class="info-tag">APS · 1–2 meV resolution · partial phonon DOS g(E)</span>
+                <p>NRIXS (also called phonon-assisted nuclear resonant scattering or PHOENIX) scans the X-ray energy across the ⁵⁷Fe nuclear resonance ±100 meV using an ultra-high-resolution monochromator (HERIX, ~1–2 meV resolution at APS Sector 3). Phonon creation and annihilation sidebands appear symmetrically around the elastic line at E = 0.</p>
+                <p>Multiple APD detectors positioned at quasi-90° (off forward-scatter) collect inelastically scattered photons, suppressing elastic forward scatter and measuring the partial phonon density of states g(E) of only the ⁵⁷Fe sublattice. From g(E) one extracts the Lamb-Mössbauer factor, Debye sound velocities, and vibrational entropy.</p>
+                <ul>
+                    <li>HRM: ~1 meV bandwidth; energy range ±100 meV around resonance</li>
+                    <li>4 APD detectors at quasi-90° to sample; forward APD for NFS reference</li>
+                    <li>Yields partial phonon DOS g(E) for ⁵⁷Fe sublattice only</li>
+                    <li>Extracts Lamb-Mössbauer factor f_LM, Debye velocity vD, vibrational entropy</li>
+                    <li>Instrument: APS Sector 3-ID-D (HERIX) · Sector 16-ID-D (HPCAT)</li>
+                </ul>
+                <p style="margin-top:0.6rem"><a href="https://www.aps.anl.gov/Beamlines/Directory/Details?beamline_id=8" target="_blank" rel="noopener noreferrer" style="color:var(--teal);font-size:1.1rem">↗ APS Sector 3 / HERIX beamline page</a></p>`,
+            init() {
+                const N = 160;
+                const spectrum = new Float32Array(N);
+                for (let b = 0; b < N; b++) {
+                    const E = -80 + (b / N) * 160; // meV
+                    // Partial phonon DOS: peaks at ±25 and ±45 meV over low background
+                    const phonon = 0.30 * Math.exp(-0.5 * ((E - 25) / 5.5) ** 2)
+                                 + 0.30 * Math.exp(-0.5 * ((E + 25) / 5.5) ** 2)
+                                 + 0.16 * Math.exp(-0.5 * ((E - 45) / 4.5) ** 2)
+                                 + 0.16 * Math.exp(-0.5 * ((E + 45) / 4.5) ** 2)
+                                 + 0.04 * Math.exp(-0.5 * (E / 2.5) ** 2)
+                                 + 0.008;
+                    spectrum[b] = phonon + 0.003 * Math.random();
+                }
+                return {
+                    particles: [], spawnT: -99,
+                    scanE: -80, scanDir: 1, scanT: 0,
+                    apd: [0, 0, 0, 0],
+                    spectrum
+                };
+            },
+            update(s, t, dt) {
+                const SY = LH / 2;
+                const SAMPLE_X = 480;
+                s.scanT += dt;
+                s.scanE += s.scanDir * dt * 16;
+                if (s.scanE > 80) { s.scanE = 80; s.scanDir = -1; }
+                if (s.scanE < -80) { s.scanE = -80; s.scanDir = 1; }
+                s.apd = s.apd.map(function (v) { return Math.max(0, v - dt * 0.3); });
+
+                if (t - s.spawnT > 0.12 && s.particles.length < 100) {
+                    s.spawnT = t;
+                    s.particles.push({
+                        x: 60, y: SY + (Math.random() - 0.5) * 5,
+                        vx: 350, vy: 0,
+                        col: gammaCol(s.scanE / 80),
+                        scanE: s.scanE,
+                        state: 'incoming'
+                    });
+                }
+
+                const APD_POSITIONS = [
+                    { x: SAMPLE_X + 110, y: SY,       idx: 0 },
+                    { x: SAMPLE_X - 110, y: SY,       idx: 1 },
+                    { x: SAMPLE_X,       y: SY - 110, idx: 2 },
+                    { x: SAMPLE_X,       y: SY + 110, idx: 3 },
+                ];
+
+                for (let i = s.particles.length - 1; i >= 0; i--) {
+                    const p = s.particles[i];
+                    p.x += p.vx * dt * PSIM;
+                    p.y += p.vy * dt * PSIM;
+
+                    if (p.state === 'incoming' && Math.hypot(p.x - SAMPLE_X, p.y - SY) < 16) {
+                        const E = p.scanE;
+                        const isPhonon25 = Math.abs(Math.abs(E) - 25) < 5;
+                        const isPhonon45 = Math.abs(Math.abs(E) - 45) < 5;
+                        if (isPhonon25 || isPhonon45) {
+                            // Phonon scatter to nearest APD
+                            const apdIdx = Math.floor(Math.random() * 4);
+                            const target = APD_POSITIONS[apdIdx];
+                            const dx = target.x - SAMPLE_X, dy = target.y - SY;
+                            const dist = Math.hypot(dx, dy);
+                            p.vx = (dx / dist) * 300; p.vy = (dy / dist) * 300;
+                            p.state = 'scattered'; p.targetAPD = apdIdx;
+                            s.apd[apdIdx] = Math.min(1, s.apd[apdIdx] + 0.6);
+                        } else if (Math.abs(E) < 5) {
+                            // Elastic — continue forward
+                            p.state = 'through';
+                        } else {
+                            // No resonance — pass through
+                            p.state = 'through';
+                        }
+                    }
+
+                    // Remove scattered photons when reaching APD region
+                    if (p.state === 'scattered') {
+                        const target = APD_POSITIONS[p.targetAPD];
+                        if (Math.hypot(p.x - target.x, p.y - target.y) < 12) {
+                            s.particles.splice(i, 1); continue;
+                        }
+                    }
+
+                    if (p.x > LW + 40 || p.x < -40 || p.y < -40 || p.y > LH + 40) {
+                        s.particles.splice(i, 1);
+                    }
+                }
+            },
+            draw(s, t) {
+                const SY = LH / 2;
+                const SAMPLE_X = 480;
+
+                // Synchrotron
+                drawSource(55, SY, 'synchrotron', t);
+
+                // 4-crystal HRM (4 small angled crystals)
+                for (let k = 0; k < 4; k++) {
+                    const cx = 162 + k * 14;
+                    const ca = -0.4 + k * 0.08;
+                    ctx.save(); ctx.translate(cx, SY - 4); ctx.rotate(ca);
+                    ctx.beginPath(); ctx.rect(-4, -14, 8, 28);
+                    ctx.fillStyle = '#4ab8cc'; ctx.strokeStyle = C.teal; ctx.lineWidth = 1.2;
+                    ctx.fill(); ctx.stroke();
+                    ctx.restore();
+                }
+                label(175, SY - 28, 'HRM', { size: 9, color: 'rgba(0,143,163,0.80)' });
+                label(175, SY - 16, '~1 meV', { size: 8, color: 'rgba(0,143,163,0.55)' });
+
+                // Beam guide
+                ctx.setLineDash([4, 6]);
+                ctx.strokeStyle = 'rgba(0,143,163,0.15)'; ctx.lineWidth = 1;
+                ctx.beginPath(); ctx.moveTo(90, SY); ctx.lineTo(SAMPLE_X - 18, SY); ctx.stroke();
+                ctx.setLineDash([]);
+
+                // Sample
+                drawSample(SAMPLE_X, SY, '⁵⁷Fe sample');
+
+                // 4 APD detectors around sample
+                const APD_POS = [
+                    { x: SAMPLE_X + 110, y: SY,       lbl: 'APD 1' },
+                    { x: SAMPLE_X - 110, y: SY,       lbl: 'APD 2' },
+                    { x: SAMPLE_X,       y: SY - 110, lbl: 'APD 3' },
+                    { x: SAMPLE_X,       y: SY + 110, lbl: 'APD 4' },
+                ];
+                APD_POS.forEach(function (ap, idx) {
+                    const lit = s.apd[idx] > 0.1;
+                    const angle = Math.atan2(ap.y - SY, ap.x - SAMPLE_X) + Math.PI / 2;
+                    ctx.save(); ctx.translate(ap.x, ap.y); ctx.rotate(angle);
+                    ctx.beginPath(); ctx.rect(-8, -5, 16, 10);
+                    ctx.fillStyle = lit ? 'rgba(34,211,238,0.90)' : 'rgba(22,61,86,0.55)';
+                    ctx.strokeStyle = lit ? '#22d3ee' : '#5cc2d2'; ctx.lineWidth = 1.2;
+                    ctx.fill(); ctx.stroke();
+                    ctx.restore();
+                    if (lit) { glow(ap.x, ap.y, 18, 'rgb(34,211,238)', 0.3); }
+                    label(ap.x + (ap.x > SAMPLE_X ? 20 : ap.x < SAMPLE_X ? -20 : 0),
+                          ap.y + (ap.y > SY ? 18 : ap.y < SY ? -18 : 0),
+                          ap.lbl, { size: 8, color: 'rgba(0,143,163,0.65)' });
+                });
+
+                // Draw quasi-90° lines from sample to APDs
+                APD_POS.forEach(function (ap) {
+                    ctx.setLineDash([3, 5]);
+                    ctx.strokeStyle = 'rgba(0,143,163,0.12)'; ctx.lineWidth = 1;
+                    ctx.beginPath(); ctx.moveTo(SAMPLE_X, SY); ctx.lineTo(ap.x, ap.y); ctx.stroke();
+                    ctx.setLineDash([]);
+                });
+
+                // Energy label
+                const eSign = s.scanE >= 0 ? '+' : '';
+                const eCol = s.scanE > 5 ? gammaCol(1) : s.scanE < -5 ? gammaCol(-1) : gammaCol(0);
+                label(LW - 130, 22, 'ΔE = ' + eSign + s.scanE.toFixed(0) + ' meV', { size: 12, color: eCol, weight: 600 });
+
+                // Draw phonon DOS inset
+                const IX = 18, IY = LH - 136, IW = 210, IH = 116;
+                ctx.fillStyle = 'rgba(22,61,86,0.06)'; ctx.strokeStyle = 'rgba(0,143,163,0.30)'; ctx.lineWidth = 1;
+                ctx.fillRect(IX, IY, IW, IH); ctx.strokeRect(IX, IY, IW, IH);
+                label(IX + IW / 2, IY + 12, 'Partial Phonon DOS g(E)', { size: 9, color: 'rgba(0,143,163,0.85)' });
+                const NN = s.spectrum.length;
+                const PL = IX + 8, PT = IY + 18, PW = IW - 16, PH = IH - 26;
+                const mx = Math.max.apply(null, Array.from(s.spectrum)) || 1;
+                ctx.beginPath();
+                for (let b = 0; b < NN; b++) {
+                    const xn = PL + (b / NN) * PW;
+                    const yn = PT + PH - (s.spectrum[b] / mx) * PH;
+                    b === 0 ? ctx.moveTo(xn, yn) : ctx.lineTo(xn, yn);
+                }
+                ctx.strokeStyle = 'rgba(0,200,160,0.85)'; ctx.lineWidth = 1.4; ctx.stroke();
+                // Current scan position marker
+                const scanFrac = (s.scanE + 80) / 160;
+                const markerXs = PL + scanFrac * PW;
+                ctx.strokeStyle = 'rgba(255,200,50,0.80)'; ctx.lineWidth = 1;
+                ctx.setLineDash([2, 3]);
+                ctx.beginPath(); ctx.moveTo(markerXs, PT); ctx.lineTo(markerXs, PT + PH); ctx.stroke();
+                ctx.setLineDash([]);
+                label(PL, IY + IH + 2, '-80', { size: 8, color: 'rgba(22,61,86,0.50)', align: 'left' });
+                label(PL + PW / 2, IY + IH + 2, '0 meV', { size: 8, color: 'rgba(22,61,86,0.50)' });
+                label(PL + PW, IY + IH + 2, '+80', { size: 8, color: 'rgba(22,61,86,0.50)', align: 'right' });
+
+                // Draw photons
+                s.particles.forEach(function (p) {
+                    drawPhoton(p.x, p.y, 2, p.col);
+                });
+
+                label(LW / 2, LH - 14, 'Energy scan ±80 meV → phonon sidebands → partial ⁵⁷Fe phonon DOS g(E) · Lamb-Mössbauer factor', { size: 10, color: 'rgba(0,143,163,0.42)' });
+            }
+        },
+
+        // ── 4. SMS — Synchrotron Mössbauer Source ─────────────────────────────
+        sms: {
+            label: 'SMS',
+            tag:   'ESRF ID18 · ⁵⁷FeBO₃ nuclear monochromator · ~15 neV',
+            info: `<h3>SMS — Synchrotron Mössbauer Source</h3>
+                <span class="info-tag">ESRF ID18 · ⁵⁷FeBO₃ crystal · ~15 neV bandwidth · tuneable</span>
+                <p>The Synchrotron Mössbauer Source (SMS) at ESRF ID18 uses a ⁵⁷FeBO₃ single crystal as a nuclear monochromator. Near the magnetic ordering temperature (~T_N = 348.8 K), this crystal diffracts synchrotron radiation via nuclear resonance scattering, producing a beam with ~15 neV bandwidth — equivalent to the natural linewidth of the ⁵⁷Fe nucleus.</p>
+                <p>The beam energy is tunable by varying the crystal temperature (energy shift ~0.8 neV/mK), analogous to the velocity drive in conventional Mössbauer spectroscopy but using thermal expansion. The SMS produces a collimated, polarized 14.4 keV beam with brightness 10⁸× higher than a radioactive ⁵⁷Co source, enabling studies of tiny samples, extreme pressures (diamond-anvil cells), and time-resolved experiments.</p>
+                <ul>
+                    <li>⁵⁷FeBO₃ nuclear monochromator: ~15 neV bandwidth at T ~ T_N</li>
+                    <li>Energy tuning by crystal temperature: δE ≈ 0.8 neV/mK</li>
+                    <li>10⁸× brighter than ⁵⁷Co radioactive source; naturally collimated and polarized</li>
+                    <li>Ideal for diamond-anvil cells (DAC), small samples, in situ studies</li>
+                    <li>Instrument: ESRF ID18 (Nuclear Resonance beamline, Grenoble)</li>
+                </ul>
+                <p style="margin-top:0.6rem"><a href="https://www.esrf.fr/UsersAndScience/Experiments/HRRS/ID18" target="_blank" rel="noopener noreferrer" style="color:var(--teal);font-size:1.1rem">↗ ESRF ID18 Nuclear Resonance beamline</a></p>`,
+            init() {
+                const N = 120;
+                const spectrum = new Float32Array(N);
+                for (let b = 0; b < N; b++) {
+                    const E = -6 + (b / N) * 12; // neV, narrow window
+                    // Single narrow absorption dip at center (neV scale)
+                    const dip = 0.40 * lorentzian(E, 0, 0.08);
+                    spectrum[b] = 1.0 - dip + 0.004 * Math.random();
+                }
+                return {
+                    particles: [], spawnT: -99, detHit: 0,
+                    monoCrystalT: 0, crystalTemp: 348.8,
+                    spectrum
+                };
+            },
+            update(s, t, dt) {
+                const SY = LH / 2;
+                const MONO_X = 220;
+                const SAMPLE_X = 480;
+                const DET_X = 820;
+                s.monoCrystalT += dt * 8;
+                s.detHit = Math.max(0, s.detHit * 0.97);
+                // Gentle temperature oscillation for visual
+                s.crystalTemp = 348.8 + 0.6 * Math.sin(t * 0.8);
+
+                if (t - s.spawnT > 0.13 && s.particles.length < 80) {
+                    s.spawnT = t;
+                    s.particles.push({
+                        x: 55 + 22, y: SY + (Math.random() - 0.5) * 5,
+                        vx: 360, vy: 0,
+                        col: gammaCol(0.05),
+                        state: 'pre_mono'
+                    });
+                }
+
+                for (let i = s.particles.length - 1; i >= 0; i--) {
+                    const p = s.particles[i];
+                    p.x += p.vx * dt * PSIM;
+                    p.y += p.vy * dt * PSIM;
+
+                    // Pass through monochromator → narrow bandwidth selected
+                    if (p.state === 'pre_mono' && p.x > MONO_X) {
+                        if (Math.random() < 0.72) {
+                            p.state = 'mono_out';
+                            p.col = gammaCol(0); // resonance energy
+                        } else {
+                            s.particles.splice(i, 1); continue;
+                        }
+                    }
+
+                    // Slits at x=360
+                    if (p.state === 'mono_out' && p.x > 360 && !p.passedSlits) {
+                        if (Math.random() < 0.88) { p.passedSlits = true; }
+                        else { s.particles.splice(i, 1); continue; }
+                    }
+
+                    // Sample absorption
+                    if (p.state === 'mono_out' && p.passedSlits && Math.hypot(p.x - SAMPLE_X, p.y - SY) < 16) {
+                        const dip = 0.40 * lorentzian(0, 0, 0.08); // always near resonance
+                        if (Math.random() < dip * 1.2) {
+                            // Absorbed
+                            const bin = Math.min(119, Math.max(0, 60 + Math.round((Math.random() - 0.5) * 4)));
+                            s.spectrum[bin] = Math.max(0.55, s.spectrum[bin] - 0.005);
+                            s.particles.splice(i, 1); continue;
+                        }
+                        p.state = 'to_det';
+                    }
+
+                    if (p.x > DET_X) {
+                        s.detHit = Math.min(1, s.detHit + 0.45);
+                        s.particles.splice(i, 1); continue;
+                    }
+                    if (p.x > LW + 40 || p.y < -40 || p.y > LH + 40) { s.particles.splice(i, 1); }
+                }
+            },
+            draw(s, t) {
+                const SY = LH / 2;
+                const MONO_X = 220;
+                const SAMPLE_X = 480;
+                const DET_X = 820;
+
+                // Synchrotron source
+                drawSource(55, SY, 'synchrotron', t);
+
+                // ⁵⁷FeBO₃ nuclear monochromator crystal (prominent, with label)
+                const monoAngle = 0.05 * Math.sin(s.monoCrystalT * 0.06); // slight thermal wobble
+                ctx.save(); ctx.translate(MONO_X, SY);
+                ctx.rotate(monoAngle);
+                // Crystal body
+                ctx.beginPath();
+                ctx.moveTo(-10, -28); ctx.lineTo(10, -28);
+                ctx.lineTo(14, 28); ctx.lineTo(-14, 28); ctx.closePath();
+                ctx.fillStyle = '#3aafcc'; ctx.strokeStyle = C.teal; ctx.lineWidth = 2;
+                ctx.fill(); ctx.stroke();
+                // Lattice lines
+                ctx.strokeStyle = 'rgba(255,255,255,0.42)'; ctx.lineWidth = 0.9;
+                for (let i = -4; i <= 4; i++) {
+                    ctx.beginPath(); ctx.moveTo(-12, i * 7); ctx.lineTo(12, i * 7); ctx.stroke();
+                }
+                // Nuclear resonance glow
+                glow(0, 0, 22, 'rgb(255,220,80)', 0.20 + 0.15 * Math.abs(Math.sin(s.monoCrystalT * 0.5)));
+                ctx.restore();
+                label(MONO_X, SY - 42, '⁵⁷FeBO₃', { size: 10, color: 'rgba(0,143,163,0.90)', weight: 600 });
+                label(MONO_X, SY - 30, 'Nuclear Mono.', { size: 9, color: 'rgba(0,143,163,0.65)' });
+                label(MONO_X, SY + 46, 'T = ' + s.crystalTemp.toFixed(1) + ' K', { size: 9, color: 'rgba(255,180,60,0.75)' });
+
+                // Bandwidth label
+                label(MONO_X, SY - 18, '~15 neV', { size: 9, color: 'rgba(255,200,60,0.75)' });
+
+                // Beam guide dashes
+                ctx.setLineDash([4, 6]);
+                ctx.strokeStyle = 'rgba(0,143,163,0.15)'; ctx.lineWidth = 1;
+                ctx.beginPath(); ctx.moveTo(88, SY); ctx.lineTo(DET_X - 14, SY); ctx.stroke();
+                ctx.setLineDash([]);
+
+                // Slits at x=360
+                const SL_X = 360;
+                [[-9, -3], [3, 9]].forEach(function (off) {
+                    ctx.beginPath();
+                    ctx.moveTo(SL_X - 3, SY + off[0]);
+                    ctx.lineTo(SL_X + 3, SY + off[0]);
+                    ctx.lineTo(SL_X + 3, SY + off[1]);
+                    ctx.lineTo(SL_X - 3, SY + off[1]);
+                    ctx.fillStyle = 'rgba(22,61,86,0.80)'; ctx.fill();
+                });
+                label(SL_X, SY - 22, 'Slits', { size: 9 });
+
+                // Sample (with DAC suggestion)
+                glow(SAMPLE_X, SY, 22, 'rgb(255,255,180)', 0.12);
+                drawFeSample(SAMPLE_X, SY, 'Sample\n(DAC)');
+
+                // Temperature tuning annotation
+                const tArrow = [
+                    { x: SAMPLE_X - 60, y: SY - 72 },
+                    { x: SAMPLE_X + 60, y: SY - 72 }
+                ];
+                ctx.beginPath();
+                ctx.moveTo(tArrow[0].x, tArrow[0].y);
+                ctx.lineTo(tArrow[1].x, tArrow[1].y);
+                ctx.strokeStyle = 'rgba(255,180,60,0.40)'; ctx.lineWidth = 1;
+                ctx.setLineDash([3, 4]); ctx.stroke(); ctx.setLineDash([]);
+                label(MONO_X + 90, SY - 80, 'Energy tuneable by T', { size: 9, color: 'rgba(255,180,60,0.65)' });
+                label(MONO_X + 90, SY - 68, 'δE ≈ 0.8 neV/mK', { size: 9, color: 'rgba(255,180,60,0.50)' });
+
+                // Detector
+                const detLit = s.detHit > 0.1;
+                ctx.beginPath(); ctx.roundRect(DET_X - 6, SY - 36, 22, 72, 5);
+                ctx.fillStyle = detLit ? 'rgba(34,211,238,0.25)' : 'rgba(22,61,86,0.30)';
+                ctx.strokeStyle = detLit ? '#22d3ee' : '#5cc2d2'; ctx.lineWidth = 1.5;
+                ctx.fill(); ctx.stroke();
+                if (detLit) { glow(DET_X + 5, SY, 24, 'rgb(34,211,238)', 0.22); }
+                label(DET_X + 5, SY + 48, 'Detector', { size: 9 });
+
+                // Draw narrow-line spectrum inset
+                const IX = 18, IY = LH - 136, IW = 210, IH = 116;
+                ctx.fillStyle = 'rgba(22,61,86,0.06)'; ctx.strokeStyle = 'rgba(0,143,163,0.30)'; ctx.lineWidth = 1;
+                ctx.fillRect(IX, IY, IW, IH); ctx.strokeRect(IX, IY, IW, IH);
+                label(IX + IW / 2, IY + 12, 'Mössbauer Spectrum (SMS)', { size: 9, color: 'rgba(0,143,163,0.85)' });
+                const NN = s.spectrum.length;
+                const PL = IX + 8, PT = IY + 18, PW = IW - 16, PH = IH - 26;
+                const mx = Math.max.apply(null, Array.from(s.spectrum)) || 1;
+                ctx.beginPath();
+                for (let b = 0; b < NN; b++) {
+                    const xn = PL + (b / NN) * PW;
+                    const yn = PT + PH - (s.spectrum[b] / mx) * PH;
+                    b === 0 ? ctx.moveTo(xn, yn) : ctx.lineTo(xn, yn);
+                }
+                ctx.strokeStyle = 'rgba(0,143,163,0.85)'; ctx.lineWidth = 1.4; ctx.stroke();
+                label(PL, IY + IH + 2, '-6 neV', { size: 8, color: 'rgba(22,61,86,0.50)', align: 'left' });
+                label(PL + PW / 2, IY + IH + 2, '0', { size: 8, color: 'rgba(22,61,86,0.50)' });
+                label(PL + PW, IY + IH + 2, '+6 neV', { size: 8, color: 'rgba(22,61,86,0.50)', align: 'right' });
+
+                // Draw photons
+                s.particles.forEach(function (p) {
+                    drawPhoton(p.x, p.y, 2, p.col);
+                });
+
+                label(LW / 2, LH - 14, '⁵⁷FeBO₃ nuclear monochromator → ~15 neV beam → transmission Mössbauer at synchrotron brightness  |  ESRF ID18', { size: 10, color: 'rgba(0,143,163,0.42)' });
+            }
+        }
+    };
+
+    // ── Resize canvas ──────────────────────────────────────────────────────────
+    function resize() {
+        const shell = canvas.parentElement;
+        canvas.width  = shell.clientWidth  || 900;
+        canvas.height = shell.clientHeight || 506;
+    }
+    window.addEventListener('resize', resize);
+    resize();
+
+    // ── Main render loop ───────────────────────────────────────────────────────
+    function loop(ts) {
+        requestAnimationFrame(loop);
+        if (!activeKey) return;
+        const t  = ts * 0.001;
+        const dt = Math.min(t - (prevT || t), 0.05);
+        prevT = t;
+        const inst = INSTRUMENTS[activeKey];
+        const scaleX = canvas.width  / LW;
+        const scaleY = canvas.height / LH;
+        const scale  = Math.min(scaleX, scaleY);
+        const offX   = (canvas.width  - LW * scale) / 2;
+        const offY   = (canvas.height - LH * scale) / 2;
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+        ctx.save();
+        ctx.translate(offX, offY);
+        ctx.scale(scale, scale);
+        drawBG();
+        inst.update(state, t, dt);
+        inst.draw(state, t);
+        ctx.restore();
+    }
+    requestAnimationFrame(loop);
+
+    // ── Instrument selection ───────────────────────────────────────────────────
+    function selectInstrument(key) {
+        activeKey = key;
+        prevT = null;
+        state = INSTRUMENTS[key].init();
+        placeholder.style.display = 'none';
+        infoPanel.innerHTML = INSTRUMENTS[key].info;
+        resize();
+        document.querySelectorAll('.inst-card').forEach(function (c) {
+            c.classList.toggle('active', c.dataset.inst === key);
+        });
+    }
+
+    document.querySelectorAll('.inst-card').forEach(function (card) {
+        card.addEventListener('click', function () { selectInstrument(card.dataset.inst); });
+    });
+    })();
+    </script>
+</body>
+</html>

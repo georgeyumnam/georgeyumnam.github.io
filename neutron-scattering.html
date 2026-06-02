@@ -87,6 +87,22 @@
         .signal-header-title { font-size: 1.1rem; font-weight: 600; color: rgba(255,255,255,0.85); letter-spacing: 0.04em; }
         .signal-header-axis  { font-size: 0.95rem; color: rgba(200,200,200,0.55); font-style: italic; }
         #signal-canvas { display: block; width: 100%; height: 100%; }
+        /* Navbar dropdown */
+        .nav-dropdown { position: relative; }
+        .nav-dropdown-menu {
+            display: none; position: absolute; top: calc(100% + 6px); left: 50%;
+            transform: translateX(-50%);
+            background: rgba(255,255,255,0.95); backdrop-filter: blur(16px);
+            border: 1px solid var(--border); border-radius: 12px; padding: 0.4rem 0;
+            min-width: 210px; box-shadow: var(--shadow-md); z-index: 200;
+        }
+        .nav-dropdown:hover .nav-dropdown-menu { display: block; }
+        .nav-dropdown-menu a {
+            display: block; padding: 0.55rem 1.1rem; color: var(--white);
+            text-decoration: none; font-size: 1rem; font-weight: 500;
+            transition: var(--transition);
+        }
+        .nav-dropdown-menu a:hover, .nav-dropdown-menu a.active { color: var(--teal); background: var(--teal-light); }
         @media (max-width: 900px) { .inst-grid { grid-template-columns: repeat(3,1fr); } }
         @media (max-width: 768px) {
             .inst-grid { grid-template-columns: repeat(2,1fr); }
@@ -114,7 +130,13 @@
                     <li><a href="index.html#publications" class="nav-link">Publications</a></li>
                     <li><a href="index.html#teaching" class="nav-link">Teaching</a></li>
                     <li><a href="index.html#mitsna" class="nav-link">MitSna</a></li>
-                    <li><a href="neutron-scattering.html" class="nav-link active" target="_blank" rel="noopener noreferrer">Neutron Scattering</a></li>
+                    <li class="nav-dropdown">
+                        <a href="#" class="nav-link">Experiments <i class="fas fa-chevron-down" style="font-size:0.65em;margin-left:3px;"></i></a>
+                        <div class="nav-dropdown-menu">
+                            <a href="neutron-scattering.html" class="active" target="_blank" rel="noopener noreferrer">Neutron Scattering</a>
+                            <a href="mossbauer.html" target="_blank" rel="noopener noreferrer">Mössbauer Spectroscopy</a>
+                        </div>
+                    </li>
                     <li><a href="index.html#contact" class="nav-link">Contact</a></li>
                 </ul>
                 <div class="hamburger"><span></span><span></span><span></span></div>
