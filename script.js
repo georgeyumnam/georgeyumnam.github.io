@@ -518,7 +518,7 @@ window.addEventListener('scroll', onScroll); onScroll();
   const rail = document.getElementById('beamrail');
   if (rail) {
     const secs = [...document.querySelectorAll('section[id]')].filter(s => s.id !== 'home');
-    const names = { beamstats: 'Beam stats', about: 'Sample · About', employment: 'Career', education: 'Training',
+    const names = { about: 'Sample · About', employment: 'Career', education: 'Training',
                     projects: 'Scattering · Research', 'past-research': 'Archive · Past research',
                     publications: 'Detector · Papers', teaching: 'Mentorship',
                     mitsna: 'Community', contact: 'Signal out · Contact' };
