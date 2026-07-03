@@ -732,6 +732,10 @@ section { padding: 84px 0; position: relative; z-index: 1; }
 .case-refs { margin-top: 0 !important; margin-bottom: 0.4rem; }
 .case-refs li a { color: var(--teal); font-weight: 600; transition: var(--transition); }
 .case-refs li a:hover { color: var(--teal-dark); }
+/* reference lists outside .research-panel (e.g. archive rows) */
+.research-row .case-refs { list-style: none; display: flex; flex-direction: column; gap: 0.5rem; margin-bottom: 1.2rem; }
+.research-row .case-refs li { font-size: 1.3rem; color: var(--text-dim); padding-left: 1.3rem; position: relative; line-height: 1.65; }
+.research-row .case-refs li::before { content: '▸'; position: absolute; left: 0; color: var(--teal); }
 .scholar-note {
     text-align: center;
     font-size: 1.4rem !important;
