@@ -7,7 +7,7 @@
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Space+Grotesk:wght@500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="styles.css?v=5">
+    <link rel="stylesheet" href="styles.css?v=7">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 </head>
 <body>
@@ -41,19 +41,19 @@
             <div class="nav-wrapper">
                 <a href="#home" class="logo">George Yumnam</a>
                 <ul class="nav-menu">
-                    <li><a href="#about" class="nav-link">About</a></li>
                     <li><a href="#projects" class="nav-link">Research</a></li>
                     <li><a href="#publications" class="nav-link">Publications</a></li>
-                    <li><a href="#teaching" class="nav-link">Teaching</a></li>
-                    <li><a href="#mitsna" class="nav-link">MitSna</a></li>
+                    <li><a href="#contact" class="nav-link">Contact</a></li>
                     <li class="nav-dropdown">
-                        <a href="#" class="nav-link">Experiments <i class="fas fa-chevron-down" style="font-size:0.65em;margin-left:3px;"></i></a>
+                        <a href="#" class="nav-link">More <i class="fas fa-chevron-down" style="font-size:0.65em;margin-left:3px;"></i></a>
                         <div class="nav-dropdown-menu">
+                            <a href="#teaching">Teaching &amp; Mentoring</a>
+                            <a href="#mitsna">MitSna Foundation</a>
+                            <div class="nav-dropdown-label">Experiments</div>
                             <a href="neutron-scattering.html" target="_blank" rel="noopener noreferrer">Neutron Scattering</a>
                             <a href="mossbauer.html" target="_blank" rel="noopener noreferrer">Mössbauer Spectroscopy</a>
                         </div>
                     </li>
-                    <li><a href="#contact" class="nav-link">Contact</a></li>
                 </ul>
                 <button id="cmdk-btn" class="cmdk-chip" aria-label="Open quick navigation">⌘K</button>
                 <div class="hamburger">
@@ -113,8 +113,8 @@
             </div>
             <div class="about-layout">
                 <div class="about-text">
-                    <p>I am a postdoctoral fellow at the Stewart Blusson Quantum Matter Institute (SBQMI) at the University of British Columbia, Vancouver. I am an experimental condensed-matter physicist specializing in neutron and X-ray scattering. My research centers on how spin, lattice, and crystal-field degrees of freedom hybridize and evolve under disorder, field, pressure, and chemical tuning.</p>
-                    <p>I focus on understanding how collective excitations emerge and hybridize in ordered and unconventional magnets, and how external tuning reshapes magnetic spectra. By building experimentally grounded models of these coupled excitations, my work aims to uncover organizing principles that govern magnetic behavior in complex quantum materials.</p>
+                    <p>I am an experimental condensed-matter physicist, currently a postdoctoral fellow at the Stewart Blusson Quantum Matter Institute (SBQMI) at the University of British Columbia in Vancouver. Most of my work happens at neutron and X-ray scattering facilities, where I study how spins, the lattice, and crystal-field states talk to each other — and what happens to that conversation when a material is pushed by disorder, magnetic field, pressure, or chemical substitution.</p>
+                    <p>The questions I keep returning to are about collective excitations: how they form in ordered and unconventional magnets, why they hybridize, and how tuning a material reshapes its magnetic spectrum. I try to anchor every model in what the data actually show, with the longer-term aim of finding the organizing principles behind magnetic behavior in complex quantum materials.</p>
                 </div>
                 <div class="about-photo-wrap">
                     <img src="images/profile2.jpg" alt="George Yumnam at a neutron scattering beamline" class="about-photo">
@@ -180,7 +180,7 @@
                     </div>
                     <div class="project-card-body">
                         <h3 class="project-title">Altermagnetism &amp; Magnon-Phonon Coupling</h3>
-                        <p class="project-description">Altermagnetism is a recently recognized type of magnetic order with spin-split energy bands but no net magnetization, making it fundamentally distinct from both ferromagnets and antiferromagnets. My work maps the spin dynamics across three material platforms. In α-MnTe, I resolved the spin-split magnon dispersion and tracked how chemical doping and applied pressure reshape the magnetic order and magnon-phonon hybridization. In hematite, I probe chiral magnon branches that reflect the underlying altermagnetic symmetry. In RuO₂, where the magnetic ground state is still actively debated, a combination of inelastic neutron scattering and Mössbauer spectroscopy places the tightest experimental bounds on its magnetism reported to date. This research is built on a PI-led neutron user program across SEQUOIA, ARCS, HYSPEC, and TAX at SNS and HFIR.</p>
+                        <p class="project-description">Altermagnets order magnetically without any net magnetization, yet their energy bands are spin-split — a combination that fits neither the ferromagnetic nor the antiferromagnetic mold. I study the spin dynamics of three such materials. In α-MnTe, I resolved the spin-split magnon dispersion and followed how doping and pressure rework the magnetic order and its coupling to phonons. In hematite, I am after the chiral magnon branches that the altermagnetic symmetry predicts. And in RuO₂, whose magnetic ground state remains contested, our inelastic neutron scattering and Mössbauer measurements set the tightest bounds on the magnetism published so far. The experiments run through a PI-led neutron user program on SEQUOIA, ARCS, HYSPEC, and TAX at SNS and HFIR.</p>
                         <div class="project-tech">
                             <span class="tech-tag">Altermagnetism</span>
                             <span class="tech-tag">Spin-Split Magnons</span>
@@ -196,7 +196,7 @@
                     </div>
                     <div class="project-card-body">
                         <h3 class="project-title">Magnon Resilience in Diluted Antiferromagnets</h3>
-                        <p class="project-description">When non-magnetic atoms replace magnetic ones in an antiferromagnet, at some point the lattice becomes too diluted to sustain coherent spin waves. In Y-doped TbSb, I am studying exactly this regime. Substituting non-magnetic yttrium for magnetic terbium progressively dilutes the magnetic sublattice, yet the spin waves turn out to be far more robust than simple percolation theory predicts. Crystal-field interactions between the single-ion and collective degrees of freedom appear to stabilize magnon branches well past the expected breakdown point. Using HYSPEC, ARCS, and VERITAS at SNS, the goal is to pin down this mechanism and understand how local single-ion anisotropy protects collective magnetism from disorder more generally.</p>
+                        <p class="project-description">Dilute an antiferromagnet with enough non-magnetic atoms and its spin waves should eventually fall apart — percolation theory even says when. In Y-doped TbSb, they don't. As yttrium replaces terbium, the magnon branches stay well-defined far beyond the point where the textbook picture predicts collapse. The extra stability seems to come from crystal-field levels hybridizing with the collective spin-wave modes. With measurements on HYSPEC, ARCS, and VERITAS at SNS, I want to pin down that mechanism — and, more broadly, learn how local single-ion anisotropy shields collective magnetism from disorder.</p>
                         <div class="project-tech">
                             <span class="tech-tag">Diluted Antiferromagnets</span>
                             <span class="tech-tag">Crystal-Field Hybridization</span>
@@ -212,7 +212,7 @@
                     </div>
                     <div class="project-card-body">
                         <h3 class="project-title">Nanoengineered Artificial Honeycomb Lattices</h3>
-                        <p class="project-description">My PhD work centered on patterning thin-film permalloy and Nd into honeycomb geometries to study how magnetic charges behave when the lattice geometry is controlled at the nanoscale. In Nd-based honeycomb lattices, we found a quantum-disordered state of these charges, published as the Frontispiece in Advanced Science (2021). In permalloy networks, the same charge physics produces a rectifying effect: the lattice acts as a magnetic diode with a very low forward voltage, tunable by field history and temperature (Mater. Today Phys., 2022). The measurements relied on polarized neutron reflectometry and SANS with DWBA modeling, techniques I developed hands-on during my PhD in close collaboration with beamlines at ORNL.</p>
+                        <p class="project-description">For my PhD, I patterned thin-film permalloy and Nd into honeycomb networks to watch how emergent magnetic charges behave when the lattice geometry is controlled at the nanoscale. The Nd lattices gave us a surprise: a quantum-disordered state of those charges, which ended up as the Frontispiece of Advanced Science (2021). In the permalloy networks, the same charge physics rectifies — the array behaves as a magnetic diode with an unusually low forward voltage, tunable by field history and temperature (Mater. Today Phys., 2022). Much of the evidence came from polarized neutron reflectometry and SANS with DWBA modeling, techniques I learned hands-on at the ORNL beamlines.</p>
                         <div class="project-tech">
                             <span class="tech-tag">Magnetic Monopoles</span>
                             <span class="tech-tag">Spin Ice</span>
@@ -228,7 +228,7 @@
                     </div>
                     <div class="project-card-body">
                         <h3 class="project-title">Itinerant Magnets &amp; Quantum Information</h3>
-                        <p class="project-description">At SBQMI, I am studying itinerant magnets that do not order in any conventional sense. These materials are interesting because their spin fluctuations span a wide range of energy and wavevector, encoding correlations that standard probes struggle to characterize. One approach I am developing is to extract the Quantum Fisher Information (QFI) directly from neutron scattering data. QFI gives a lower bound on multipartite entanglement, which connects the measurement to quantities relevant for quantum sensing and computing. Alongside this, I am growing single crystals and doing physical property characterization to identify the best candidate systems. The broader goal is to find materials where magnetic fluctuations are genuinely useful for quantum information applications.</p>
+                        <p class="project-description">At SBQMI, I work on itinerant magnets that never settle into conventional order. Their spin fluctuations spread across wide ranges of energy and wavevector, and the correlations buried in those fluctuations are exactly what standard probes have trouble quantifying. My approach is to pull the Quantum Fisher Information (QFI) straight out of neutron scattering data — QFI bounds the multipartite entanglement from below, which ties a scattering experiment to quantities that matter for quantum sensing and computing. In parallel, I grow single crystals and characterize their bulk properties to decide which systems deserve beam time. What I am really after are materials whose magnetic fluctuations can do useful quantum-information work.</p>
                         <div class="project-tech">
                             <span class="tech-tag">Itinerant Magnetism</span>
                             <span class="tech-tag">Quantum Fisher Information</span>
@@ -314,19 +314,19 @@
                 <p class="section-eyebrow">Mentorship</p>
                 <h2 class="section-title">Teaching &amp; Mentoring</h2>
             </div>
-            <p class="teaching-intro">As a postdoctoral researcher, I typically join projects once a concrete materials or scattering question is on the table. I am not currently hiring students directly, but I am very happy to co-advise, mentor on neutron and X-ray scattering experiments, and collaborate on joint proposals. I follow a bottom-up approach in teaching physics at the college and graduate level.</p>
+            <p class="teaching-intro">As a postdoc, I usually come on board once a project has a concrete materials or scattering question to answer. I am not in a position to hire students myself right now, but I gladly co-advise, mentor students through neutron and X-ray experiments, and team up on joint proposals. When I teach — at the college or graduate level — I build up from fundamentals rather than down from formalism.</p>
             <div class="cards-grid">
                 <div class="opp-card">
                     <h4>Co-advised Students</h4>
-                    <p>Joint projects on neutron and X-ray scattering studies of magnon dynamics and related quantum materials.</p>
+                    <p>Joint projects probing magnon dynamics and related quantum materials with neutrons and X-rays.</p>
                 </div>
                 <div class="opp-card">
                     <h4>Visiting Researchers</h4>
-                    <p>Short-term visits to pair scattering experiments with shared analysis notebooks and open data pipelines.</p>
+                    <p>Short research visits built around a scattering experiment, with analysis notebooks and data pipelines we keep open and shared.</p>
                 </div>
                 <div class="opp-card">
                     <h4>Collaborative Proposals</h4>
-                    <p>Partners on neutron/X-ray scattering experiments on magnetic and quantum materials with shared authorship plans.</p>
+                    <p>Beamtime proposals on magnetic and quantum materials, planned together from the start — authorship included.</p>
                 </div>
             </div>
         </div>
@@ -339,19 +339,19 @@
                 <p class="section-eyebrow">Community</p>
                 <h2 class="section-title">MitSna Foundation</h2>
             </div>
-            <p class="teaching-intro"><a href="https://mitsna.org" target="_blank" rel="noopener noreferrer">MitSna Foundation</a> is a non-governmental organization dedicated to helping students from underserved communities access and navigate higher education. I have been involved with MitSna since its early formation in 2019, beginning as a founding member and served as Advisor, and have remained an active member ever since.</p>
+            <p class="teaching-intro"><a href="https://mitsna.org" target="_blank" rel="noopener noreferrer">MitSna Foundation</a> is a non-governmental organization that helps students from underserved communities get into — and through — higher education. I have been part of MitSna since it took shape in 2019, first as a founding member, later as an Advisor, and I remain active in the organization today.</p>
             <div class="cards-grid">
                 <div class="opp-card">
                     <h4>Organizational Founding</h4>
-                    <p>Contributed to shaping the strategic direction of the organization from its earliest stages, including drafting the founding bylaws that govern its structure and operations.</p>
+                    <p>Helped set the organization's direction from its earliest days, including drafting the founding bylaws it still runs on.</p>
                 </div>
                 <div class="opp-card">
                     <h4>Seminars &amp; Workshops</h4>
-                    <p>Delivered multiple seminars, training sessions, and workshops for students and members: covering topics ranging from academic pathways and research opportunities to professional development in STEM.</p>
+                    <p>Have given seminars, trainings, and workshops for students and members — on academic pathways, research opportunities, and building a career in STEM.</p>
                 </div>
                 <div class="opp-card">
                     <h4>Human Resources &amp; Advisory</h4>
-                    <p>Served in advisory and human resources capacities, helping recruit and guide volunteers and mentors, and building the organizational culture that supports MitSna's educational mission.</p>
+                    <p>Served on the advisory and HR side: recruiting and guiding volunteers and mentors, and shaping the culture that carries MitSna's educational mission.</p>
                 </div>
             </div>
         </div>
@@ -363,7 +363,7 @@
             <div class="section-header">
                 <p class="section-eyebrow">Contact</p>
                 <h2 class="section-title">Get In Touch</h2>
-                <p class="contact-subtitle">I'm always open to collaboration, mentorship, and new research conversations.</p>
+                <p class="contact-subtitle">Always glad to talk research, collaborations, or mentorship — my inbox is open.</p>
             </div>
             <div class="contact-info">
                 <div class="contact-item">
@@ -404,6 +404,6 @@
         </div>
     </footer>
 
-    <script src="script.js?v=5"></script>
+    <script src="script.js?v=7"></script>
 </body>
 </html>

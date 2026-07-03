@@ -9,8 +9,8 @@ if (hamburger) hamburger.onclick = () => {
 };
 
 document.addEventListener('click', e => {
-  const link = e.target.closest('.nav-link');
-  if (link) { navMenu?.classList.remove('active'); hamburger?.classList.remove('active'); }
+  const link = e.target.closest('.nav-menu a');
+  if (link && link.getAttribute('href') !== '#') { navMenu?.classList.remove('active'); hamburger?.classList.remove('active'); }
   const anchor = e.target.closest('a[href^="#"]');
   if (anchor) {
     const href = anchor.getAttribute('href');
@@ -55,6 +55,8 @@ window.addEventListener('scroll', onScroll); onScroll();
   const BDX = S3 * D / 2, BDY = D / 2;
 
   const REDUCED = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  const DRIFT   = 0.12;         // scroll-parallax rate for the lattice
+  const PERIODY = 3 * D;        // vertical lattice period — drift wraps seamlessly
   let W, H, atoms = [], bonds = [];
   const mouse = { x: -9999, y: -9999 };
 
@@ -63,7 +65,7 @@ window.addEventListener('scroll', onScroll); onScroll();
   function build() {
     atoms = []; bonds = [];
     const map = new Map();
-    const rows = Math.ceil(H / (1.5 * D)) + 3;
+    const rows = Math.ceil(H / (1.5 * D)) + 5;   // extra rows cover the drift band
     const cols = Math.ceil(W / (S3 * D)) + 3;
     // A2 has a rightward component, so bottom rows are shifted right.
     // Extend nStart negative enough to cover the bottom-left corner.
@@ -153,21 +155,24 @@ window.addEventListener('scroll', onScroll); onScroll();
     const t = ts * 0.001;
     // phonon: red sublattice (spin=+1) moves left, blue (spin=-1) moves right — antiphase
     const pdx = s => -s * PHONON_AMP * Math.sin(PHONON_OMEGA * t);
+    // scroll drift: lattice glides up slowly as the page scrolls (wraps on period)
+    const yoff = REDUCED ? 0 : (window.scrollY * DRIFT) % PERIODY;
 
     // Bonds
     ctx.lineWidth = 1.5;
-    ctx.strokeStyle = 'rgba(148,171,255,0.14)';
+    ctx.strokeStyle = 'rgba(148,171,255,0.16)';
     for (const [ai, bi] of bonds) {
       const a = atoms[ai], b = atoms[bi];
       ctx.beginPath();
-      ctx.moveTo(a.x + pdx(a.spin), a.y);
-      ctx.lineTo(b.x + pdx(b.spin), b.y);
+      ctx.moveTo(a.x + pdx(a.spin), a.y - yoff);
+      ctx.lineTo(b.x + pdx(b.spin), b.y - yoff);
       ctx.stroke();
     }
 
     // Spins
     for (const atom of atoms) {
-      const mdx = atom.x - mouse.x, mdy = atom.y - mouse.y;
+      const ry = atom.y - yoff;        // rendered y — original + scroll drift
+      const mdx = atom.x - mouse.x, mdy = ry - mouse.y;
       const mdist = Math.sqrt(mdx * mdx + mdy * mdy);
       // pf: 1 = at mouse, 0 = far away
       const pf = Math.max(0, 1 - mdist / MOUSE_R);
@@ -183,12 +188,12 @@ window.addEventListener('scroll', onScroll); onScroll();
       const phi  = omegaEff * t + atom.phase + (spin === 1 ? Math.PI : 0);
 
       const tipX = rx + AL * Math.sin(theta) * Math.cos(phi);
-      const tipY = atom.y - spin * AL * Math.cos(theta)
-                         + AL * Math.sin(theta) * Math.sin(phi) * PERSP;
+      const tipY = ry - spin * AL * Math.cos(theta)
+                      + AL * Math.sin(theta) * Math.sin(phi) * PERSP;
       const tf   = 0.40;
       const tlX  = rx - AL * tf * Math.sin(theta) * Math.cos(phi);
-      const tlY  = atom.y + spin * AL * tf * Math.cos(theta)
-                         - AL * tf * Math.sin(theta) * Math.sin(phi) * PERSP;
+      const tlY  = ry + spin * AL * tf * Math.cos(theta)
+                      - AL * tf * Math.sin(theta) * Math.sin(phi) * PERSP;
 
       // Up = red, Down = blue
       const rgb   = spin === 1 ? '79,217,236' : '242,104,142';
@@ -196,27 +201,27 @@ window.addEventListener('scroll', onScroll); onScroll();
 
       drawCylinderArrow(tlX, tlY, tipX, tipY, rgb, alpha);
 
-      // Shiny black ball — directional hemisphere light from mouse side
+      // Shiny ball — directional hemisphere light from mouse side
       const lx = mouse.x > -9000 ? -mdx / (mdist || 1) : -0.5;
       const ly = mouse.y > -9000 ? -mdy / (mdist || 1) : -0.8;
 
-      // Black base sphere
+      // Base sphere (lifted to match lighter theme)
       ctx.beginPath();
-      ctx.arc(rx, atom.y, ATOM_R, 0, Math.PI * 2);
-      ctx.fillStyle = 'rgb(9,13,26)';
+      ctx.arc(rx, ry, ATOM_R, 0, Math.PI * 2);
+      ctx.fillStyle = 'rgb(19,27,49)';
       ctx.fill();
 
       // Light overlay: full white on lit side, zero on dark side
       const grad = ctx.createLinearGradient(
-        rx + lx * ATOM_R, atom.y + ly * ATOM_R,
-        rx - lx * ATOM_R, atom.y - ly * ATOM_R
+        rx + lx * ATOM_R, ry + ly * ATOM_R,
+        rx - lx * ATOM_R, ry - ly * ATOM_R
       );
       grad.addColorStop(0,    'rgba(170,215,255,0.55)');
       grad.addColorStop(0.50, 'rgba(170,215,255,0.06)');
       grad.addColorStop(1,    'rgba(255,255,255,0)');
 
       ctx.beginPath();
-      ctx.arc(rx, atom.y, ATOM_R, 0, Math.PI * 2);
+      ctx.arc(rx, ry, ATOM_R, 0, Math.PI * 2);
       ctx.fillStyle = grad;
       ctx.fill();
     }
@@ -268,30 +273,44 @@ window.addEventListener('scroll', onScroll); onScroll();
   const wlColor = i => ['79,217,236', '139,122,247', '242,104,142'][i % 3];
 
   // ── 1. Spallation preloader (once per session) ────────────────────────────
+  // After the burst, the page "lands": the photo zooms out into place on top
+  // of the already-running lattice/beam animations.
   const pre = document.getElementById('preloader');
+  const photoWrap = document.querySelector('.hero-photo-wrap');
+  const heroContent = document.querySelector('.hero-content');
+  const land = soft => {
+    if (RM) return;
+    if (soft) photoWrap?.classList.add('zoomland-soft');
+    else { photoWrap?.classList.add('zoomland'); heroContent?.classList.add('zoomland'); }
+    // drop the animation fill once done so scroll parallax can take over
+    [photoWrap, heroContent].forEach(el => el?.addEventListener('animationend', () =>
+      el.classList.remove('zoomland', 'zoomland-soft'), { once: true }));
+  };
   if (pre) {
-    if (RM || sessionStorage.getItem('gy-pre')) { pre.remove(); }
+    if (RM || sessionStorage.getItem('gy-pre')) { pre.remove(); land(true); }
     else {
       sessionStorage.setItem('gy-pre', '1');
       document.body.style.overflow = 'hidden';
+      // ~2 s total: proton flight (1.05 s) → point-of-collision burst → page
+      // emerges from the collision via the photo zoom-out landing
       setTimeout(() => {
         pre.classList.add('burst');
-        for (let k = 0; k < 14; k++) {
+        for (let k = 0; k < 24; k++) {
           const n = document.createElement('div');
           n.className = 'pre-n';
-          const a = (Math.random() - 0.15) * Math.PI * 1.6;
-          const d = 90 + Math.random() * 180;
+          const a = Math.random() * Math.PI * 2;          // full-sphere burst from the point
+          const d = 130 + Math.random() * 260;
           n.style.setProperty('--dx', Math.cos(a) * d + 'px');
           n.style.setProperty('--dy', Math.sin(a) * d + 'px');
           n.style.background = `rgb(${wlColor(k)})`;
-          n.style.boxShadow = `0 0 10px rgba(${wlColor(k)},0.9)`;
+          n.style.boxShadow = `0 0 14px rgba(${wlColor(k)},0.9)`;
           pre.appendChild(n);
         }
-      }, 850);
-      setTimeout(() => { pre.classList.add('done'); document.body.style.overflow = ''; }, 1650);
-      setTimeout(() => pre.remove(), 2200);
+      }, 1050);
+      setTimeout(() => { pre.classList.add('done'); document.body.style.overflow = ''; land(false); }, 2050);
+      setTimeout(() => pre.remove(), 2700);
     }
-  }
+  } else land(true);
 
   // ── 2. Hero neutron stream (cursor-deflected, wavelength-true speeds) ─────
   const bc = document.getElementById('beamcanvas');
@@ -364,6 +383,25 @@ window.addEventListener('scroll', onScroll); onScroll();
       });
     };
     split(ht);
+    // Composited .ltr spans break the parent's background-clip:text gradient
+    // (Chromium): repaint the gradient per letter, offset so the sweep stays
+    // continuous across the whole word.
+    const paintGrad = () => {
+      ht.querySelectorAll('.grad-text').forEach(g => {
+        const gw = Math.max(1, g.offsetWidth);   // offset* ignores transforms
+        g.querySelectorAll('.ltr').forEach(l => {
+          l.style.background = 'linear-gradient(120deg, #4fd9ec 0%, #8b7af7 55%, #f2688e 100%)';
+          l.style.backgroundSize = `${gw}px 100%`;
+          l.style.backgroundPosition = `${g.offsetLeft - l.offsetLeft}px 0`;
+          l.style.webkitBackgroundClip = 'text';
+          l.style.backgroundClip = 'text';
+          l.style.color = 'transparent';
+        });
+      });
+    };
+    paintGrad();
+    addEventListener('resize', paintGrad);
+    document.fonts?.ready.then(paintGrad);
     const ls = ht.querySelectorAll('.ltr');
     if (!RM) {
       ls.forEach(l => {
@@ -372,10 +410,27 @@ window.addEventListener('scroll', onScroll); onScroll();
         l.style.setProperty('--sr', (Math.random() - 0.5) * 70 + 'deg');
         l.classList.add('scatter');
       });
-      const t0 = pre && !sessionStorage.getItem('gy-pre-done') ? 1500 : 150;
+      const t0 = pre && !sessionStorage.getItem('gy-pre-done') ? 1950 : 150;
       sessionStorage.setItem('gy-pre-done', '1');
       ls.forEach((l, i) => setTimeout(() => l.classList.add('land'), t0 + i * 55));
     }
+  }
+
+  // ── 3b. Hero scroll parallax — content drifts/fades so leaving the hero
+  //        feels continuous rather than a hard cut ─────────────────────────
+  if (heroContent && !RM) {
+    let hpTick = false;
+    addEventListener('scroll', () => {
+      if (hpTick) return; hpTick = true;
+      requestAnimationFrame(() => {
+        hpTick = false;
+        const y = scrollY;
+        if (y <= innerHeight * 1.2 && !heroContent.classList.contains('zoomland')) {
+          heroContent.style.transform = `translateY(${y * 0.16}px)`;
+          heroContent.style.opacity = Math.max(0, 1 - y / (innerHeight * 0.95));
+        }
+      });
+    }, { passive: true });
   }
 
   // ── 4. Time-of-flight chromatic tint on reveals ───────────────────────────

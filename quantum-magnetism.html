@@ -7,7 +7,7 @@
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Space+Grotesk:wght@500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="styles.css?v=5">
+    <link rel="stylesheet" href="styles.css?v=7">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 </head>
 <body>
@@ -17,13 +17,19 @@
             <div class="nav-wrapper">
                 <a href="index.html" class="logo">George Yumnam</a>
                 <ul class="nav-menu">
-                    <li><a href="index.html#about" class="nav-link">About</a></li>
                     <li><a href="index.html#projects" class="nav-link">Research</a></li>
                     <li><a href="index.html#publications" class="nav-link">Publications</a></li>
-                    <li><a href="index.html#teaching" class="nav-link">Teaching</a></li>
-                    <li><a href="index.html#mitsna" class="nav-link">MitSna</a></li>
-                    <li><a href="neutron-scattering.html" class="nav-link" target="_blank" rel="noopener noreferrer">Neutron Scattering</a></li>
                     <li><a href="index.html#contact" class="nav-link">Contact</a></li>
+                    <li class="nav-dropdown">
+                        <a href="#" class="nav-link">More <i class="fas fa-chevron-down" style="font-size:0.65em;margin-left:3px;"></i></a>
+                        <div class="nav-dropdown-menu">
+                            <a href="index.html#teaching">Teaching &amp; Mentoring</a>
+                            <a href="index.html#mitsna">MitSna Foundation</a>
+                            <div class="nav-dropdown-label">Experiments</div>
+                            <a href="neutron-scattering.html" target="_blank" rel="noopener noreferrer">Neutron Scattering</a>
+                            <a href="mossbauer.html" target="_blank" rel="noopener noreferrer">M&ouml;ssbauer Spectroscopy</a>
+                        </div>
+                    </li>
                 </ul>
                 <div class="hamburger"><span></span><span></span><span></span></div>
             </div>
@@ -43,8 +49,8 @@
 
         <div class="research-panel">
             <h2>Overview</h2>
-            <p>At SBQMI, I am investigating itinerant magnets that do not develop conventional long-range magnetic order. These materials are interesting because their spin fluctuations extend broadly in energy and wavevector, carrying quantum correlations that are distributed across many degrees of freedom rather than localized in a simple ordered state. Characterizing those correlations is difficult with standard probes — the inelastic neutron spectra are diffuse and broad, and are often attributed simply to disorder or short-range fluctuations without further analysis.</p>
-            <p>A central part of this program is developing Quantum Fisher Information (QFI) as a practical tool for extracting entanglement information directly from neutron scattering structure factors. QFI provides a rigorous lower bound on multipartite entanglement and is computable from experimental data without any model assumptions about the ground state. This connects condensed-matter neutron measurements to the language of quantum information science and gives a concrete, experiment-based metric for assessing whether a material's quantum correlations are strong enough to be useful for sensing or computing applications.</p>
+            <p>At SBQMI, I am studying itinerant magnets that refuse to order in any conventional way. Their spin fluctuations sprawl across energy and wavevector, and the quantum correlations they carry are spread over many degrees of freedom rather than locked into an ordered pattern. Standard probes struggle here: the inelastic neutron spectra come out broad and diffuse, and it is tempting — too tempting — to file them under "disorder" or "short-range fluctuations" and move on.</p>
+            <p>The centerpiece of this program is turning Quantum Fisher Information (QFI) into a practical, working tool for reading entanglement out of neutron scattering structure factors. QFI gives a rigorous lower bound on multipartite entanglement, and it can be computed from the data without assuming anything about the ground state. That puts neutron measurements in direct conversation with quantum information science — and provides a concrete, experiment-based yardstick for whether a material's quantum correlations are strong enough to matter for sensing or computing.</p>
         </div>
 
         <div class="research-two-col">
@@ -71,8 +77,8 @@
 
         <div class="research-panel">
             <h2>Quantum Fisher Information from Neutron Scattering</h2>
-            <p>The Quantum Fisher Information density F<sub>Q</sub> is related to the dynamic spin structure factor S(q, ω) by an integral over all frequencies at a given wavevector. This sum-rule relation means that QFI is directly accessible from inelastic neutron scattering data without any model assumptions. When F<sub>Q</sub>/N exceeds k, it certifies that at least (k+1)-partite entanglement is present in the system — meaning at least k+1 spins are genuinely quantum-mechanically entangled.</p>
-            <p>In practice, extracting QFI from neutron data requires wide energy-transfer coverage and careful absolute normalization, both of which are achievable on modern time-of-flight spectrometers at SNS. The goal of this part of the program is to establish a reliable experimental protocol for QFI extraction across different classes of quantum magnets, and to use the resulting entanglement benchmarks to identify which materials are worth pursuing for quantum information applications.</p>
+            <p>The QFI density F<sub>Q</sub> follows from the dynamic spin structure factor S(q, ω) through an integral over frequency at fixed wavevector. Because of this sum rule, QFI comes straight from inelastic neutron data — no model input required. And the certification is sharp: whenever F<sub>Q</sub>/N exceeds k, at least k+1 spins in the system are genuinely entangled with one another.</p>
+            <p>The practical demands are wide energy-transfer coverage and careful absolute normalization, both within reach of the modern time-of-flight spectrometers at SNS. I am working toward a reliable, repeatable protocol for QFI extraction across different classes of quantum magnets, so the resulting entanglement benchmarks can tell us which materials are worth serious pursuit for quantum information applications.</p>
             <div class="research-tags-row">
                 <span class="tech-tag">Quantum Fisher Information</span>
                 <span class="tech-tag">Itinerant magnetism</span>
@@ -85,13 +91,13 @@
 
         <div class="research-panel">
             <h2>Crystal Synthesis and Material Screening</h2>
-            <p>Not every itinerant magnet will host strong quantum correlations. The challenge is identifying systems where the interplay between kinetic energy, exchange interactions, and geometric frustration produces a strongly correlated paramagnetic state rather than a conventional ordered phase or a trivial paramagnet. I am growing single crystals of candidate materials at SBQMI and characterizing their bulk magnetic and thermodynamic properties using PPMS and MPMS.</p>
-            <p>Measurements of susceptibility, specific heat, and resistivity as functions of temperature and field provide a first map of the magnetic phase diagram and flag systems with anomalous correlations that are worth investigating with neutron scattering. This synthesis-driven approach allows the neutron beam time to be focused on the most promising candidates rather than spent on routine survey measurements.</p>
+            <p>Most itinerant magnets will not host strong quantum correlations, and there is no shortcut for finding the ones that do. The interesting cases are those where kinetic energy, exchange, and geometric frustration conspire to produce a strongly correlated paramagnet — rather than simply ordering, or going quietly paramagnetic. I grow single crystals of the candidates at SBQMI and characterize their bulk magnetic and thermodynamic behavior with PPMS and MPMS.</p>
+            <p>Susceptibility, specific heat, and resistivity versus temperature and field sketch the first map of each phase diagram and flag anomalous correlations worth a closer look. Screening this way means the neutron beam time — always the scarcest resource — goes to the most promising materials instead of routine surveys.</p>
         </div>
 
         <div class="research-panel">
             <h2>Connection to Quantum Technology</h2>
-            <p>The connection to quantum information science here is direct. QFI is the same quantity that determines the sensitivity of a quantum sensor operating at the Heisenberg limit — the fundamental quantum bound on measurement precision. A material with high multipartite entanglement in its spin fluctuations could in principle be used as a quantum-enhanced sensing medium for weak magnetic fields, operating in a regime where classical sensors are limited by shot noise. Identifying which magnetic materials achieve high QFI at accessible temperatures and fields is therefore a concrete step toward quantum magnetic materials with real technological value.</p>
+            <p>The link to quantum technology is unusually direct here. QFI is precisely the quantity that sets the sensitivity of a quantum sensor at the Heisenberg limit — the fundamental bound on measurement precision. A material carrying high multipartite entanglement in its spin fluctuations could serve as a quantum-enhanced medium for detecting weak magnetic fields, in a regime where classical sensors run into shot noise. Finding magnets that reach high QFI at practical temperatures and fields is a real step toward quantum materials with technological consequences.</p>
         </div>
 
     </div>
@@ -107,6 +113,6 @@
         </div>
     </footer>
 
-    <script src="script.js?v=5"></script>
+    <script src="script.js?v=7"></script>
 </body>
 </html>

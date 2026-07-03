@@ -7,7 +7,7 @@
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Space+Grotesk:wght@500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="styles.css?v=5">
+    <link rel="stylesheet" href="styles.css?v=7">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 </head>
 <body>
@@ -17,13 +17,19 @@
             <div class="nav-wrapper">
                 <a href="index.html" class="logo">George Yumnam</a>
                 <ul class="nav-menu">
-                    <li><a href="index.html#about" class="nav-link">About</a></li>
                     <li><a href="index.html#projects" class="nav-link">Research</a></li>
                     <li><a href="index.html#publications" class="nav-link">Publications</a></li>
-                    <li><a href="index.html#teaching" class="nav-link">Teaching</a></li>
-                    <li><a href="index.html#mitsna" class="nav-link">MitSna</a></li>
-                    <li><a href="neutron-scattering.html" class="nav-link" target="_blank" rel="noopener noreferrer">Neutron Scattering</a></li>
                     <li><a href="index.html#contact" class="nav-link">Contact</a></li>
+                    <li class="nav-dropdown">
+                        <a href="#" class="nav-link">More <i class="fas fa-chevron-down" style="font-size:0.65em;margin-left:3px;"></i></a>
+                        <div class="nav-dropdown-menu">
+                            <a href="index.html#teaching">Teaching &amp; Mentoring</a>
+                            <a href="index.html#mitsna">MitSna Foundation</a>
+                            <div class="nav-dropdown-label">Experiments</div>
+                            <a href="neutron-scattering.html" target="_blank" rel="noopener noreferrer">Neutron Scattering</a>
+                            <a href="mossbauer.html" target="_blank" rel="noopener noreferrer">M&ouml;ssbauer Spectroscopy</a>
+                        </div>
+                    </li>
                 </ul>
                 <div class="hamburger"><span></span><span></span><span></span></div>
             </div>
@@ -43,8 +49,8 @@
 
         <div class="research-panel">
             <h2>Overview</h2>
-            <p>TbSb is a rare-earth antiferromagnet with a rock-salt crystal structure that orders below T<sub>N</sub> ≈ 15 K. The Tb³⁺ ions carry a large magnetic moment and experience a strong cubic crystal-field from the surrounding Sb cage, which splits the J = 6 ground multiplet into a well-defined level scheme. When non-magnetic yttrium is substituted for magnetic terbium, the magnetic sublattice is progressively diluted. Standard percolation theory predicts that once the concentration of magnetic sites drops below the percolation threshold, long-range order and coherent spin waves should break down.</p>
-            <p>In practice, the spin waves in Y-doped TbSb are far more robust than this picture suggests. Using inelastic neutron scattering across a series of (Tb<sub>1−x</sub>Y<sub>x</sub>)Sb samples, I am tracking the magnon spectrum as a function of yttrium content and finding that magnon branches remain well-defined at doping levels where simple models predict their collapse. Crystal-field hybridization between single-ion and collective degrees of freedom appears to be the key mechanism that thermally stabilizes the magnon modes against dilution.</p>
+            <p>TbSb is a rock-salt rare-earth antiferromagnet that orders below T<sub>N</sub> ≈ 15 K. Its Tb³⁺ ions carry large moments and sit in a strong cubic crystal field from the surrounding Sb cage, which splits the J = 6 ground multiplet into a clean, well-characterized level scheme. Swap non-magnetic yttrium onto the terbium site and the magnetic sublattice thins out; percolation theory says that below the percolation threshold, long-range order and coherent spin waves have to give way.</p>
+            <p>They don't — or at least not where they should. Measuring the magnon spectrum across a series of (Tb<sub>1−x</sub>Y<sub>x</sub>)Sb samples with inelastic neutron scattering, I find well-defined magnon branches persisting at dilutions where the simple models predict collapse. The best explanation so far is crystal-field hybridization: mixing between the single-ion levels and the collective modes appears to be what stabilizes the magnons against dilution.</p>
         </div>
 
         <div class="research-two-col">
@@ -71,14 +77,14 @@
 
         <div class="research-panel">
             <h2>TbSb as a Model System</h2>
-            <p>TbSb is an ideal platform for studying diluted magnetism precisely because its single-ion physics is well characterized. The crystal-field parameters for Tb³⁺ in the cubic Sb environment are known from earlier optical and neutron spectroscopy, the magnon dispersion in the parent compound is cleanly resolved, and Y³⁺ substitutes for Tb³⁺ without changing the lattice structure or introducing charge disorder. This means that any deviation from simple percolation behavior can be traced directly to the crystal-field coupling rather than to competing structural or electronic effects.</p>
-            <p>This is the key advantage of TbSb over more complex diluted magnets, where multiple mechanisms are simultaneously active and difficult to disentangle from scattering data alone. TbSb allows a clean, controlled test of whether and how single-ion anisotropy protects collective magnetism in a disordered system.</p>
+            <p>What makes TbSb such a good testbed is that its single-ion physics holds no surprises. The Tb³⁺ crystal-field parameters in the cubic Sb environment were pinned down long ago by optical and neutron spectroscopy, the parent compound's magnon dispersion is cleanly resolved, and Y³⁺ slots in for Tb³⁺ without distorting the lattice or adding charge disorder. So when the system strays from percolation behavior, the deviation points straight at the crystal-field coupling — there is no competing structural or electronic suspect.</p>
+            <p>That is the advantage over more complicated diluted magnets, where several mechanisms operate at once and scattering data alone cannot pull them apart. TbSb turns a messy general question — does single-ion anisotropy protect collective magnetism in a disordered system? — into a clean, controlled experiment.</p>
         </div>
 
         <div class="research-panel">
             <h2>Crystal-Field Hybridization and Magnon Stability</h2>
-            <p>In rare-earth magnets, the crystal-field splits the ground-state multiplet into a set of levels. When the separation between the ground state and excited crystal-field levels is comparable to the magnon bandwidth, the two types of excitation hybridize, producing mixed magnon–crystal-field (magnon-CEF) modes. This hybridization is a purely quantum mechanical effect with no classical analogue and can substantially alter the magnon dispersion, lifetime, and gap.</p>
-            <p>In the diluted system, the local crystal-field environment of each Tb³⁺ site depends on the surrounding Y/Tb configuration, which broadens the distribution of crystal-field splittings across the sample. Our measurements aim to determine how this distributed coupling feeds back into the collective magnon spectrum — specifically whether the effective crystal-field hybridization pins or broadens the magnon branches, and how this changes with doping level and temperature.</p>
+            <p>The crystal field splits a rare-earth ion's ground multiplet into discrete levels. When the gap between the ground state and the excited levels is comparable to the magnon bandwidth, the two kinds of excitation cannot stay independent: they hybridize into mixed magnon–crystal-field (magnon-CEF) modes. The effect is genuinely quantum mechanical — it has no classical counterpart — and it can reshape the magnon dispersion, lifetime, and gap substantially.</p>
+            <p>Dilution complicates this in an interesting way. Each Tb³⁺ site sees a local environment set by its particular Y/Tb neighborhood, so the crystal-field splittings acquire a distribution across the sample. Our measurements ask how that distributed coupling feeds back into the collective spectrum: does the hybridization pin the magnon branches in place or smear them out — and how does the answer change with doping and temperature?</p>
             <div class="research-tags-row">
                 <span class="tech-tag">Diluted antiferromagnets</span>
                 <span class="tech-tag">Crystal-field hybridization</span>
@@ -91,7 +97,7 @@
 
         <div class="research-panel">
             <h2>Broader Significance</h2>
-            <p>Understanding when and why collective spin excitations survive magnetic disorder is a foundational question in quantum magnetism. Magnon coherence length governs thermal conductivity in magnetic insulators, sets the range of spin-wave propagation in magnonic devices, and determines the fidelity of quantum correlations in candidate quantum materials. Establishing the conditions under which dilution-induced disorder destroys or preserves magnon coherence — and identifying the microscopic mechanism responsible — provides design principles for disorder-tolerant magnetic systems across a wide range of potential applications.</p>
+            <p>When do collective spin excitations survive disorder, and why? The question sounds academic but has practical teeth. Magnon coherence length controls thermal conductivity in magnetic insulators, sets how far spin waves travel in magnonic devices, and limits the fidelity of quantum correlations in candidate quantum materials. Working out when dilution destroys magnon coherence — and naming the mechanism when it doesn't — gives real design rules for magnets that tolerate disorder.</p>
         </div>
 
     </div>
@@ -107,6 +113,6 @@
         </div>
     </footer>
 
-    <script src="script.js?v=5"></script>
+    <script src="script.js?v=7"></script>
 </body>
 </html>

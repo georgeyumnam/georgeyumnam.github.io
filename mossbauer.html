@@ -7,7 +7,7 @@
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Space+Grotesk:wght@500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="styles.css?v=15">
+    <link rel="stylesheet" href="styles.css?v=16">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
         .tool-hero { padding: 64px 24px 40px; position: relative; z-index: 1; }
@@ -100,22 +100,7 @@
         .info-panel ul li { font-size: 1.2rem; color: var(--text-dim); padding-left: 1.1rem; position: relative; line-height: 1.55; }
         .info-panel ul li::before { content: '▸'; position: absolute; left: 0; color: var(--teal); font-size: 1rem; }
         .info-empty { color: rgba(154,166,200,0.55); font-size: 1.326rem; text-align: center; padding: 2rem 0; }
-        /* Navbar dropdown */
-        .nav-dropdown { position: relative; }
-        .nav-dropdown-menu {
-            display: none; position: absolute; top: calc(100% + 6px); left: 50%;
-            transform: translateX(-50%);
-            background: rgba(13,19,38,0.96); backdrop-filter: blur(16px);
-            border: 1px solid var(--border); border-radius: 12px; padding: 0.4rem 0;
-            min-width: 210px; box-shadow: var(--shadow-md); z-index: 200;
-        }
-        .nav-dropdown:hover .nav-dropdown-menu { display: block; }
-        .nav-dropdown-menu a {
-            display: block; padding: 0.55rem 1.1rem; color: var(--white);
-            text-decoration: none; font-size: 1rem; font-weight: 500;
-            transition: var(--transition);
-        }
-        .nav-dropdown-menu a:hover, .nav-dropdown-menu a.active { color: var(--teal); background: var(--teal-light); }
+
         @media (max-width: 900px) { .inst-grid { grid-template-columns: repeat(2,1fr); } }
         @media (max-width: 768px) {
             .inst-grid { grid-template-columns: repeat(2,1fr); }
@@ -138,19 +123,19 @@
             <div class="nav-wrapper">
                 <a href="index.html" class="logo">George Yumnam</a>
                 <ul class="nav-menu">
-                    <li><a href="index.html#about" class="nav-link">About</a></li>
                     <li><a href="index.html#projects" class="nav-link">Research</a></li>
                     <li><a href="index.html#publications" class="nav-link">Publications</a></li>
-                    <li><a href="index.html#teaching" class="nav-link">Teaching</a></li>
-                    <li><a href="index.html#mitsna" class="nav-link">MitSna</a></li>
+                    <li><a href="index.html#contact" class="nav-link">Contact</a></li>
                     <li class="nav-dropdown">
-                        <a href="#" class="nav-link">Experiments <i class="fas fa-chevron-down" style="font-size:0.65em;margin-left:3px;"></i></a>
+                        <a href="#" class="nav-link">More <i class="fas fa-chevron-down" style="font-size:0.65em;margin-left:3px;"></i></a>
                         <div class="nav-dropdown-menu">
+                            <a href="index.html#teaching">Teaching &amp; Mentoring</a>
+                            <a href="index.html#mitsna">MitSna Foundation</a>
+                            <div class="nav-dropdown-label">Experiments</div>
                             <a href="neutron-scattering.html" target="_blank" rel="noopener noreferrer">Neutron Scattering</a>
                             <a href="mossbauer.html" class="active" target="_blank" rel="noopener noreferrer">Mössbauer Spectroscopy</a>
                         </div>
                     </li>
-                    <li><a href="index.html#contact" class="nav-link">Contact</a></li>
                 </ul>
                 <div class="hamburger"><span></span><span></span><span></span></div>
             </div>
@@ -162,7 +147,7 @@
             <div class="tool-hero-panel">
                 <h1 class="tool-title">Mössbauer Spectroscopy</h1>
                 <p class="tool-sub">Physics-accurate simulations · Select a technique</p>
-                <p class="tool-desc">Mössbauer spectroscopy probes nuclear hyperfine interactions via recoil-free gamma-ray emission and absorption (¹⁴.4 keV for ⁵⁷Fe). Each technique — from conventional transmission to synchrotron nuclear forward scattering — reveals magnetic order, valence state, local symmetry, and phonon dynamics with meV-to-neV energy resolution. Gamma / X-ray colors encode energy relative to the nuclear resonance.</p>
+                <p class="tool-desc">Mössbauer spectroscopy reads nuclear hyperfine interactions through recoil-free gamma-ray emission and absorption (14.4 keV for ⁵⁷Fe). From conventional transmission through synchrotron nuclear forward scattering, these techniques resolve magnetic order, valence, local symmetry, and phonon dynamics with meV-to-neV energy resolution. Gamma / X-ray colors indicate energy relative to the nuclear resonance.</p>
             </div>
         </div>
     </div>
@@ -209,7 +194,7 @@
         </div>
     </footer>
 
-    <script src="script.js?v=5"></script>
+    <script src="script.js?v=7"></script>
     <script>
     // ── Mössbauer Spectroscopy Demo Engine ──
     (function () {
