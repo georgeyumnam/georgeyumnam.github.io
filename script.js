@@ -339,7 +339,7 @@ window.addEventListener('scroll', onScroll); onScroll();
       ps.push({ x: -20, y: Math.random() * H, lam,
                 vx: (3.4 - lam * 2.3) * 1.35,       // 1.35x faster overall
                 vy: 0,
-                r: 3 + lam * 4.8,                   // 3x larger than before
+                r: 5.5,                             // uniform size for all neutrons
                 spin: Math.random() < 0.5 ? 1 : -1, // up / down, random
                 scat: Math.random() < 0.4,          // 40% scatter off the sample
                 hit: false });
