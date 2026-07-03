@@ -6,8 +6,8 @@
     <title>Itinerant Magnets &amp; Quantum Information – George Yumnam</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Space+Grotesk:wght@500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="styles.css?v=7">
+    <link href="https://fonts.googleapis.com/css2?family=Figtree:wght@300;400;500;600;700;800&family=Space+Grotesk:wght@500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="styles.css?v=8">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 </head>
 <body>
@@ -17,6 +17,7 @@
             <div class="nav-wrapper">
                 <a href="index.html" class="logo">George Yumnam</a>
                 <ul class="nav-menu">
+                    <li><a href="index.html#about" class="nav-link">About</a></li>
                     <li><a href="index.html#projects" class="nav-link">Research</a></li>
                     <li><a href="index.html#publications" class="nav-link">Publications</a></li>
                     <li><a href="index.html#contact" class="nav-link">Contact</a></li>
@@ -50,28 +51,17 @@
         <div class="research-panel">
             <h2>Overview</h2>
             <p>At SBQMI, I study itinerant magnets that do not develop conventional long-range magnetic order. Their spin fluctuations extend broadly in energy and wavevector, and the quantum correlations they carry are distributed over many degrees of freedom rather than condensed into an ordered state. Such correlations are difficult to characterize with standard probes: the inelastic neutron spectra are broad and diffuse, and are often attributed to disorder or short-range fluctuations without further analysis.</p>
-            <p>A central component of this program is the development of Quantum Fisher Information (QFI) as a practical tool for extracting entanglement information from neutron scattering structure factors. QFI provides a rigorous lower bound on multipartite entanglement and can be computed from experimental data without model assumptions about the ground state. This connects neutron measurements directly to quantum information science and provides an experiment-based criterion for whether a material's quantum correlations are strong enough to be useful for sensing or computing.</p>
+            <p>A central component of this program is the development of Quantum Fisher Information (QFI) as a practical tool for extracting entanglement information from neutron scattering structure factors. QFI provides a rigorous lower bound on multipartite entanglement and can be computed from experimental data without model assumptions about the ground state. This connects neutron measurements directly to quantum information science and provides an experiment-based criterion for whether a material's quantum correlations are strong enough to be useful for sensing or computing. The program combines single-crystal synthesis and bulk characterization with inelastic neutron scattering at SNS and HFIR over wide energy and momentum ranges, followed by QFI extraction through frequency sum rules and comparison with theoretical entanglement measures. The guiding questions are which itinerant magnets host the strongest multipartite entanglement, how the entanglement content evolves with temperature, field, and chemical tuning, and which material characteristics, such as bandwidth, frustration, and spin-orbit coupling, sustain high QFI.</p>
         </div>
 
-        <div class="research-two-col">
-            <div class="research-panel">
-                <h2>Research Approach</h2>
-                <ul>
-                    <li>Single-crystal synthesis and physical property characterization (PPMS/MPMS) to screen candidate itinerant quantum magnets</li>
-                    <li>Inelastic neutron scattering at SNS and HFIR to measure dynamic structure factors over wide energy-momentum ranges</li>
-                    <li>Extraction of Quantum Fisher Information (QFI) from measured neutron scattering intensities via frequency sum rules</li>
-                    <li>Comparison of QFI bounds with theoretical entanglement measures for candidate ground state models</li>
-                    <li>Temperature- and field-dependent measurements to map how entanglement content evolves with external tuning parameters</li>
-                </ul>
-            </div>
-            <div class="research-panel">
-                <h2>Central Questions</h2>
-                <ul>
-                    <li>Which itinerant magnets host the strongest multipartite entanglement as quantified by QFI from neutron data?</li>
-                    <li>How does entanglement content evolve with temperature, field, and chemical tuning, and can it be sustained at accessible temperatures?</li>
-                    <li>Can QFI-based diagnostics distinguish genuinely correlated paramagnetic states from conventional disorder-broadened phases?</li>
-                    <li>What material properties (bandwidth, frustration, spin-orbit coupling) are most conducive to sustaining high QFI?</li>
-                </ul>
+        <div class="research-panel">
+            <h2>Case Study: Itinerant Magnetism in CeAuSb2</h2>
+            <p>My work on itinerant and correlated magnets began during my PhD with CeAuSb2, a heavy-fermion antiferromagnet in which the interplay of Kondo screening and RKKY exchange produces a delicate magnetic ground state. Using neutron scattering and bulk measurements, we characterized the microscopic nature of the magnetic ground state and its field evolution. This experience with metallic, strongly correlated magnetism now informs the selection of candidate materials for the QFI program at SBQMI.</p>
+            <p class="case-see">See: Microscopic nature of magnetic ground state in CeAuSb2, <a href="https://doi.org/10.1002/pssr.201900304" target="_blank" rel="noopener noreferrer">Phys. Status Solidi RRL 13, 1900304 (2019)</a>.</p>
+            <div class="research-tags-row">
+                <span class="tech-tag">Heavy fermions</span>
+                <span class="tech-tag">Itinerant magnetism</span>
+                <span class="tech-tag">Neutron diffraction</span>
             </div>
         </div>
 
@@ -98,6 +88,7 @@
         <div class="research-panel">
             <h2>Connection to Quantum Technology</h2>
             <p>The connection to quantum technology is direct. QFI is the same quantity that determines the sensitivity of a quantum sensor operating at the Heisenberg limit, the fundamental quantum bound on measurement precision. A material with high multipartite entanglement in its spin fluctuations could in principle serve as a quantum-enhanced medium for detecting weak magnetic fields, in a regime where classical sensors are limited by shot noise. Identifying magnets that reach high QFI at accessible temperatures and fields is therefore a concrete step toward quantum materials of technological value.</p>
+            <p class="scholar-note">For a complete list of publications and presentations, see my <a href="https://scholar.google.com/citations?user=D3v8UV4AAAAJ&hl=en" target="_blank" rel="noopener noreferrer">Google Scholar profile</a>.</p>
         </div>
 
     </div>
@@ -113,6 +104,6 @@
         </div>
     </footer>
 
-    <script src="script.js?v=7"></script>
+    <script src="script.js?v=8"></script>
 </body>
 </html>

@@ -6,8 +6,8 @@
     <title>George Yumnam - Portfolio</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Space+Grotesk:wght@500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="styles.css?v=7">
+    <link href="https://fonts.googleapis.com/css2?family=Figtree:wght@300;400;500;600;700;800&family=Space+Grotesk:wght@500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="styles.css?v=8">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 </head>
 <body>
@@ -41,6 +41,7 @@
             <div class="nav-wrapper">
                 <a href="#home" class="logo">George Yumnam</a>
                 <ul class="nav-menu">
+                    <li><a href="#about" class="nav-link">About</a></li>
                     <li><a href="#projects" class="nav-link">Research</a></li>
                     <li><a href="#publications" class="nav-link">Publications</a></li>
                     <li><a href="#contact" class="nav-link">Contact</a></li>
@@ -172,72 +173,76 @@
                 <p class="section-eyebrow">Research</p>
                 <h2 class="section-title">Current Research</h2>
             </div>
-            <div class="projects-grid">
+            <div class="research-rows">
 
-                <div class="project-card">
-                    <div class="project-image">
-                        <img src="images/magnon-phonon.png" alt="Magnon-Phonon Interactions">
-                    </div>
-                    <div class="project-card-body">
-                        <h3 class="project-title">Altermagnetism &amp; Magnon-Phonon Coupling</h3>
-                        <p class="project-description">Altermagnets are magnetically ordered materials with spin-split energy bands but no net magnetization, a combination found in neither ferromagnets nor conventional antiferromagnets. I study the spin dynamics of three such systems. In α-MnTe, I resolved the spin-split magnon dispersion and characterized how doping and pressure modify the magnetic order and its coupling to phonons. In hematite, I am probing the chiral magnon branches predicted by the altermagnetic symmetry. In RuO₂, where the magnetic ground state remains under debate, our inelastic neutron scattering and Mössbauer measurements place the tightest experimental bounds on the magnetism reported to date. These experiments are carried out through a PI-led neutron user program on SEQUOIA, ARCS, HYSPEC, and TAX at SNS and HFIR.</p>
-                        <div class="project-tech">
-                            <span class="tech-tag">Altermagnetism</span>
-                            <span class="tech-tag">Spin-Split Magnons</span>
-                            <span class="tech-tag">Spin-Lattice Coupling</span>
+                <article class="research-row">
+                    <h3 class="research-row-title">Itinerant Magnets &amp; Quantum Information Science</h3>
+                    <div class="research-row-body">
+                        <div class="research-row-fig">
+                            <img src="images/quantum-magnetism.png" alt="Itinerant Magnets and Quantum Information Science">
                         </div>
-                        <a href="magnon-phonon.html" class="project-link" aria-label="Read more about Altermagnetism & Magnon-Phonon Coupling">Read More →</a>
-                    </div>
-                </div>
-
-                <div class="project-card">
-                    <div class="project-image">
-                        <img src="images/high-entropy.png" alt="Magnon Resilience in Diluted Antiferromagnets">
-                    </div>
-                    <div class="project-card-body">
-                        <h3 class="project-title">Magnon Resilience in Diluted Antiferromagnets</h3>
-                        <p class="project-description">When non-magnetic atoms are substituted into an antiferromagnet, percolation theory predicts the dilution at which coherent spin waves should collapse. In Y-doped TbSb, the magnon branches remain well defined far beyond this threshold. The additional stability appears to arise from hybridization between crystal-field levels and the collective spin-wave modes. Using HYSPEC, ARCS, and VERITAS at SNS, I am working to establish this mechanism quantitatively and, more broadly, to understand how local single-ion anisotropy protects collective magnetism against disorder.</p>
-                        <div class="project-tech">
-                            <span class="tech-tag">Diluted Antiferromagnets</span>
-                            <span class="tech-tag">Crystal-Field Hybridization</span>
-                            <span class="tech-tag">Magnon Stability</span>
+                        <div class="research-row-text">
+                            <p>At SBQMI, I study itinerant magnets that do not develop conventional long-range order. Their spin fluctuations extend over wide ranges of energy and wavevector, and the correlations they carry are difficult to quantify with standard probes. My approach is to extract the Quantum Fisher Information (QFI) directly from neutron scattering data. QFI provides a rigorous lower bound on multipartite entanglement and thereby connects a scattering measurement to quantities relevant for quantum sensing and computing. In parallel, I grow single crystals and characterize their bulk properties to identify the most promising candidate systems.</p>
+                            <div class="project-tech">
+                                <span class="tech-tag">Itinerant Magnetism</span>
+                                <span class="tech-tag">Quantum Fisher Information</span>
+                                <span class="tech-tag">Quantum Entanglement</span>
+                            </div>
+                            <a href="quantum-magnetism.html" class="project-link" aria-label="Read more about Itinerant Magnets and Quantum Information Science">Read More →</a>
                         </div>
-                        <a href="high-entropy-oxides.html" class="project-link" aria-label="Read more about Magnon Resilience in Diluted Antiferromagnets">Read More →</a>
                     </div>
-                </div>
+                </article>
 
-                <div class="project-card">
-                    <div class="project-image">
-                        <img src="images/disorder.png" alt="Honeycomb Lattice Magnetism">
-                    </div>
-                    <div class="project-card-body">
-                        <h3 class="project-title">Nanoengineered Artificial Honeycomb Lattices</h3>
-                        <p class="project-description">During my PhD, I patterned thin-film permalloy and Nd into artificial honeycomb lattices to study the behavior of emergent magnetic charges under nanoscale geometric control. In the Nd-based lattices, we identified a quantum-disordered state of these charges, published as the Frontispiece of Advanced Science (2021). In the permalloy networks, the same charge physics produces rectification: the lattice functions as a magnetic diode with an unusually low forward voltage, tunable through field history and temperature (Mater. Today Phys., 2022). The measurements relied on polarized neutron reflectometry and SANS with DWBA modeling, techniques I developed hands-on at the ORNL beamlines.</p>
-                        <div class="project-tech">
-                            <span class="tech-tag">Magnetic Monopoles</span>
-                            <span class="tech-tag">Spin Ice</span>
-                            <span class="tech-tag">Magnetic Diode</span>
+                <article class="research-row rev">
+                    <h3 class="research-row-title">Altermagnetism &amp; Magnon-Phonon Coupling</h3>
+                    <div class="research-row-body">
+                        <div class="research-row-fig">
+                            <img src="images/magnon-phonon.png" alt="Altermagnetism and Magnon-Phonon Coupling">
                         </div>
-                        <a href="honeycomb-lattice.html" class="project-link" aria-label="Read more about Nanoengineered Artificial Honeycomb Lattices">Read More →</a>
-                    </div>
-                </div>
-
-                <div class="project-card">
-                    <div class="project-image">
-                        <img src="images/quantum-magnetism.png" alt="Quantum Magnetism">
-                    </div>
-                    <div class="project-card-body">
-                        <h3 class="project-title">Itinerant Magnets &amp; Quantum Information</h3>
-                        <p class="project-description">At SBQMI, I study itinerant magnets that do not develop conventional long-range order. Their spin fluctuations extend over wide ranges of energy and wavevector, and the correlations they carry are difficult to quantify with standard probes. My approach is to extract the Quantum Fisher Information (QFI) directly from neutron scattering data. QFI provides a rigorous lower bound on multipartite entanglement and thereby connects a scattering measurement to quantities relevant for quantum sensing and computing. In parallel, I grow single crystals and characterize their bulk properties to identify the most promising candidate systems. The long-term goal is to establish which magnetic materials host fluctuations useful for quantum information applications.</p>
-                        <div class="project-tech">
-                            <span class="tech-tag">Itinerant Magnetism</span>
-                            <span class="tech-tag">Quantum Fisher Information</span>
-                            <span class="tech-tag">Quantum Entanglement</span>
+                        <div class="research-row-text">
+                            <p>Altermagnets are magnetically ordered materials with spin-split energy bands but no net magnetization, a combination found in neither ferromagnets nor conventional antiferromagnets. I study the spin dynamics of three such systems. In α-MnTe, I resolved the spin-split magnon dispersion and characterized how doping and pressure modify the magnetic order and its coupling to phonons. In hematite, I am probing the chiral magnon branches predicted by the altermagnetic symmetry. In RuO₂, where the magnetic ground state remains under debate, our inelastic neutron scattering and Mössbauer measurements place the tightest experimental bounds on the magnetism reported to date.</p>
+                            <div class="project-tech">
+                                <span class="tech-tag">Altermagnetism</span>
+                                <span class="tech-tag">Spin-Split Magnons</span>
+                                <span class="tech-tag">Spin-Lattice Coupling</span>
+                            </div>
+                            <a href="magnon-phonon.html" class="project-link" aria-label="Read more about Altermagnetism and Magnon-Phonon Coupling">Read More →</a>
                         </div>
-                        <a href="quantum-magnetism.html" class="project-link" aria-label="Read more about Quantum Magnetism">Read More →</a>
                     </div>
-                </div>
+                </article>
 
+                <article class="research-row">
+                    <h3 class="research-row-title">Hybrid Magnon Excitations: Crystal Fields &amp; High-Entropy Oxides</h3>
+                    <div class="research-row-body">
+                        <div class="research-row-fig">
+                            <img src="images/high-entropy.png" alt="Hybrid Magnon Excitations and Crystal Fields">
+                        </div>
+                        <div class="research-row-text">
+                            <p>When non-magnetic atoms are substituted into an antiferromagnet, percolation theory predicts the dilution at which coherent spin waves should collapse. In Y-doped TbSb, the magnon branches remain well defined far beyond this threshold, and the additional stability appears to arise from hybridization between crystal-field levels and the collective spin-wave modes. Using HYSPEC, ARCS, and VERITAS at SNS, I am working to establish this mechanism quantitatively. In parallel, in rock-salt high-entropy oxides, we study how extreme chemical disorder shapes the coupled magnetic and lattice thermodynamics.</p>
+                            <div class="project-tech">
+                                <span class="tech-tag">Crystal-Field Hybridization</span>
+                                <span class="tech-tag">Diluted Antiferromagnets</span>
+                                <span class="tech-tag">High-Entropy Oxides</span>
+                            </div>
+                            <a href="high-entropy-oxides.html" class="project-link" aria-label="Read more about Hybrid Magnon Excitations and Crystal Fields">Read More →</a>
+                        </div>
+                    </div>
+                </article>
+
+            </div>
+        </div>
+    </section>
+
+    <!-- Past Research -->
+    <section id="past-research" class="projects">
+        <div class="container">
+            <div class="section-header">
+                <p class="section-eyebrow">Archive</p>
+                <h2 class="section-title">Past Research</h2>
+            </div>
+            <div class="past-cta">
+                <p>My earlier work spans nanoengineered artificial honeycomb spin-ice lattices and first-principles studies of thermoelectric materials and thermal transport, including machine-learning approaches to lattice thermal conductivity.</p>
+                <a href="past-research.html" class="btn btn-primary">Explore My Past Research →</a>
             </div>
         </div>
     </section>
@@ -404,6 +409,6 @@
         </div>
     </footer>
 
-    <script src="script.js?v=7"></script>
+    <script src="script.js?v=8"></script>
 </body>
 </html>

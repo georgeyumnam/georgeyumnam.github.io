@@ -443,7 +443,8 @@ window.addEventListener('scroll', onScroll); onScroll();
   if (rail) {
     const secs = [...document.querySelectorAll('section[id]')].filter(s => s.id !== 'home');
     const names = { beamstats: 'Beam stats', about: 'Sample · About', employment: 'Career', education: 'Training',
-                    projects: 'Scattering · Research', publications: 'Detector · Papers', teaching: 'Mentorship',
+                    projects: 'Scattering · Research', 'past-research': 'Archive · Past research',
+                    publications: 'Detector · Papers', teaching: 'Mentorship',
                     mitsna: 'Community', contact: 'Signal out · Contact' };
     const nodes = secs.map(sec => {
       const n = document.createElement('button');
@@ -541,16 +542,18 @@ window.addEventListener('scroll', onScroll); onScroll();
       { k: 'Section', t: 'Employment', u: 'index.html#employment' },
       { k: 'Section', t: 'Education', u: 'index.html#education' },
       { k: 'Section', t: 'Current Research', u: 'index.html#projects' },
+      { k: 'Section', t: 'Past Research', u: 'past-research.html' },
       { k: 'Section', t: 'Selected Publications', u: 'index.html#publications' },
       { k: 'Section', t: 'Teaching & Mentoring', u: 'index.html#teaching' },
       { k: 'Section', t: 'MitSna Foundation', u: 'index.html#mitsna' },
       { k: 'Section', t: 'Contact', u: 'index.html#contact' },
       { k: 'Sim', t: 'Neutron Scattering Instruments · interactive', u: 'neutron-scattering.html' },
       { k: 'Sim', t: 'Mössbauer Spectroscopy · interactive', u: 'mossbauer.html' },
+      { k: 'Research', t: 'Itinerant Magnets & Quantum Information Science', u: 'quantum-magnetism.html' },
       { k: 'Research', t: 'Altermagnetism & Magnon-Phonon Coupling', u: 'magnon-phonon.html' },
-      { k: 'Research', t: 'Magnon Resilience in Diluted Antiferromagnets', u: 'high-entropy-oxides.html' },
-      { k: 'Research', t: 'Artificial Honeycomb Lattices', u: 'honeycomb-lattice.html' },
-      { k: 'Research', t: 'Itinerant Magnets & Quantum Information', u: 'quantum-magnetism.html' },
+      { k: 'Research', t: 'Hybrid Magnon Excitations: Crystal Fields & High-Entropy Oxides', u: 'high-entropy-oxides.html' },
+      { k: 'Research', t: 'Artificial Honeycomb Lattices (past)', u: 'honeycomb-lattice.html' },
+      { k: 'Research', t: 'DFT Thermoelectrics & Thermal Transport (past)', u: 'dft-thermoelectrics.html' },
       { k: 'Link', t: 'Google Scholar profile', u: 'https://scholar.google.com/citations?user=D3v8UV4AAAAJ&hl=en' },
       { k: 'Link', t: 'LinkedIn', u: 'https://www.linkedin.com/in/george-yumnam/' },
       { k: 'Link', t: 'Email George', u: 'mailto:georgeyumnam@gmail.com' }

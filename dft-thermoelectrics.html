@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>DFT Thermoelectrics &amp; Thermal Transport &ndash; George Yumnam</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Figtree:wght@300;400;500;600;700;800&family=Space+Grotesk:wght@500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="styles.css?v=8">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body>
+
+    <nav class="navbar">
+        <div class="container">
+            <div class="nav-wrapper">
+                <a href="index.html" class="logo">George Yumnam</a>
+                <ul class="nav-menu">
+                    <li><a href="index.html#about" class="nav-link">About</a></li>
+                    <li><a href="index.html#projects" class="nav-link">Research</a></li>
+                    <li><a href="index.html#publications" class="nav-link">Publications</a></li>
+                    <li><a href="index.html#contact" class="nav-link">Contact</a></li>
+                    <li class="nav-dropdown">
+                        <a href="#" class="nav-link">More <i class="fas fa-chevron-down" style="font-size:0.65em;margin-left:3px;"></i></a>
+                        <div class="nav-dropdown-menu">
+                            <a href="index.html#teaching">Teaching &amp; Mentoring</a>
+                            <a href="index.html#mitsna">MitSna Foundation</a>
+                            <div class="nav-dropdown-label">Experiments</div>
+                            <a href="neutron-scattering.html" target="_blank" rel="noopener noreferrer">Neutron Scattering</a>
+                            <a href="mossbauer.html" target="_blank" rel="noopener noreferrer">M&ouml;ssbauer Spectroscopy</a>
+                        </div>
+                    </li>
+                </ul>
+                <div class="hamburger"><span></span><span></span><span></span></div>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Hero image banner -->
+    <div class="research-hero">
+        <img src="images/thermoelectrics.svg" alt="DFT studies of thermoelectrics and thermal transport" class="research-hero-img">
+        <div class="research-hero-overlay">
+            <a href="past-research.html" class="research-back">&larr; Back to Past Research</a>
+            <h1 class="research-hero-title">DFT Studies of Thermoelectrics &amp; Thermal Transport</h1>
+            <p class="research-hero-sub">First-principles transport &middot; Lattice dynamics &middot; Machine learning</p>
+        </div>
+    </div>
+
+    <!-- Content -->
+    <div class="research-body">
+
+        <div class="research-panel">
+            <h2>Overview</h2>
+            <p>Before moving into neutron scattering, my research focused on first-principles studies of thermoelectric materials. Thermoelectrics convert heat directly into electricity, and their efficiency is governed by the figure of merit zT, which rewards a high electrical conductivity and Seebeck coefficient while requiring a low thermal conductivity. Using density functional theory (DFT) together with Boltzmann transport equation (BTE) calculations, I studied how electronic structure, chemical bonding, and lattice dynamics combine to set these competing transport properties.</p>
+            <p>The work followed two complementary directions: detailed transport studies of specific material families, including transition-metal dichalcogenides, chalcopyrites, halide double perovskites, and Zintl phases, and the development of machine-learning models that predict lattice thermal conductivity across large composition spaces from high-throughput property maps.</p>
+        </div>
+
+        <div class="research-panel">
+            <h2>Case Study: Transition-Metal Dichalcogenides</h2>
+            <p>Zr- and Hf-based transition-metal dichalcogenides are layered semiconductors with intrinsically low thermal conductivity. First-principles calculations of their high-temperature thermoelectric properties identified doping regimes with favorable power factors and clarified the roles of band degeneracy and carrier scattering. A subsequent study established how structural and bonding characters, quantified through the Born effective charges, control the lattice thermal conductivity across the MX&#8322; family, providing a bonding-based descriptor for identifying low thermal conductivity compounds.</p>
+            <p class="case-see">See: High temperature thermoelectric properties of Zr and Hf based transition metal dichalcogenides, J. Chem. Phys. 143 (2015), and Interplay of structural and bonding characters in thermal conductivity and Born effective charge of transition metal dichalcogenides, J. Phys. Chem. C 122, 2521 (2018).</p>
+            <div class="research-tags-row">
+                <span class="tech-tag">DFT</span>
+                <span class="tech-tag">BTE transport</span>
+                <span class="tech-tag">Born effective charges</span>
+                <span class="tech-tag">Layered semiconductors</span>
+            </div>
+        </div>
+
+        <div class="research-panel">
+            <h2>Case Study: Valley Convergence in Chalcopyrites</h2>
+            <p>In A<sup>II</sup>B<sup>IV</sup>C<sub>2</sub><sup>V</sup> chalcopyrite semiconductors, the thermoelectric figure of merit can be raised substantially when multiple electronic valleys converge in energy. Our calculations mapped how cation chemistry tunes the valence-band valley alignment and identified compositions in which convergence maximizes the power factor while the intrinsic lattice thermal conductivity remains low. The combination yields a high predicted figure of merit in this family.</p>
+            <p class="case-see">See: High thermoelectric figure of merit via tunable valley convergence coupled low thermal conductivity in A<sup>II</sup>B<sup>IV</sup>C<sub>2</sub><sup>V</sup> chalcopyrites, J. Phys. Chem. C 122, 29150 (2018).</p>
+            <div class="research-tags-row">
+                <span class="tech-tag">Valley convergence</span>
+                <span class="tech-tag">Band engineering</span>
+                <span class="tech-tag">Chalcopyrites</span>
+            </div>
+        </div>
+
+        <div class="research-panel">
+            <h2>Case Study: Machine Learning for Lattice Thermal Conductivity</h2>
+            <p>Full BTE calculations of lattice thermal conductivity are too expensive for large-scale materials screening. By coupling a high-throughput property map to machine learning, we constructed a model that predicts lattice thermal conductivity from readily computed descriptors, with accuracy sufficient to rank candidate compounds before any transport calculation is performed. This approach was presented at the APS March Meeting 2020 and provides a practical route to accelerated thermoelectric discovery.</p>
+            <p class="case-see">See: Coupling the high-throughput property map to machine learning for predicting lattice thermal conductivity, <a href="https://doi.org/10.1021/acs.chemmater.9b01046" target="_blank" rel="noopener noreferrer">Chem. Mater. 31, 5145 (2019)</a>, and the APS March Meeting 2020 talk abstract, Combined High-Throughput and Machine Learning Approach for Prediction of Lattice Thermal Conductivity.</p>
+            <div class="research-tags-row">
+                <span class="tech-tag">Machine learning</span>
+                <span class="tech-tag">High-throughput screening</span>
+                <span class="tech-tag">Lattice thermal conductivity</span>
+            </div>
+        </div>
+
+        <div class="research-panel">
+            <h2>Extensions and Collaborations</h2>
+            <p>These methods extended naturally to collaborative studies of other energy materials. Contributions include the optical and thermoelectric properties of the halide double perovskite Cs&#8322;InAgCl&#8326; under heavy substitutional doping, and the electronic, optical, and thermoelectric properties of the multifunctional Zintl compound BaAg&#8322;Te&#8322; for energy conversion.</p>
+            <p class="case-see">See: RSC Adv. 11, 5521 (2021), and Physica B 668, 415209 (2023).</p>
+            <p class="scholar-note">For a complete list of publications and presentations, see my <a href="https://scholar.google.com/citations?user=D3v8UV4AAAAJ&hl=en" target="_blank" rel="noopener noreferrer">Google Scholar profile</a>.</p>
+        </div>
+
+    </div>
+
+    <footer class="footer">
+        <div class="container">
+            <p>&copy; 2026 George Yumnam &middot; Stewart Blusson Quantum Matter Institute, UBC</p>
+            <div class="footer-social">
+                <a href="https://scholar.google.com/citations?user=D3v8UV4AAAAJ&hl=en" target="_blank" rel="noopener noreferrer"><i class="fas fa-book-open"></i></a>
+                <a href="https://www.linkedin.com/in/george-yumnam/" target="_blank" rel="noopener noreferrer"><i class="fab fa-linkedin"></i></a>
+                <a href="mailto:georgeyumnam@gmail.com"><i class="fas fa-envelope"></i></a>
+            </div>
+        </div>
+    </footer>
+
+    <script src="script.js?v=8"></script>
+</body>
+</html>

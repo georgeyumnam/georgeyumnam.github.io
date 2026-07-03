@@ -1,0 +1,90 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1600 900" font-family="Arial, Helvetica, sans-serif">
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#111a2e"/>
+      <stop offset="1" stop-color="#0e1526"/>
+    </linearGradient>
+    <radialGradient id="hot" cx="0.5" cy="0.5" r="0.5">
+      <stop offset="0" stop-color="#f2688e" stop-opacity="0.55"/>
+      <stop offset="1" stop-color="#f2688e" stop-opacity="0"/>
+    </radialGradient>
+    <radialGradient id="cold" cx="0.5" cy="0.5" r="0.5">
+      <stop offset="0" stop-color="#4fd9ec" stop-opacity="0.5"/>
+      <stop offset="1" stop-color="#4fd9ec" stop-opacity="0"/>
+    </radialGradient>
+    <linearGradient id="flux" x1="0" y1="0" x2="1" y2="0">
+      <stop offset="0" stop-color="#f2688e"/>
+      <stop offset="0.55" stop-color="#8b7af7"/>
+      <stop offset="1" stop-color="#4fd9ec"/>
+    </linearGradient>
+  </defs>
+
+  <rect width="1600" height="900" fill="url(#bg)"/>
+  <ellipse cx="120" cy="450" rx="340" ry="380" fill="url(#hot)"/>
+  <ellipse cx="1480" cy="450" rx="340" ry="380" fill="url(#cold)"/>
+
+  <text x="150" y="130" fill="#f2688e" font-size="42" font-weight="bold">HOT</text>
+  <text x="1360" y="130" fill="#4fd9ec" font-size="42" font-weight="bold">COLD</text>
+
+  <!-- phonon wave through lattice -->
+  <path d="M 220 450 C 300 330, 380 330, 460 450 S 620 570, 700 450 S 860 330, 940 450 S 1100 570, 1180 450 S 1340 330, 1420 450"
+        fill="none" stroke="url(#flux)" stroke-width="6" stroke-linecap="round" opacity="0.85"/>
+
+  <!-- lattice atoms: two interleaved rows following the wave -->
+  <g>
+    <g fill="#dce3f7">
+      <circle cx="220" cy="450" r="26"/>
+      <circle cx="460" cy="450" r="26"/>
+      <circle cx="700" cy="450" r="26"/>
+      <circle cx="940" cy="450" r="26"/>
+      <circle cx="1180" cy="450" r="26"/>
+      <circle cx="1420" cy="450" r="26"/>
+    </g>
+    <g fill="#8b7af7">
+      <circle cx="340" cy="362" r="18"/>
+      <circle cx="580" cy="538" r="18"/>
+      <circle cx="820" cy="362" r="18"/>
+      <circle cx="1060" cy="538" r="18"/>
+      <circle cx="1300" cy="362" r="18"/>
+    </g>
+    <g stroke="#5a6a96" stroke-width="3" opacity="0.7">
+      <line x1="220" y1="450" x2="340" y2="362"/><line x1="340" y1="362" x2="460" y2="450"/>
+      <line x1="460" y1="450" x2="580" y2="538"/><line x1="580" y1="538" x2="700" y2="450"/>
+      <line x1="700" y1="450" x2="820" y2="362"/><line x1="820" y1="362" x2="940" y2="450"/>
+      <line x1="940" y1="450" x2="1060" y2="538"/><line x1="1060" y1="538" x2="1180" y2="450"/>
+      <line x1="1180" y1="450" x2="1300" y2="362"/><line x1="1300" y1="362" x2="1420" y2="450"/>
+    </g>
+  </g>
+
+  <!-- heat flux arrow -->
+  <g>
+    <line x1="330" y1="700" x2="1230" y2="700" stroke="url(#flux)" stroke-width="10" stroke-linecap="round"/>
+    <polygon points="1290,700 1220,672 1220,728" fill="#4fd9ec"/>
+    <text x="640" y="755" fill="#aab6d8" font-size="34" letter-spacing="4">HEAT FLUX  q = -k dT/dx</text>
+  </g>
+
+  <!-- kappa(T) inset -->
+  <g transform="translate(1130,120)">
+    <rect x="0" y="0" width="330" height="230" rx="16" fill="#17233f" stroke="#3a4a76" stroke-width="2"/>
+    <line x1="45" y1="185" x2="300" y2="185" stroke="#aab6d8" stroke-width="3"/>
+    <line x1="45" y1="185" x2="45" y2="30" stroke="#aab6d8" stroke-width="3"/>
+    <path d="M 55 60 Q 110 165 290 178" fill="none" stroke="#4fd9ec" stroke-width="5" stroke-linecap="round"/>
+    <text x="150" y="215" fill="#aab6d8" font-size="26">T</text>
+    <text x="14" y="110" fill="#aab6d8" font-size="26">k</text>
+    <text x="120" y="55" fill="#dce3f7" font-size="24">k ~ 1/T</text>
+  </g>
+
+  <!-- ML motif -->
+  <g transform="translate(140,120)">
+    <rect x="0" y="0" width="330" height="230" rx="16" fill="#17233f" stroke="#3a4a76" stroke-width="2"/>
+    <g fill="#f2688e"><circle cx="60" cy="60" r="13"/><circle cx="60" cy="115" r="13"/><circle cx="60" cy="170" r="13"/></g>
+    <g fill="#8b7af7"><circle cx="165" cy="85" r="13"/><circle cx="165" cy="145" r="13"/></g>
+    <g fill="#4fd9ec"><circle cx="270" cy="115" r="15"/></g>
+    <g stroke="#5a6a96" stroke-width="2.5" opacity="0.8">
+      <line x1="73" y1="60" x2="152" y2="85"/><line x1="73" y1="115" x2="152" y2="85"/><line x1="73" y1="170" x2="152" y2="85"/>
+      <line x1="73" y1="60" x2="152" y2="145"/><line x1="73" y1="115" x2="152" y2="145"/><line x1="73" y1="170" x2="152" y2="145"/>
+      <line x1="178" y1="85" x2="255" y2="115"/><line x1="178" y1="145" x2="255" y2="115"/>
+    </g>
+    <text x="36" y="215" fill="#aab6d8" font-size="22">descriptors -&gt; ML -&gt; k</text>
+  </g>
+</svg>
