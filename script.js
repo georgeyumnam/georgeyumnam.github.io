@@ -248,7 +248,7 @@ window.addEventListener('scroll', onScroll); onScroll();
 // ── Scroll reveal ───────────────────────────────────────────────────────────
 (function () {
   if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
-  const targets = $$('.section-header, .project-card, .pub-card, .opp-card, .education-list li, .contact-item, .about-text, .about-photo-wrap, .teaching-intro, .research-panel');
+  const targets = $$('.section-header, .project-card, .pub-card, .opp-card, .education-list li, .contact-item, .about-text, .about-photo-wrap, .teaching-intro, .research-panel, .stats-grid');
   if (!('IntersectionObserver' in window) || !targets.length) return;
   const io = new IntersectionObserver(entries => {
     for (const e of entries) {
@@ -260,4 +260,270 @@ window.addEventListener('scroll', onScroll); onScroll();
     el.style.transitionDelay = `${Math.min((i % 4) * 60, 180)}ms`;
     io.observe(el);
   });
+})();
+
+// ═══ v5 · "You are the neutron" — dynamics engine ═══════════════════════════
+(function () {
+  const RM = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  const wlColor = i => ['79,217,236', '139,122,247', '242,104,142'][i % 3];
+
+  // ── 1. Spallation preloader (once per session) ────────────────────────────
+  const pre = document.getElementById('preloader');
+  if (pre) {
+    if (RM || sessionStorage.getItem('gy-pre')) { pre.remove(); }
+    else {
+      sessionStorage.setItem('gy-pre', '1');
+      document.body.style.overflow = 'hidden';
+      setTimeout(() => {
+        pre.classList.add('burst');
+        for (let k = 0; k < 14; k++) {
+          const n = document.createElement('div');
+          n.className = 'pre-n';
+          const a = (Math.random() - 0.15) * Math.PI * 1.6;
+          const d = 90 + Math.random() * 180;
+          n.style.setProperty('--dx', Math.cos(a) * d + 'px');
+          n.style.setProperty('--dy', Math.sin(a) * d + 'px');
+          n.style.background = `rgb(${wlColor(k)})`;
+          n.style.boxShadow = `0 0 10px rgba(${wlColor(k)},0.9)`;
+          pre.appendChild(n);
+        }
+      }, 850);
+      setTimeout(() => { pre.classList.add('done'); document.body.style.overflow = ''; }, 1650);
+      setTimeout(() => pre.remove(), 2200);
+    }
+  }
+
+  // ── 2. Hero neutron stream (cursor-deflected, wavelength-true speeds) ─────
+  const bc = document.getElementById('beamcanvas');
+  if (bc && !RM) {
+    const bctx = bc.getContext('2d');
+    let W, H, ps = [], run = false;
+    const M = { x: -9e3, y: -9e3 };
+    function size() {
+      const r = bc.parentElement.getBoundingClientRect();
+      W = bc.width = r.width; H = bc.height = r.height;
+    }
+    function spawn() {
+      const lam = Math.random();                    // 0 = short λ (fast, cyan) → 1 = long λ (slow, rose)
+      ps.push({ x: -10, y: Math.random() * H, lam,
+                vx: 3.4 - lam * 2.3, vy: 0, r: 1 + lam * 1.6 });
+    }
+    function frame() {
+      if (!run) return;
+      requestAnimationFrame(frame);
+      bctx.clearRect(0, 0, W, H);
+      if (ps.length < 110 && Math.random() < 0.5) spawn();
+      for (const p of ps) {
+        const dx = p.x - M.x, dy = p.y - M.y, d2 = dx * dx + dy * dy;
+        if (d2 < 22500) { const f = (1 - d2 / 22500) * 0.5; p.vy += (dy > 0 ? f : -f); }  // field deflection
+        p.vy *= 0.96;
+        p.x += p.vx; p.y += p.vy;
+        const c = p.lam < 0.33 ? '79,217,236' : p.lam < 0.66 ? '139,122,247' : '242,104,142';
+        bctx.beginPath();
+        bctx.moveTo(p.x - p.vx * 6, p.y - p.vy * 6);
+        bctx.lineTo(p.x, p.y);
+        bctx.strokeStyle = `rgba(${c},0.28)`;
+        bctx.lineWidth = p.r;
+        bctx.stroke();
+        bctx.beginPath();
+        bctx.arc(p.x, p.y, p.r, 0, 7);
+        bctx.fillStyle = `rgba(${c},0.75)`;
+        bctx.fill();
+      }
+      ps = ps.filter(p => p.x < W + 20 && p.y > -20 && p.y < H + 20);
+    }
+    new IntersectionObserver(e => {
+      const v = e[0].isIntersecting;
+      if (v && !run) { run = true; size(); frame(); }
+      if (!v) run = false;
+    }).observe(bc.parentElement);
+    bc.parentElement.addEventListener('mousemove', e => {
+      const r = bc.getBoundingClientRect();
+      M.x = e.clientX - r.left; M.y = e.clientY - r.top;
+    });
+    bc.parentElement.addEventListener('mouseleave', () => { M.x = -9e3; M.y = -9e3; });
+    window.addEventListener('resize', size);
+  }
+
+  // ── 3. Hero letter scatter ────────────────────────────────────────────────
+  const ht = document.querySelector('.hero-title');
+  if (ht) {
+    const split = node => {
+      [...node.childNodes].forEach(ch => {
+        if (ch.nodeType === 3) {
+          const frag = document.createDocumentFragment();
+          for (const c of ch.textContent) {
+            if (c === ' ') { frag.appendChild(document.createTextNode(' ')); continue; }
+            const sp = document.createElement('span');
+            sp.className = 'ltr';
+            sp.textContent = c;
+            frag.appendChild(sp);
+          }
+          node.replaceChild(frag, ch);
+        } else if (ch.nodeType === 1) split(ch);
+      });
+    };
+    split(ht);
+    const ls = ht.querySelectorAll('.ltr');
+    if (!RM) {
+      ls.forEach(l => {
+        l.style.setProperty('--sx', (Math.random() - 0.5) * 220 + 'px');
+        l.style.setProperty('--sy', (Math.random() - 0.5) * 140 + 'px');
+        l.style.setProperty('--sr', (Math.random() - 0.5) * 70 + 'deg');
+        l.classList.add('scatter');
+      });
+      const t0 = pre && !sessionStorage.getItem('gy-pre-done') ? 1500 : 150;
+      sessionStorage.setItem('gy-pre-done', '1');
+      ls.forEach((l, i) => setTimeout(() => l.classList.add('land'), t0 + i * 55));
+    }
+  }
+
+  // ── 4. Time-of-flight chromatic tint on reveals ───────────────────────────
+  document.querySelectorAll('.reveal, .project-card, .pub-card, .opp-card, .stat').forEach((el, i) => {
+    el.classList.add(['tof-b', 'tof-v', 'tof-r'][i % 3]);
+  });
+
+  // ── 5. Beamline rail ──────────────────────────────────────────────────────
+  const rail = document.getElementById('beamrail');
+  if (rail) {
+    const secs = [...document.querySelectorAll('section[id]')].filter(s => s.id !== 'home');
+    const names = { beamstats: 'Beam stats', about: 'Sample · About', employment: 'Career', education: 'Training',
+                    projects: 'Scattering · Research', publications: 'Detector · Papers', teaching: 'Mentorship',
+                    mitsna: 'Community', contact: 'Signal out · Contact' };
+    const nodes = secs.map(sec => {
+      const n = document.createElement('button');
+      n.className = 'rail-node';
+      n.setAttribute('aria-label', names[sec.id] || sec.id);
+      n.innerHTML = `<span class="rail-tip">${names[sec.id] || sec.id}</span>`;
+      n.addEventListener('click', () => sec.scrollIntoView({ behavior: RM ? 'auto' : 'smooth' }));
+      rail.appendChild(n);
+      return n;
+    });
+    const prog = rail.querySelector('.rail-progress');
+    function railTick() {
+      const max = document.documentElement.scrollHeight - innerHeight;
+      prog.style.height = Math.min(100, (scrollY / max) * 100) + '%';
+      const rh = rail.clientHeight;
+      let active = 0;
+      secs.forEach((sec, i) => {
+        const t = sec.offsetTop / max;
+        nodes[i].style.top = Math.min(0.97, t) * rh - 7 + 'px';
+        if (scrollY >= sec.offsetTop - innerHeight * 0.45) active = i;
+      });
+      nodes.forEach((n, i) => n.classList.toggle('on', i === active));
+    }
+    addEventListener('scroll', railTick, { passive: true });
+    addEventListener('resize', railTick);
+    railTick();
+  }
+
+  // ── 6. Count-up stats ─────────────────────────────────────────────────────
+  const stats = document.querySelectorAll('.stat-n');
+  if (stats.length) {
+    const io = new IntersectionObserver(es => es.forEach(e => {
+      if (!e.isIntersecting) return;
+      io.unobserve(e.target);
+      const end = +e.target.dataset.count;
+      if (RM) { e.target.textContent = end; return; }
+      const t0 = performance.now();
+      (function tick(t) {
+        const p = Math.min(1, (t - t0) / 1400);
+        e.target.textContent = Math.round(end * (1 - Math.pow(1 - p, 3)));
+        if (p < 1) requestAnimationFrame(tick);
+      })(t0);
+    }), { threshold: 0.6 });
+    stats.forEach(s => io.observe(s));
+  }
+
+  // ── 7. 3D tilt on research + publication cards ────────────────────────────
+  if (!RM && matchMedia('(pointer: fine)').matches) {
+    document.querySelectorAll('.project-card, .pub-card').forEach(card => {
+      card.classList.add('tilt');
+      const glare = document.createElement('div');
+      glare.className = 'tilt-glare';
+      card.appendChild(glare);
+      card.addEventListener('mousemove', e => {
+        const r = card.getBoundingClientRect();
+        const px = (e.clientX - r.left) / r.width, py = (e.clientY - r.top) / r.height;
+        card.style.transform = `perspective(900px) rotateY(${(px - 0.5) * 7}deg) rotateX(${(0.5 - py) * 7}deg) translateY(-6px)`;
+        card.style.setProperty('--gx', px * 100 + '%');
+        card.style.setProperty('--gy', py * 100 + '%');
+      });
+      card.addEventListener('mouseleave', () => { card.style.transform = ''; });
+    });
+
+    // Magnetic buttons
+    document.querySelectorAll('.btn').forEach(b => {
+      b.addEventListener('mousemove', e => {
+        const r = b.getBoundingClientRect();
+        b.style.transform = `translate(${(e.clientX - r.left - r.width / 2) * 0.18}px, ${(e.clientY - r.top - r.height / 2) * 0.3}px)`;
+      });
+      b.addEventListener('mouseleave', () => { b.style.transform = ''; });
+    });
+
+    // Cursor glow orb
+    const orb = document.createElement('div');
+    orb.id = 'cursor-orb';
+    document.body.appendChild(orb);
+    let ox = -100, oy = -100, tx = ox, ty = oy;
+    addEventListener('mousemove', e => { tx = e.clientX; ty = e.clientY; });
+    (function orbTick() {
+      ox += (tx - ox) * 0.22; oy += (ty - oy) * 0.22;
+      orb.style.left = ox + 'px'; orb.style.top = oy + 'px';
+      requestAnimationFrame(orbTick);
+    })();
+    document.addEventListener('mouseover', e =>
+      orb.classList.toggle('grow', !!e.target.closest('a, button, .inst-card, .project-card, .pub-card')));
+  }
+
+  // ── 8. Command palette (⌘K) ───────────────────────────────────────────────
+  const cmdk = document.getElementById('cmdk');
+  if (cmdk) {
+    const input = document.getElementById('cmdk-input');
+    const list = document.getElementById('cmdk-list');
+    const ITEMS = [
+      { k: 'Section', t: 'About — the sample', u: 'index.html#about' },
+      { k: 'Section', t: 'Employment', u: 'index.html#employment' },
+      { k: 'Section', t: 'Education', u: 'index.html#education' },
+      { k: 'Section', t: 'Current Research', u: 'index.html#projects' },
+      { k: 'Section', t: 'Selected Publications', u: 'index.html#publications' },
+      { k: 'Section', t: 'Teaching & Mentoring', u: 'index.html#teaching' },
+      { k: 'Section', t: 'MitSna Foundation', u: 'index.html#mitsna' },
+      { k: 'Section', t: 'Contact', u: 'index.html#contact' },
+      { k: 'Sim', t: 'Neutron Scattering Instruments — interactive', u: 'neutron-scattering.html' },
+      { k: 'Sim', t: 'Mössbauer Spectroscopy — interactive', u: 'mossbauer.html' },
+      { k: 'Research', t: 'Altermagnetism & Magnon-Phonon Coupling', u: 'magnon-phonon.html' },
+      { k: 'Research', t: 'Magnon Resilience in Diluted Antiferromagnets', u: 'high-entropy-oxides.html' },
+      { k: 'Research', t: 'Artificial Honeycomb Lattices', u: 'honeycomb-lattice.html' },
+      { k: 'Research', t: 'Itinerant Magnets & Quantum Information', u: 'quantum-magnetism.html' },
+      { k: 'Link', t: 'Google Scholar profile', u: 'https://scholar.google.com/citations?user=D3v8UV4AAAAJ&hl=en' },
+      { k: 'Link', t: 'LinkedIn', u: 'https://www.linkedin.com/in/george-yumnam/' },
+      { k: 'Link', t: 'Email George', u: 'mailto:georgeyumnam@gmail.com' }
+    ];
+    let sel = 0, shown = ITEMS;
+    function render() {
+      list.innerHTML = shown.map((it, i) =>
+        `<div class="cmdk-item${i === sel ? ' sel' : ''}" data-u="${it.u}"><span class="ci-k">${it.k}</span>${it.t}</div>`).join('')
+        || '<div class="cmdk-item">No matches — the detector is quiet.</div>';
+    }
+    function open() { cmdk.hidden = false; input.value = ''; shown = ITEMS; sel = 0; render(); input.focus(); }
+    function close() { cmdk.hidden = true; }
+    function go(u) { close(); if (u) location.href = u; }
+    document.getElementById('cmdk-btn')?.addEventListener('click', open);
+    addEventListener('keydown', e => {
+      if ((e.metaKey || e.ctrlKey) && e.key.toLowerCase() === 'k') { e.preventDefault(); cmdk.hidden ? open() : close(); }
+      if (cmdk.hidden) return;
+      if (e.key === 'Escape') close();
+      if (e.key === 'ArrowDown') { sel = Math.min(sel + 1, shown.length - 1); render(); }
+      if (e.key === 'ArrowUp')   { sel = Math.max(sel - 1, 0); render(); }
+      if (e.key === 'Enter' && shown[sel]) go(shown[sel].u);
+    });
+    input.addEventListener('input', () => {
+      const q = input.value.toLowerCase();
+      shown = ITEMS.filter(it => (it.t + it.k).toLowerCase().includes(q));
+      sel = 0; render();
+    });
+    list.addEventListener('click', e => { const it = e.target.closest('.cmdk-item'); if (it?.dataset.u) go(it.dataset.u); });
+    cmdk.addEventListener('click', e => { if (e.target === cmdk) close(); });
+  }
 })();
