@@ -7,7 +7,7 @@
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Figtree:wght@300;400;500;600;700;800&family=Space+Grotesk:wght@500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="styles.css?v=9">
+    <link rel="stylesheet" href="styles.css?v=10">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 </head>
 <body>
@@ -54,21 +54,32 @@
             <h2>Overview</h2>
             <p>Artificial spin-ice systems are lithographically patterned arrays of nanoscale magnetic islands whose geometry enforces frustration: no configuration can satisfy every pairwise interaction simultaneously. The honeycomb lattice is a particularly interesting case because its three-island vertices map exactly onto magnetic charge states, so the array realizes a disordered Coulomb gas of effective magnetic charges on a coordination-3 lattice.</p>
             <p>I fabricated permalloy (Ni₈₁Fe₁₉) honeycomb arrays by electron-beam lithography and studied how the charge-ice behavior evolves with applied field and with the geometric design parameters. Magnetic force microscopy (MFM) for single-island moment imaging, magneto-optical Kerr effect (MOKE) measurements for ensemble hysteresis, micromagnetic simulations (OOMMF and MuMax3), and vertex-statistics analysis together map the phase diagram, complemented by polarized neutron reflectometry and SANS at ORNL. They also identify a regime in which the array functions as a magnetic diode, transmitting flux preferentially in one direction as a consequence of symmetry broken by the field history. The guiding questions were whether geometric tuning can stabilize charge-ordered phases at room temperature, what switching mechanism underlies the diode effect, and how monopole pairs nucleate, propagate, and annihilate within the frustrated lattice.</p>
-            <p class="case-see">See: Nonconventional magnetic phenomena in neodymium thin film, <a href="https://doi.org/10.1103/PhysRevResearch.2.043018" target="_blank" rel="noopener noreferrer">Phys. Rev. Research 2, 043018 (2020)</a>.</p>
+            <p class="case-see">See:</p>
+            <ul class="case-refs">
+                <li>Nonconventional magnetic phenomena in neodymium thin film, <a href="https://doi.org/10.1103/PhysRevResearch.2.043018" target="_blank" rel="noopener noreferrer">Phys. Rev. Research 2, 043018 (2020)</a></li>
+            </ul>
         </div>
 
         <div class="research-panel">
             <h2>Geometric Frustration and Magnetic Charge Ice</h2>
             <p>Each honeycomb vertex joins exactly three islands, and each island carries an Ising-like moment pinned along its long axis. Because three moments meeting at a vertex cannot be mutually antiparallel, the lowest-energy configurations are "two-in, one-out" and "one-in, two-out", both of which carry a net magnetic charge analogous to a Coulomb monopole. The array therefore fractionalizes into a gas of effective charges with long-range Coulombic interactions, a magnetic analogue of the proton-disorder ice model on a coordination-3 lattice.</p>
             <p>Island length, width, thickness, and lattice constant can be varied independently, providing separate control over the switching field, the dipolar coupling strength, and the vertex degeneracy. Across this parameter space the system evolves from a nearly uncorrelated paramagnet at weak coupling, through a strongly correlated charge-ice phase, to a topologically ordered phase with macroscopic remanence at strong coupling. The charge-ice phase is identified by a characteristic plateau in the MFM vertex-population statistics as a function of applied field. In Nd-based honeycomb lattices, the charge degrees of freedom instead settle into a quantum-disordered state, and micromagnetic simulations with distorted-wave Born approximation modeling establish how the charge correlations manifest in scattering observables.</p>
-            <p class="case-see">See: Quantum disordered state of magnetic charges in nanoengineered honeycomb lattice, <a href="https://doi.org/10.1002/advs.202004103" target="_blank" rel="noopener noreferrer">Adv. Sci. 8, 2004103 (2021)</a>, and Various facets of magnetic charge correlation, <a href="https://doi.org/10.1103/PhysRevB.104.134429" target="_blank" rel="noopener noreferrer">Phys. Rev. B 104, 134429 (2021)</a>.</p>
+            <p class="case-see">See:</p>
+            <ul class="case-refs">
+                <li>Quantum disordered state of magnetic charges in nanoengineered honeycomb lattice, <a href="https://doi.org/10.1002/advs.202004103" target="_blank" rel="noopener noreferrer">Adv. Sci. 8, 2004103 (2021)</a></li>
+                <li>Various facets of magnetic charge correlation, <a href="https://doi.org/10.1103/PhysRevB.104.134429" target="_blank" rel="noopener noreferrer">Phys. Rev. B 104, 134429 (2021)</a></li>
+            </ul>
         </div>
 
         <div class="research-panel">
             <h2>The Magnetic Diode Effect</h2>
             <p>A central result of this work is that the array can be conditioned into a state in which flux transmission is strongly asymmetric with respect to field direction, a magnetic analogue of the electrical diode. Initialization with a large field along one of the three honeycomb axes freezes in an imbalance of charge types. A smaller AC field applied along the same axis then drives avalanche-like reversals that nucleate and propagate preferentially in one direction, producing a pronounced asymmetry in the MOKE hysteresis loop.</p>
             <p>Micromagnetic simulations trace the asymmetry to distinct energy barriers for positive and negative charge propagation through the conditioned lattice: the frozen charge background acts as a built-in potential that lowers the barrier in one direction and raises it in the other. The rectification ratio scales with the density of frozen charges and is set by the amplitude and history of the conditioning field. The mechanism is fully reversible and involves no moving parts, properties that make it attractive for field-controlled magnetic logic and neuromorphic hardware.</p>
-            <p class="case-see">See: Magnetic charge and geometry confluence for ultra-low forward voltage diode in artificial honeycomb lattice, <a href="https://doi.org/10.1016/j.mtphys.2021.100574" target="_blank" rel="noopener noreferrer">Mater. Today Phys. 22, 100574 (2022)</a>, and Field and temperature tuning of magnetic diode in permalloy honeycomb lattice, <a href="https://doi.org/10.1016/j.mtadv.2023.100386" target="_blank" rel="noopener noreferrer">Mater. Today Adv. 18, 100386 (2023)</a>.</p>
+            <p class="case-see">See:</p>
+            <ul class="case-refs">
+                <li>Magnetic charge and geometry confluence for ultra-low forward voltage diode in artificial honeycomb lattice, <a href="https://doi.org/10.1016/j.mtphys.2021.100574" target="_blank" rel="noopener noreferrer">Mater. Today Phys. 22, 100574 (2022)</a></li>
+                <li>Field and temperature tuning of magnetic diode in permalloy honeycomb lattice, <a href="https://doi.org/10.1016/j.mtadv.2023.100386" target="_blank" rel="noopener noreferrer">Mater. Today Adv. 18, 100386 (2023)</a></li>
+            </ul>
             <div class="research-tags-row">
                 <span class="tech-tag">Artificial spin ice</span>
                 <span class="tech-tag">Magnetic charge ice</span>
@@ -83,7 +94,10 @@
             <h2>Topological Defects and Monopole Dynamics</h2>
             <p>Beyond the static diode effect, we characterized the dynamics of monopole–antimonopole pairs using field-driven MFM imaging. As the field is ramped through the switching region, charged vertex pairs nucleate along domain boundaries and separate by propagating along the honeycomb bonds. The propagation paths are directional, steered by the charge-ice background, and each event terminates when the pair annihilates at a distant boundary or at a pre-existing charge of opposite sign.</p>
             <p>These observations constitute direct evidence of emergent monopole dynamics in a two-dimensional frustrated magnet. They connect the lithographic arrays to the broader physics of frustrated systems, in which fractionalized excitations govern low-temperature transport and relaxation, with the added advantage that here the excitations can be engineered and imaged directly, which is not possible in bulk frustrated magnets. The relaxation of the magnetic charges also drives measurable electrical signatures, linking charge dynamics to transport.</p>
-            <p class="case-see">See: Magnetic charge's relaxation propelled electricity in two-dimensional magnetic honeycomb lattice, <a href="https://doi.org/10.1016/j.isci.2021.102206" target="_blank" rel="noopener noreferrer">iScience 24, 102206 (2021)</a>.</p>
+            <p class="case-see">See:</p>
+            <ul class="case-refs">
+                <li>Magnetic charge's relaxation propelled electricity in two-dimensional magnetic honeycomb lattice, <a href="https://doi.org/10.1016/j.isci.2021.102206" target="_blank" rel="noopener noreferrer">iScience 24, 102206 (2021)</a></li>
+            </ul>
         </div>
 
         <div class="research-panel">
@@ -109,6 +123,6 @@
         </div>
     </footer>
 
-    <script src="script.js?v=9"></script>
+    <script src="script.js?v=10"></script>
 </body>
 </html>

@@ -718,9 +718,14 @@ section { padding: 84px 0; position: relative; z-index: 1; }
     font-size: 1.32rem !important;
     color: var(--text) !important;
     margin-top: 0.4rem;
+    margin-bottom: 0.3rem !important;
+    font-weight: 600;
 }
 .case-see a { color: var(--teal); font-weight: 600; transition: var(--transition); }
 .case-see a:hover { color: var(--teal-dark); }
+.case-refs { margin-top: 0 !important; margin-bottom: 0.4rem; }
+.case-refs li a { color: var(--teal); font-weight: 600; transition: var(--transition); }
+.case-refs li a:hover { color: var(--teal-dark); }
 .scholar-note {
     text-align: center;
     font-size: 1.4rem !important;

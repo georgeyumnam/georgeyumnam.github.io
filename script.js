@@ -337,13 +337,29 @@ window.addEventListener('scroll', onScroll); onScroll();
     function spawn() {
       const lam = Math.random();                    // 0 = short λ (fast, cyan) → 1 = long λ (slow, rose)
       ps.push({ x: -20, y: Math.random() * H, lam,
-                vx: 3.4 - lam * 2.3, vy: 0,
+                vx: (3.4 - lam * 2.3) * 1.35,       // 1.35x faster overall
+                vy: 0,
                 r: 3 + lam * 4.8,                   // 3x larger than before
                 spin: Math.random() < 0.5 ? 1 : -1, // up / down, random
                 scat: Math.random() < 0.4,          // 40% scatter off the sample
                 hit: false });
     }
     function drawNeutron(p, c) {
+      // comet tail: faint, semi-transparent, longer for faster neutrons
+      const sp = Math.hypot(p.vx, p.vy) || 0.1;
+      const tl = sp * 10;
+      const tx = p.x - (p.vx / sp) * tl;
+      const ty = p.y - (p.vy / sp) * tl;
+      const tg = bctx.createLinearGradient(tx, ty, p.x, p.y);
+      tg.addColorStop(0, `rgba(${c},0)`);
+      tg.addColorStop(1, `rgba(${c},0.22)`);
+      bctx.strokeStyle = tg;
+      bctx.lineWidth = p.r * 1.1;
+      bctx.lineCap = 'round';
+      bctx.beginPath();
+      bctx.moveTo(tx, ty);
+      bctx.lineTo(p.x, p.y);
+      bctx.stroke();
       // sphere body with a small highlight
       bctx.beginPath();
       bctx.arc(p.x, p.y, p.r, 0, 7);
@@ -387,13 +403,12 @@ window.addEventListener('scroll', onScroll); onScroll();
           if (Math.hypot(cx, cy) < C.r + p.r) {
             p.hit = true;
             if (p.scat) {
-              const n = Math.atan2(cy, cx);                       // outward normal at impact
-              const th = n + (Math.random() - 0.5) * Math.PI * 1.2; // randomized outgoing direction
-              const sp = Math.hypot(p.vx, p.vy) * (0.7 + Math.random() * 0.5);
+              // deflect by at most 60 degrees from the original flight path
+              const th0 = Math.atan2(p.vy, p.vx);
+              const th = th0 + (Math.random() - 0.5) * (2 * Math.PI / 3);
+              const sp = Math.hypot(p.vx, p.vy) * (0.8 + Math.random() * 0.35);
               p.vx = Math.cos(th) * sp;
               p.vy = Math.sin(th) * sp;
-              p.x = C.x + Math.cos(n) * (C.r + p.r + 1);
-              p.y = C.y + Math.sin(n) * (C.r + p.r + 1);
               glow = Math.min(1, glow + 0.35);
             }
           }
