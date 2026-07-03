@@ -640,14 +640,15 @@ section { padding: 84px 0; position: relative; z-index: 1; }
 }
 .research-row:hover { border-color: rgba(79, 217, 236, 0.35); }
 
+/* title sits above the text only, so the figure spans the full card height */
 .research-row-title {
     font-size: 2.15rem;
     font-weight: 700;
     color: var(--white);
     letter-spacing: -0.4px;
     line-height: 1.25;
-    margin-bottom: 1.5rem;
-    padding-bottom: 0.9rem;
+    margin-bottom: 1.1rem;
+    padding-bottom: 0.8rem;
     border-bottom: 1px solid var(--border);
 }
 
@@ -655,14 +656,18 @@ section { padding: 84px 0; position: relative; z-index: 1; }
     display: grid;
     grid-template-columns: minmax(0, 5fr) minmax(0, 7fr);
     gap: 2.4rem;
-    align-items: center;
+    align-items: stretch;
 }
 .research-row.rev .research-row-body { grid-template-columns: minmax(0, 7fr) minmax(0, 5fr); }
 .research-row.rev .research-row-fig  { order: 2; }
 .research-row.rev .research-row-text { order: 1; }
 
+.research-row-fig { display: flex; }
 .research-row-fig img {
     width: 100%;
+    height: 100%;
+    min-height: 300px;
+    object-fit: cover;
     border-radius: 14px;
     border: 1px solid var(--border);
     display: block;
@@ -682,6 +687,7 @@ section { padding: 84px 0; position: relative; z-index: 1; }
     .research-row.rev .research-row-body { grid-template-columns: 1fr; gap: 1.4rem; }
     .research-row.rev .research-row-fig  { order: 0; }
     .research-row.rev .research-row-text { order: 0; }
+    .research-row-fig img { height: auto; min-height: 0; }
 }
 @media (max-width: 600px) {
     .research-row { padding: 1.4rem 1.3rem; }
