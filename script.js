@@ -34,7 +34,7 @@ window.addEventListener('scroll', onScroll); onScroll();
 // ── Full-page honeycomb spin lattice ───────────────────────────────────────
 (function () {
   const canvas = document.createElement('canvas');
-  canvas.style.cssText = 'position:fixed;top:0;left:0;width:100%;height:100%;pointer-events:none;z-index:0;';
+  canvas.style.cssText = 'position:fixed;top:0;left:0;width:100%;height:100%;pointer-events:none;z-index:0;opacity:0.6;';
   document.body.insertBefore(canvas, document.body.firstChild);
   const ctx = canvas.getContext('2d');
 
@@ -54,6 +54,7 @@ window.addEventListener('scroll', onScroll); onScroll();
   const A2x = S3 * D / 2, A2y = 1.5 * D;
   const BDX = S3 * D / 2, BDY = D / 2;
 
+  const REDUCED = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
   let W, H, atoms = [], bonds = [];
   const mouse = { x: -9999, y: -9999 };
 
@@ -120,7 +121,7 @@ window.addEventListener('scroll', onScroll); onScroll();
     ctx.fill();
 
     // Highlight strip — top ~25% of shaft for 3-D cylinder illusion
-    ctx.fillStyle = `rgba(255,255,255,0.22)`;
+    ctx.fillStyle = `rgba(255,255,255,0.16)`;
     ctx.beginPath();
     ctx.rect(0, -SHAFT_W / 2, shaftLen, SHAFT_W * 0.28);
     ctx.fill();
@@ -135,7 +136,7 @@ window.addEventListener('scroll', onScroll); onScroll();
     ctx.fill();
 
     // Cone highlight
-    ctx.fillStyle = `rgba(255,255,255,0.18)`;
+    ctx.fillStyle = `rgba(255,255,255,0.12)`;
     ctx.beginPath();
     ctx.moveTo(totalLen, 0);
     ctx.lineTo(shaftLen, -HEAD_W / 2);
@@ -147,7 +148,7 @@ window.addEventListener('scroll', onScroll); onScroll();
   }
 
   function draw(ts) {
-    requestAnimationFrame(draw);
+    if (!REDUCED) requestAnimationFrame(draw);
     ctx.clearRect(0, 0, W, H);
     const t = ts * 0.001;
     // phonon: red sublattice (spin=+1) moves left, blue (spin=-1) moves right — antiphase
@@ -155,7 +156,7 @@ window.addEventListener('scroll', onScroll); onScroll();
 
     // Bonds
     ctx.lineWidth = 1.5;
-    ctx.strokeStyle = 'rgba(22,61,86,0.28)';
+    ctx.strokeStyle = 'rgba(148,171,255,0.14)';
     for (const [ai, bi] of bonds) {
       const a = atoms[ai], b = atoms[bi];
       ctx.beginPath();
@@ -190,8 +191,8 @@ window.addEventListener('scroll', onScroll); onScroll();
                          - AL * tf * Math.sin(theta) * Math.sin(phi) * PERSP;
 
       // Up = red, Down = blue
-      const rgb   = spin === 1 ? '239,68,68' : '96,165,250';
-      const alpha = 0.70 + pf * 0.10;
+      const rgb   = spin === 1 ? '79,217,236' : '242,104,142';
+      const alpha = 0.42 + pf * 0.30;
 
       drawCylinderArrow(tlX, tlY, tipX, tipY, rgb, alpha);
 
@@ -202,7 +203,7 @@ window.addEventListener('scroll', onScroll); onScroll();
       // Black base sphere
       ctx.beginPath();
       ctx.arc(rx, atom.y, ATOM_R, 0, Math.PI * 2);
-      ctx.fillStyle = 'rgb(4,4,6)';
+      ctx.fillStyle = 'rgb(9,13,26)';
       ctx.fill();
 
       // Light overlay: full white on lit side, zero on dark side
@@ -210,8 +211,8 @@ window.addEventListener('scroll', onScroll); onScroll();
         rx + lx * ATOM_R, atom.y + ly * ATOM_R,
         rx - lx * ATOM_R, atom.y - ly * ATOM_R
       );
-      grad.addColorStop(0,    'rgba(255,255,255,0.82)');
-      grad.addColorStop(0.50, 'rgba(255,255,255,0.08)');
+      grad.addColorStop(0,    'rgba(170,215,255,0.55)');
+      grad.addColorStop(0.50, 'rgba(170,215,255,0.06)');
       grad.addColorStop(1,    'rgba(255,255,255,0)');
 
       ctx.beginPath();
@@ -237,5 +238,26 @@ window.addEventListener('scroll', onScroll); onScroll();
   window.addEventListener('resize', resize);
 
   resize();
-  requestAnimationFrame(draw);
+  if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+    draw(0);                 // single static frame
+  } else {
+    requestAnimationFrame(draw);
+  }
+})();
+
+// ── Scroll reveal ───────────────────────────────────────────────────────────
+(function () {
+  if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+  const targets = $$('.section-header, .project-card, .pub-card, .opp-card, .education-list li, .contact-item, .about-text, .about-photo-wrap, .teaching-intro, .research-panel');
+  if (!('IntersectionObserver' in window) || !targets.length) return;
+  const io = new IntersectionObserver(entries => {
+    for (const e of entries) {
+      if (e.isIntersecting) { e.target.classList.add('in'); io.unobserve(e.target); }
+    }
+  }, { threshold: 0.12, rootMargin: '0px 0px -6% 0px' });
+  targets.forEach((el, i) => {
+    el.classList.add('reveal');
+    el.style.transitionDelay = `${Math.min((i % 4) * 60, 180)}ms`;
+    io.observe(el);
+  });
 })();

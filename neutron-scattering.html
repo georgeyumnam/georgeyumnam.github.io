@@ -6,21 +6,21 @@
     <title>Neutron Scattering Instruments – George Yumnam</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="styles.css?v=13">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Space+Grotesk:wght@500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="styles.css?v=14">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
         .tool-hero { padding: 64px 24px 40px; position: relative; z-index: 1; }
         .tool-hero-panel {
-            background: rgba(255,255,255,0.92); backdrop-filter: blur(28px);
+            background: var(--glass-card); backdrop-filter: blur(28px);
             -webkit-backdrop-filter: blur(28px); border: 1px solid var(--border);
             border-radius: 20px; padding: 2rem 2.5rem; box-shadow: var(--glow);
             position: relative; overflow: hidden;
         }
         .tool-hero-panel::after {
             content: ''; position: absolute; inset: 0; border-radius: inherit; pointer-events: none;
-            background: linear-gradient(to bottom,rgba(255,255,255,.48) 0%,transparent 14%,transparent 86%,rgba(116,190,226,.18) 100%),
-                        linear-gradient(to right,rgba(255,255,255,.36) 0%,transparent 8%,transparent 92%,rgba(116,190,226,.14) 100%);
+            background: linear-gradient(to bottom,rgba(148,171,255,.08) 0%,transparent 14%,transparent 86%,rgba(79,217,236,.06) 100%),
+                        linear-gradient(to right,rgba(148,171,255,.05) 0%,transparent 8%,transparent 92%,rgba(79,217,236,.05) 100%);
             mix-blend-mode: screen;
         }
         .tool-title { font-size: 3.4rem; font-weight: 800; color: var(--white); letter-spacing: -0.8px; margin-bottom: 0.4rem; }
@@ -34,8 +34,8 @@
             backdrop-filter: blur(14px); -webkit-backdrop-filter: blur(14px);
             text-align: center; user-select: none;
         }
-        .inst-card:hover { border-color: rgba(0,143,163,0.55); transform: translateY(-3px); box-shadow: var(--shadow-md); }
-        .inst-card.active { border-color: var(--teal); background: rgba(0,143,163,0.12); box-shadow: 0 0 0 3px rgba(0,143,163,0.18),var(--shadow-md); }
+        .inst-card:hover { border-color: rgba(79,217,236,0.55); transform: translateY(-3px); box-shadow: var(--shadow-md); }
+        .inst-card.active { border-color: var(--teal); background: rgba(79,217,236,0.10); box-shadow: 0 0 0 3px rgba(79,217,236,0.18),var(--shadow-md); }
         .inst-icon { font-size: 1.8rem; color: var(--teal); margin-bottom: 0.4rem; }
         .inst-name { font-size: 1.326rem; font-weight: 700; color: var(--white); margin-bottom: 0.2rem; line-height: 1.3; }
         .inst-hint { font-size: 1.1rem; color: var(--text-dim); line-height: 1.4; }
@@ -45,7 +45,7 @@
         .signal-shell { grid-column:1; grid-row:2; }
         .right-col    { grid-column:1; grid-row:3; }
         .canvas-shell {
-            background: rgba(255,255,255,0.88); border: 1px solid var(--border); border-radius: 20px;
+            background: #f2f6ff; border: 1px solid rgba(148,171,255,0.30); border-radius: 20px;
             overflow: hidden; box-shadow: var(--glow); backdrop-filter: blur(16px);
             -webkit-backdrop-filter: blur(16px); aspect-ratio: 16/9; position: relative;
         }
@@ -65,7 +65,7 @@
         .info-panel h3 { font-size: 1.7rem; font-weight: 700; color: var(--white); margin-bottom: 0.5rem; }
         .info-panel .info-tag {
             display: inline-block; font-size: 1.1rem; font-weight: 600; color: var(--teal);
-            background: rgba(0,143,163,0.10); border: 1px solid rgba(0,143,163,0.28);
+            background: rgba(79,217,236,0.10); border: 1px solid rgba(79,217,236,0.28);
             border-radius: 999px; padding: 2px 10px; margin-bottom: 0.9rem;
         }
         .info-panel p { font-size: 1.326rem; color: var(--text-dim); line-height: 1.7; margin-bottom: 0.75rem; }
@@ -73,7 +73,7 @@
         .info-panel ul { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 0.4rem; }
         .info-panel ul li { font-size: 1.2rem; color: var(--text-dim); padding-left: 1.1rem; position: relative; line-height: 1.55; }
         .info-panel ul li::before { content: '▸'; position: absolute; left: 0; color: var(--teal); font-size: 1rem; }
-        .info-empty { color: rgba(22,61,86,0.38); font-size: 1.326rem; text-align: center; padding: 2rem 0; }
+        .info-empty { color: rgba(154,166,200,0.55); font-size: 1.326rem; text-align: center; padding: 2rem 0; }
         .signal-shell {
             background: #000000; border: 1px solid rgba(255,255,255,0.12); border-radius: 16px;
             overflow: hidden; box-shadow: 0 0 22px rgba(0,0,0,0.55),var(--shadow-md);
@@ -92,7 +92,7 @@
         .nav-dropdown-menu {
             display: none; position: absolute; top: calc(100% + 6px); left: 50%;
             transform: translateX(-50%);
-            background: rgba(255,255,255,0.95); backdrop-filter: blur(16px);
+            background: rgba(13,19,38,0.96); backdrop-filter: blur(16px);
             border: 1px solid var(--border); border-radius: 12px; padding: 0.4rem 0;
             min-width: 210px; box-shadow: var(--shadow-md); z-index: 200;
         }
@@ -778,7 +778,7 @@
                     label(r[0], LH - 18, r[1], { size: 9, color: 'rgba(0,143,163,0.45)' });
                 });
                 ctx.beginPath(); ctx.moveTo(T0X, LH - 31); ctx.lineTo(SX, LH - 31);
-                ctx.strokeStyle = 'rgba(0,143,163,0.18)'; ctx.lineWidth = 1; ctx.stroke();
+                ctx.strokeStyle = 'rgba(79,217,236,0.18)'; ctx.lineWidth = 1; ctx.stroke();
                 label(LW / 2, LH - 10, 'Time-of-flight → λ → d = λ / (2 sinθ)', { size: 10, color: 'rgba(0,143,163,0.38)' });
 
                 s.particles.forEach(function (p) {
@@ -1269,14 +1269,14 @@
 
                 // ── Beam guide lines (primary path) ───────────────────────────────────
                 ctx.setLineDash([3, 5]);
-                ctx.strokeStyle = 'rgba(0,143,163,0.18)'; ctx.lineWidth = 1;
+                ctx.strokeStyle = 'rgba(79,217,236,0.18)'; ctx.lineWidth = 1;
                 ctx.beginPath(); ctx.moveTo(104, srcY); ctx.lineTo(HIT_X, SY); ctx.stroke();
                 ctx.setLineDash([]);
 
                 // ── Flat sample layers ────────────────────────────────────────────────
                 const layers = [
                     { y: SY, h: 14, col: 'rgba(0,143,163,0.22)', lbl: 'Magnetic layer (Co)' },
-                    { y: SY + 14, h: 10, col: 'rgba(0,143,163,0.12)', lbl: 'Buffer (Cu)' },
+                    { y: SY + 14, h: 10, col: 'rgba(79,217,236,0.10)', lbl: 'Buffer (Cu)' },
                     { y: SY + 24, h: 38, col: 'rgba(22,61,86,0.10)', lbl: 'Substrate (Si)' }
                 ];
                 layers.forEach(function (ly) {
@@ -1562,8 +1562,8 @@
                 // ── Larmor magnet solenoid helper ─────────────────────────────────────
                 function drawMagnet(x1, x2, upward, lbl) {
                     const R = 34, W = x2 - x1;
-                    const col = upward ? 'rgba(0,143,163,0.18)' : 'rgba(232,93,4,0.14)';
-                    const wireCol = upward ? 'rgba(0,143,163,0.55)' : 'rgba(232,93,4,0.55)';
+                    const col = upward ? 'rgba(79,217,236,0.18)' : 'rgba(232,93,4,0.14)';
+                    const wireCol = upward ? 'rgba(79,217,236,0.55)' : 'rgba(232,93,4,0.55)';
                     const arrCol  = upward ? 'rgba(0,143,163,0.35)' : 'rgba(232,93,4,0.35)';
                     ctx.fillStyle = col;
                     ctx.fillRect(x1, SY - R, W, 2 * R);
@@ -1792,15 +1792,15 @@
 
             // Draw beam axis dashes
             ctx.setLineDash([4, 6]);
-            ctx.strokeStyle = 'rgba(0,143,163,0.12)'; ctx.lineWidth = 1;
+            ctx.strokeStyle = 'rgba(79,217,236,0.10)'; ctx.lineWidth = 1;
             ctx.beginPath(); ctx.moveTo(90, SY); ctx.lineTo(SX - 18, SY); ctx.stroke();
             ctx.setLineDash([]);
 
             // Primary flight path brace
             ctx.beginPath(); ctx.moveTo(90, SY - 48); ctx.lineTo(SX, SY - 48);
-            ctx.strokeStyle = 'rgba(0,143,163,0.28)'; ctx.lineWidth = 1;
+            ctx.strokeStyle = 'rgba(79,217,236,0.28)'; ctx.lineWidth = 1;
             ctx.setLineDash([3, 5]); ctx.stroke(); ctx.setLineDash([]);
-            label((90 + SX) / 2, SY - 56, 'Primary flight path  19.2 m', { size: 10, color: 'rgba(0,143,163,0.55)' });
+            label((90 + SX) / 2, SY - 56, 'Primary flight path  19.2 m', { size: 10, color: 'rgba(79,217,236,0.55)' });
 
             // Three disc choppers
             function drawDisc(cx, t_label, b_label, angle) {
@@ -1992,7 +1992,7 @@
                 state.particles = [];
                 state.pulseNum  = 0;
                 mrPolBtn.textContent       = state.polarized ? '⬤ Polarized'  : '◯ Unpolarized';
-                mrPolBtn.style.background  = state.polarized ? 'rgba(0,143,163,0.55)' : 'rgba(22,61,86,0.72)';
+                mrPolBtn.style.background  = state.polarized ? 'rgba(79,217,236,0.55)' : 'rgba(22,61,86,0.72)';
                 mrPolBtn.style.borderColor = state.polarized ? 'rgba(180,100,255,0.90)' : 'var(--teal)';
             }); }
             if (mrMagBtn) { mrMagBtn.onclick = null; mrMagBtn.addEventListener('click', function () {
@@ -2013,7 +2013,7 @@
                 state.pulseNum  = 0;
                 if (!state.polarized) { state.magnetic = false; }
                 btn.textContent       = state.polarized ? '⬤ Polarized' : '◯ Unpolarized';
-                btn.style.background  = state.polarized ? 'rgba(0,143,163,0.55)' : 'rgba(22,61,86,0.72)';
+                btn.style.background  = state.polarized ? 'rgba(79,217,236,0.55)' : 'rgba(22,61,86,0.72)';
                 btn.style.borderColor = state.polarized ? 'rgba(180,100,255,0.90)' : 'var(--teal)';
                 if (magBtn) {
                     magBtn.style.display = state.polarized ? 'block' : 'none';
