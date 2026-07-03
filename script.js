@@ -38,17 +38,17 @@ window.addEventListener('scroll', onScroll); onScroll();
   document.body.insertBefore(canvas, document.body.firstChild);
   const ctx = canvas.getContext('2d');
 
-  const D      = 104;    // bond length (px) — 1.3× larger honeycomb cells
+  const D      = 104;    // bond length (px) - 1.3× larger honeycomb cells
   const S3     = Math.sqrt(3);
   const AL     = 44;     // arrow half-length (1.7× increase)
   const ATOM_R = 13.5;   // atom radius (1.5× increase)
-  const THETA0 = 0.182;  // base cone angle (rad, ~10°) — 40% increase
-  const OMEGA  = 3.0;    // base precession rate (rad/s) — 2× increase
+  const THETA0 = 0.182;  // base cone angle (rad, ~10°) - 40% increase
+  const OMEGA  = 3.0;    // base precession rate (rad/s) - 2× increase
   const MOUSE_R = 160;   // mouse influence radius (px)
   const PERSP  = 0.30;   // perspective factor for depth axis
 
-  const PHONON_AMP   = 6;                          // px — peak lateral displacement
-  const PHONON_OMEGA = 2 * Math.PI / 1.5;          // rad/s — period = 1.5 s (0.75 s half-period)
+  const PHONON_AMP   = 6;                          // px - peak lateral displacement
+  const PHONON_OMEGA = 2 * Math.PI / 1.5;          // rad/s - period = 1.5 s (0.75 s half-period)
 
   const A1x = S3 * D, A1y = 0;
   const A2x = S3 * D / 2, A2y = 1.5 * D;
@@ -56,7 +56,7 @@ window.addEventListener('scroll', onScroll); onScroll();
 
   const REDUCED = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
   const DRIFT   = 0.12;         // scroll-parallax rate for the lattice
-  const PERIODY = 3 * D;        // vertical lattice period — drift wraps seamlessly
+  const PERIODY = 3 * D;        // vertical lattice period - drift wraps seamlessly
   let W, H, atoms = [], bonds = [];
   const mouse = { x: -9999, y: -9999 };
 
@@ -76,13 +76,13 @@ window.addEventListener('scroll', onScroll); onScroll();
         const cx = n * A1x + m * A2x;
         const cy = n * A1y + m * A2y;
 
-        // A sublattice — spin up (red)
+        // A sublattice - spin up (red)
         const ai = atoms.length;
         atoms.push({ x: cx, y: cy, spin: 1,
           phase: ((n * 13 + m * 7  + 3) & 0x7FFF) / 0x7FFF * Math.PI * 2 });
         map.set(`A${n},${m}`, ai);
 
-        // B sublattice — spin down (blue)
+        // B sublattice - spin down (blue)
         const bi = atoms.length;
         atoms.push({ x: cx + BDX, y: cy + BDY, spin: -1,
           phase: ((n * 11 + m * 17 + 5) & 0x7FFF) / 0x7FFF * Math.PI * 2 });
@@ -104,7 +104,7 @@ window.addEventListener('scroll', onScroll); onScroll();
 
   // Draws a cylinder shaft + conical arrowhead from (x1,y1) to (x2,y2)
   function drawCylinderArrow(x1, y1, x2, y2, color, alpha) {
-    const SHAFT_W  = 6;   // cylinder diameter (px) — 3× the old ~2px line
+    const SHAFT_W  = 6;   // cylinder diameter (px) - 3× the old ~2px line
     const HEAD_W   = 15;  // cone base diameter
     const HEAD_LEN = 17;  // cone length
 
@@ -122,7 +122,7 @@ window.addEventListener('scroll', onScroll); onScroll();
     ctx.rect(0, -SHAFT_W / 2, shaftLen, SHAFT_W);
     ctx.fill();
 
-    // Highlight strip — top ~25% of shaft for 3-D cylinder illusion
+    // Highlight strip - top ~25% of shaft for 3-D cylinder illusion
     ctx.fillStyle = `rgba(255,255,255,0.16)`;
     ctx.beginPath();
     ctx.rect(0, -SHAFT_W / 2, shaftLen, SHAFT_W * 0.28);
@@ -153,7 +153,7 @@ window.addEventListener('scroll', onScroll); onScroll();
     if (!REDUCED) requestAnimationFrame(draw);
     ctx.clearRect(0, 0, W, H);
     const t = ts * 0.001;
-    // phonon: red sublattice (spin=+1) moves left, blue (spin=-1) moves right — antiphase
+    // phonon: red sublattice (spin=+1) moves left, blue (spin=-1) moves right - antiphase
     const pdx = s => -s * PHONON_AMP * Math.sin(PHONON_OMEGA * t);
     // scroll drift: lattice glides up slowly as the page scrolls (wraps on period)
     const yoff = REDUCED ? 0 : (window.scrollY * DRIFT) % PERIODY;
@@ -171,7 +171,7 @@ window.addEventListener('scroll', onScroll); onScroll();
 
     // Spins
     for (const atom of atoms) {
-      const ry = atom.y - yoff;        // rendered y — original + scroll drift
+      const ry = atom.y - yoff;        // rendered y - original + scroll drift
       const mdx = atom.x - mouse.x, mdy = ry - mouse.y;
       const mdist = Math.sqrt(mdx * mdx + mdy * mdy);
       // pf: 1 = at mouse, 0 = far away
@@ -182,7 +182,7 @@ window.addEventListener('scroll', onScroll); onScroll();
       const omegaEff = OMEGA * (1 - pf * 0.80);    // slows to 20% of normal near mouse
 
       const spin = atom.spin;
-      const rx = atom.x + pdx(spin);   // rendered x — original + phonon displacement
+      const rx = atom.x + pdx(spin);   // rendered x - original + phonon displacement
 
       // Red (spin-up) lags blue (spin-down) by half a precession period (π)
       const phi  = omegaEff * t + atom.phase + (spin === 1 ? Math.PI : 0);
@@ -201,7 +201,7 @@ window.addEventListener('scroll', onScroll); onScroll();
 
       drawCylinderArrow(tlX, tlY, tipX, tipY, rgb, alpha);
 
-      // Shiny ball — directional hemisphere light from mouse side
+      // Shiny ball - directional hemisphere light from mouse side
       const lx = mouse.x > -9000 ? -mdx / (mdist || 1) : -0.5;
       const ly = mouse.y > -9000 ? -mdy / (mdist || 1) : -0.8;
 
@@ -267,7 +267,7 @@ window.addEventListener('scroll', onScroll); onScroll();
   });
 })();
 
-// ═══ v5 · "You are the neutron" — dynamics engine ═══════════════════════════
+// ═══ v5 · "You are the neutron" - dynamics engine ═══════════════════════════
 (function () {
   const RM = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
   const wlColor = i => ['79,217,236', '139,122,247', '242,104,142'][i % 3];
@@ -416,7 +416,7 @@ window.addEventListener('scroll', onScroll); onScroll();
     }
   }
 
-  // ── 3b. Hero scroll parallax — content drifts/fades so leaving the hero
+  // ── 3b. Hero scroll parallax - content drifts/fades so leaving the hero
   //        feels continuous rather than a hard cut ─────────────────────────
   if (heroContent && !RM) {
     let hpTick = false;
@@ -537,7 +537,7 @@ window.addEventListener('scroll', onScroll); onScroll();
     const input = document.getElementById('cmdk-input');
     const list = document.getElementById('cmdk-list');
     const ITEMS = [
-      { k: 'Section', t: 'About — the sample', u: 'index.html#about' },
+      { k: 'Section', t: 'About · the sample', u: 'index.html#about' },
       { k: 'Section', t: 'Employment', u: 'index.html#employment' },
       { k: 'Section', t: 'Education', u: 'index.html#education' },
       { k: 'Section', t: 'Current Research', u: 'index.html#projects' },
@@ -545,8 +545,8 @@ window.addEventListener('scroll', onScroll); onScroll();
       { k: 'Section', t: 'Teaching & Mentoring', u: 'index.html#teaching' },
       { k: 'Section', t: 'MitSna Foundation', u: 'index.html#mitsna' },
       { k: 'Section', t: 'Contact', u: 'index.html#contact' },
-      { k: 'Sim', t: 'Neutron Scattering Instruments — interactive', u: 'neutron-scattering.html' },
-      { k: 'Sim', t: 'Mössbauer Spectroscopy — interactive', u: 'mossbauer.html' },
+      { k: 'Sim', t: 'Neutron Scattering Instruments · interactive', u: 'neutron-scattering.html' },
+      { k: 'Sim', t: 'Mössbauer Spectroscopy · interactive', u: 'mossbauer.html' },
       { k: 'Research', t: 'Altermagnetism & Magnon-Phonon Coupling', u: 'magnon-phonon.html' },
       { k: 'Research', t: 'Magnon Resilience in Diluted Antiferromagnets', u: 'high-entropy-oxides.html' },
       { k: 'Research', t: 'Artificial Honeycomb Lattices', u: 'honeycomb-lattice.html' },
@@ -559,7 +559,7 @@ window.addEventListener('scroll', onScroll); onScroll();
     function render() {
       list.innerHTML = shown.map((it, i) =>
         `<div class="cmdk-item${i === sel ? ' sel' : ''}" data-u="${it.u}"><span class="ci-k">${it.k}</span>${it.t}</div>`).join('')
-        || '<div class="cmdk-item">No matches — the detector is quiet.</div>';
+        || '<div class="cmdk-item">No matches. The detector is quiet.</div>';
     }
     function open() { cmdk.hidden = false; input.value = ''; shown = ITEMS; sel = 0; render(); input.focus(); }
     function close() { cmdk.hidden = true; }

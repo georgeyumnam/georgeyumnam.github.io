@@ -1,8 +1,8 @@
-/* © 2026 George Yumnam · georgeyumnam.github.io — v4 "Beamline at Night" */
+/* © 2026 George Yumnam · georgeyumnam.github.io - v4 "Beamline at Night" */
 
 /* ── Root Variables ───────────────────────────── */
 :root {
-    /* palette — guide-hall indigo (lightened), spin-up cyan, spin-down rose */
+    /* palette - guide-hall indigo (lightened), spin-up cyan, spin-down rose */
     --bg:         #0e1526;
     --bg-2:       #131b33;
     --navy:       #17233f;                       /* elevated surface */
@@ -34,7 +34,7 @@
 *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
 
 /* font-size 80% (not zoom) keeps rem type at design size while leaving
-   client coordinates 1:1 — zoom broke cursor-orb / canvas mouse mapping */
+   client coordinates 1:1 - zoom broke cursor-orb / canvas mouse mapping */
 html { scroll-behavior: smooth; background: var(--bg); font-size: 80%; }
 
 body {
@@ -1175,7 +1175,7 @@ section { padding: 84px 0; position: relative; z-index: 1; }
     .pub-inline-item a  { font-size: 0.88rem; }
 }
 
-/* ═══ v5 · "You are the neutron" — dynamics layer ═══ */
+/* ═══ v5 · "You are the neutron" - dynamics layer ═══ */
 
 /* ── Film grain ───────────────────────────────── */
 body::after {

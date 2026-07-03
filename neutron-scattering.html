@@ -54,7 +54,7 @@
         }
         .inst-name { font-family: var(--font-display); font-size: 1.326rem; font-weight: 700; color: var(--white); margin-bottom: 0.25rem; line-height: 1.3; letter-spacing: -0.2px; }
         .inst-hint { font-family: var(--font-mono); font-size: 0.98rem; color: var(--text-dim); line-height: 1.45; letter-spacing: 0.01em; }
-        /* My work — publications & APS talks per instrument */
+        /* My work - publications & APS talks per instrument */
         .inst-pubs { margin-top: 1.2rem; padding-top: 1rem; border-top: 1px solid var(--border); }
         .inst-pubs-label { font-family: var(--font-mono); font-size: 0.95rem; font-weight: 600; letter-spacing: 0.16em; text-transform: uppercase; color: var(--teal); margin-bottom: 0.7rem; }
         .inst-pub { display: flex; gap: 0.7rem; align-items: flex-start; padding: 0.65rem 0.75rem; border-radius: 10px; border: 1px solid transparent; transition: var(--transition); text-decoration: none; }
@@ -161,7 +161,7 @@
             <div class="tool-hero-panel">
                 <h1 class="tool-title">Neutron Scattering Instruments</h1>
                 <p class="tool-sub">Physics-accurate Monte Carlo simulations · Select an instrument</p>
-                <p class="tool-desc">Every instrument here pairs a neutron source with its own optics, sample geometry, and detectors — and each pairing sees a different side of matter: crystal structure, spin dynamics, buried interfaces. Colors track neutron wavelength (blue = short λ, fast; red = long λ, cold).</p>
+                <p class="tool-desc">Every instrument here pairs a neutron source with its own optics, sample geometry, and detectors, and each pairing sees a different side of matter: crystal structure, spin dynamics, buried interfaces. Colors track neutron wavelength (blue = short λ, fast; red = long λ, cold).</p>
             </div>
         </div>
     </div>
@@ -240,7 +240,7 @@
 
     <script src="script.js?v=7"></script>
     <script>
-    // ── Neutron Scattering Instrument Demo Engine — Physics-accurate Monte Carlo ──
+    // ── Neutron Scattering Instrument Demo Engine - Physics-accurate Monte Carlo ──
     (function () {
     'use strict';
     const canvas  = document.getElementById('demo-canvas');
@@ -311,7 +311,7 @@
             ctx.restore();
             label(x, y + 42, 'Reactor\n(HFIR)');
         } else {
-            // Spallation — pulsed ripple
+            // Spallation - pulsed ripple
             const ripR = (t % 1.0) * 55;
             const ripA = 0.4 * (1 - ripR / 55);
             ctx.beginPath(); ctx.arc(x, y, ripR, 0, Math.PI * 2);
@@ -559,7 +559,7 @@
             tag:   'SNS · BL-11A · Time-of-Flight Diffraction',
             info: `<h3>POWGEN (SNS)</h3>
                 <span class="info-tag">TOF · d = λt/(2L sinθ) · 0.1–5 Å</span>
-                <p>POWGEN (SNS BL-11A) is the general-purpose powder diffractometer at the Spallation Neutron Source. The pulsed white beam first passes through the frame-opening (F/O) chopper that removes the prompt γ flash, then through three bandwidth choppers that carve a useful wavelength window — all without a monochromator. Each neutron's time-of-flight to the detector encodes its wavelength, so the full d-spacing range 0.1–5 Å is measured simultaneously in one shot.</p>
+                <p>POWGEN (SNS BL-11A) is the general-purpose powder diffractometer at the Spallation Neutron Source. The pulsed white beam first passes through the frame-opening (F/O) chopper that removes the prompt γ flash, then through three bandwidth choppers that carve a useful wavelength window, all without a monochromator. Each neutron's time-of-flight to the detector encodes its wavelength, so the full d-spacing range 0.1–5 Å is measured simultaneously in one shot.</p>
                 <p>Scattered neutrons form Debye-Scherrer cones at each Bragg angle. The large cylindrical ³He detector bank spans 0.5°–168° in 2θ, providing both forward-scattering coverage for large d-spacings and high-resolution backscattering for small d.</p>
                 <ul>
                     <li>F/O chopper (red) removes prompt γ; three bandwidth choppers (orange) define λ window</li>
@@ -685,7 +685,7 @@
                 ctx.setLineDash([]);
                 label((84 + SX) / 2, SY - 60, 'Primary flight path  ~47 m', { size: 10, color: 'rgba(0,143,163,0.52)' });
 
-                // ── F/O Chopper — RED large disc ─────────────────────────────────────
+                // ── F/O Chopper - RED large disc ─────────────────────────────────────
                 (function () {
                     const R = 24;
                     ctx.beginPath(); ctx.arc(T0X, SY, R, 0, Math.PI * 2);
@@ -707,7 +707,7 @@
                     label(T0X, SY + R + 14, 'T₀ chopper', { size: 9, color: 'rgba(220,100,80,0.70)' });
                 }());
 
-                // ── Bandwidth choppers — ORANGE single discs ──────────────────────────
+                // ── Bandwidth choppers - ORANGE single discs ──────────────────────────
                 function drawBWChopper(cx, angle, idx) {
                     const R = 20;
                     ctx.beginPath(); ctx.arc(cx, SY, R, 0, Math.PI * 2);
@@ -852,7 +852,7 @@
                         if (Math.random() < 0.80) { p.state = 'pre1'; }
                         else { s.particles.splice(i, 1); continue; }
                     }
-                    // Fermi pair 1 — energy selection
+                    // Fermi pair 1 - energy selection
                     if (p.state === 'pre1' && p.x > FC1X) {
                         const gate = Math.sin(s.fc1A * 2.2) > 0.60 && p.en > 0.30 && p.en < 0.72;
                         if (gate) {
@@ -860,12 +860,12 @@
                             p.vx = 192; p.vy = (Math.random() - 0.5) * 7;
                         } else { s.particles.splice(i, 1); continue; }
                     }
-                    // Fermi pair 2 — suppression
+                    // Fermi pair 2 - suppression
                     if (p.state === 'pre2' && p.x > FC2X) {
                         if (Math.random() < 0.90) { p.state = 'pre3'; }
                         else { s.particles.splice(i, 1); continue; }
                     }
-                    // Fermi pair 3 — frame overlap control
+                    // Fermi pair 3 - frame overlap control
                     if (p.state === 'pre3' && p.x > FC3X) {
                         if (Math.random() < 0.92) { p.state = 'pre_s'; }
                         else { s.particles.splice(i, 1); continue; }
@@ -927,7 +927,7 @@
                 ctx.setLineDash([]);
                 label((86 + SX) / 2, SY - 58, 'Primary flight path  20.0 m', { size: 10, color: 'rgba(0,143,163,0.52)' });
 
-                // ── T0 chopper — RED large disc ───────────────────────────────────────
+                // ── T0 chopper - RED large disc ───────────────────────────────────────
                 (function () {
                     const R = 26;
                     ctx.beginPath(); ctx.arc(T0X, SY, R, 0, Math.PI * 2);
@@ -982,7 +982,7 @@
                 // Sample
                 drawSample(SX, SY);
 
-                // ── Cylindrical ³He detector (2π sr) — full-wrap arc ──────────────────
+                // ── Cylindrical ³He detector (2π sr) - full-wrap arc ──────────────────
                 for (let di = 0; di < nDet; di++) {
                     const ang = -Math.PI + di * (2 * Math.PI / nDet);
                     const dx = SX + detR * Math.cos(ang);
@@ -1027,7 +1027,7 @@
             info: `<h3>MAGREF (SNS)</h3>
                 <span class="info-tag">Polarized reflectometry · magnetic depth profiles</span>
                 <p>MAGREF (Magnetism Reflectometer, SNS BL-4A) uses the pulsed SNS source and a super-mirror polarizer to deliver a spin-polarized, time-of-flight white beam to a flat sample at grazing incidence. An FO chopper removes the prompt flash. Neutrons reflect specularly below the critical angle θ_c; above θ_c, R(Q⊥) encodes the depth-resolved scattering-length-density profile ρ(z) of the magnetic and nuclear layers.</p>
-                <p>An optional ³He analyzer on the reflected side enables full polarization analysis — separating R⁺⁺, R⁻⁻ (spin-flip) and R⁺⁻, R⁻⁺ (non-spin-flip) cross-sections to disentangle nuclear and magnetic SLD profiles layer by layer.</p>
+                <p>An optional ³He analyzer on the reflected side enables full polarization analysis, separating R⁺⁺, R⁻⁻ (spin-flip) and R⁺⁻, R⁻⁺ (non-spin-flip) cross-sections to disentangle nuclear and magnetic SLD profiles layer by layer.</p>
                 <ul>
                     <li>Cyan = specularly reflected beam; off-specular in purple dashes</li>
                     <li>Kiessig fringes: period ΔQ⊥ = 2π/d gives individual layer thickness d</li>
@@ -1100,7 +1100,7 @@
                     const p = s.particles[i];
                     p.x += p.vx * dt * PSIM; p.y += p.vy * dt * PSIM;
 
-                    // ── SM Flipper: spin already set correctly at spawn — just mark passage ─
+                    // ── SM Flipper: spin already set correctly at spawn - just mark passage ─
                     if (p.state === 'in' && !p.polPassed && p.x > P_X) {
                         p.polPassed = true;
                     }
@@ -1129,7 +1129,7 @@
                             p.qBin = Math.min(79, Math.max(0, Math.floor((0.7 - p.lam) / 0.5 * 79)));
                             p.state = 'reflected';
                         } else {
-                            // ── Transmitted / refracted — 0.95× incident speed ───────────
+                            // ── Transmitted / refracted - 0.95× incident speed ───────────
                             p.vx *= 0.95; p.vy *= 0.95;
                             // Transmitted neutrons acquire random spin after passing through sample
                             p.spinUp = Math.random() > 0.5;
@@ -1236,7 +1236,7 @@
 
                 drawSource(80, srcY, 'spallation', t);
 
-                // ── SM Flipper — present in both polarized and unpolarized modes ───────
+                // ── SM Flipper - present in both polarized and unpolarized modes ───────
                 const P_X = 125, P_Y = srcY + (P_X - 80) * Math.tan(a);
                 ctx.save(); ctx.translate(P_X, P_Y); ctx.rotate(a);
                 ctx.fillStyle = s.polarized ? 'rgba(120,50,200,0.75)' : 'rgba(0,110,130,0.72)';
@@ -1246,7 +1246,7 @@
                 ctx.restore();
                 label(P_X, P_Y - 38, 'SM Flipper', { size: 9, color: s.polarized ? 'rgba(180,100,255,0.85)' : 'rgba(0,200,220,0.85)' });
 
-                // ── FO Chopper — RED disc ─────────────────────────────────────────────
+                // ── FO Chopper - RED disc ─────────────────────────────────────────────
                 const FC_X = 220, FC_Y = srcY + (FC_X - 80) * Math.tan(a);
                 const R = 28;
                 ctx.beginPath(); ctx.arc(FC_X, FC_Y, R, 0, Math.PI * 2);
@@ -1311,7 +1311,7 @@
                 ctx.strokeStyle = 'rgba(34,211,238,0.20)'; ctx.lineWidth = 1; ctx.stroke();
                 ctx.setLineDash([]);
 
-                // ── ³He Analyzer — present in polarized mode (both sample types) ──────
+                // ── ³He Analyzer - present in polarized mode (both sample types) ──────
                 const AN_X = 680, AN_Y = SY - (AN_X - HIT_X) * Math.tan(a);
                 if (s.polarized) {
                     ctx.fillStyle = 'rgba(120,50,200,0.70)';
@@ -1407,9 +1407,9 @@
         nse: {
             label: 'NSE',
             tag:   'SNS · BL-15 · Larmor precession · ps–ns',
-            info: `<h3>NSE — Neutron Spin Echo (SNS BL-15)</h3>
+            info: `<h3>NSE · Neutron Spin Echo (SNS BL-15)</h3>
                 <span class="info-tag">Sub-μeV resolution · 0.1–1000 ns timescales</span>
-                <p>NSE (SNS BL-15) encodes inelastic velocity changes directly in the neutron spin phase via Larmor precession. A ³He polarizer produces a spin-polarized beam. RF Flipper 1 (π/2 pulse) tips spins into the precession plane; the neutrons then precess through Larmor Magnet L₁. RF Flipper 2 (π pulse) at the sample position reverses the precession direction. Scattered neutrons traverse L₂ and regain their original spin phase if the scattering was elastic — forming the spin echo. Inelastic scattering breaks the echo proportionally to ℏω.</p>
+                <p>NSE (SNS BL-15) encodes inelastic velocity changes directly in the neutron spin phase via Larmor precession. A ³He polarizer produces a spin-polarized beam. RF Flipper 1 (π/2 pulse) tips spins into the precession plane; the neutrons then precess through Larmor Magnet L₁. RF Flipper 2 (π pulse) at the sample position reverses the precession direction. Scattered neutrons traverse L₂ and regain their original spin phase if the scattering was elastic, forming the spin echo. Inelastic scattering breaks the echo proportionally to ℏω.</p>
                 <p>The echo amplitude S(Q,t)/S(Q,0) is the intermediate scattering function F(Q,t) measured at Fourier time t = (mγℏ/2E)(L₁+L₂). A ³He analyzer and ³He PSD detector bank complete the instrument.</p>
                 <ul>
                     <li>³He polarizer → RF flippers (π/2, π) → Larmor magnets L₁, L₂ → ³He analyzer</li>
@@ -1669,13 +1669,13 @@
                     ctx.restore();
                 });
 
-                label(LW / 2, LH - 14, 'Echo amplitude = ⟨cos Δφ⟩ = F(Q,t)  —  Intermediate scattering function  |  SNS BL-15');
+                label(LW / 2, LH - 14, 'Echo amplitude = ⟨cos Δφ⟩ = F(Q,t)  ·  Intermediate scattering function  |  SNS BL-15');
             }
         }
 
     };
 
-    // Derived instruments — share animation code, different label/tag/info
+    // Derived instruments - share animation code, different label/tag/info
 ;
 
     INSTRUMENTS.hyspec = {
@@ -1855,7 +1855,7 @@
                 label(POL_X, SY - 40, 'SM Pol.', { size: 9, color: 'rgba(180,100,255,0.85)' });
             }
 
-            // Sample — magnetic or non-magnetic
+            // Sample - magnetic or non-magnetic
             if (s.polarized && s.magnetic) {
                 glow(SX, SY, 50, 'rgb(220,60,60)', 0.20);
                 ctx.beginPath(); ctx.arc(SX, SY, 14, 0, Math.PI * 2);
@@ -1892,7 +1892,7 @@
                     ctx.restore();
                 }
                 label(SX + anaR + 8, SY - 8, '³He Ana.', { size: 9, color: 'rgba(180,100,255,0.80)', align: 'left' });
-                // Current polarization channel — highlighted box
+                // Current polarization channel - highlighted box
                 const polCh  = ['++ (NSF)', '+− (SF)', '−+ (SF)', '−− (NSF)'];
                 const polCol = ['rgba(34,211,238,0.95)', 'rgba(255,140,60,0.95)', 'rgba(255,140,60,0.95)', 'rgba(34,211,238,0.95)'];
                 const pm = ((s.pulseNum - 1) % 4 + 4) % 4;
@@ -1985,7 +1985,7 @@
 
     // ── Instrument selection ───────────────────────────────────────────────────
 
-    // ── My work per instrument — publications & APS talks (source: Google Scholar export) ──
+    // ── My work per instrument - publications & APS talks (source: Google Scholar export) ──
     const MY_WORK = {
         powgen: [
             { type: 'talk', title: 'Magnetic and lattice thermodynamics in bulk rock salt high-entropy oxides',
