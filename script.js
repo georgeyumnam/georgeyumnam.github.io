@@ -312,50 +312,111 @@ window.addEventListener('scroll', onScroll); onScroll();
     }
   } else land(true);
 
-  // ── 2. Hero neutron stream (cursor-deflected, wavelength-true speeds) ─────
+  // ── 2. Hero neutron stream: spheres with spin arrows, sample scattering ───
+  //     Neutrons carry random up/down spins (same color for both). 40% of
+  //     them scatter off the circular photo "sample"; each scattering event
+  //     briefly lights up the photo frame.
   const bc = document.getElementById('beamcanvas');
   if (bc && !RM) {
     const bctx = bc.getContext('2d');
-    let W, H, ps = [], run = false;
+    let W, H, ps = [], glow = 0;
     const M = { x: -9e3, y: -9e3 };
+    const wrap = document.querySelector('.hero-photo-wrap');
     function size() {
       const r = bc.parentElement.getBoundingClientRect();
       W = bc.width = r.width; H = bc.height = r.height;
     }
+    function sampleCircle() {
+      if (!wrap) return null;
+      const pr = wrap.getBoundingClientRect();
+      const cr = bc.getBoundingClientRect();
+      return { x: pr.left + pr.width / 2 - cr.left,
+               y: pr.top + pr.height / 2 - cr.top,
+               r: pr.width / 2 };
+    }
     function spawn() {
       const lam = Math.random();                    // 0 = short λ (fast, cyan) → 1 = long λ (slow, rose)
-      ps.push({ x: -10, y: Math.random() * H, lam,
-                vx: 3.4 - lam * 2.3, vy: 0, r: 1 + lam * 1.6 });
+      ps.push({ x: -20, y: Math.random() * H, lam,
+                vx: 3.4 - lam * 2.3, vy: 0,
+                r: 3 + lam * 4.8,                   // 3x larger than before
+                spin: Math.random() < 0.5 ? 1 : -1, // up / down, random
+                scat: Math.random() < 0.4,          // 40% scatter off the sample
+                hit: false });
+    }
+    function drawNeutron(p, c) {
+      // sphere body with a small highlight
+      bctx.beginPath();
+      bctx.arc(p.x, p.y, p.r, 0, 7);
+      bctx.fillStyle = `rgba(${c},0.85)`;
+      bctx.fill();
+      bctx.beginPath();
+      bctx.arc(p.x - p.r * 0.3, p.y - p.r * 0.3, p.r * 0.4, 0, 7);
+      bctx.fillStyle = 'rgba(255,255,255,0.30)';
+      bctx.fill();
+      // spin arrow through the sphere: tip up (spin +1) or down (-1)
+      const L = p.r * 2.7, s = p.spin;
+      const yTail = p.y + s * L / 2, yTip = p.y - s * L / 2;
+      const ah = Math.max(2.5, p.r * 0.85);
+      bctx.strokeStyle = `rgba(${c},0.95)`;
+      bctx.lineWidth = Math.max(1.5, p.r * 0.26);
+      bctx.lineCap = 'round';
+      bctx.beginPath();
+      bctx.moveTo(p.x, yTail);
+      bctx.lineTo(p.x, yTip);
+      bctx.moveTo(p.x - ah * 0.7, yTip + s * ah);
+      bctx.lineTo(p.x, yTip);
+      bctx.lineTo(p.x + ah * 0.7, yTip + s * ah);
+      bctx.stroke();
     }
     function frame() {
-      if (!run) return;
       requestAnimationFrame(frame);
+      // skip all work while the hero is scrolled out of view
+      const hb = bc.parentElement.getBoundingClientRect();
+      if (hb.bottom <= 0 || hb.top >= innerHeight) return;
       bctx.clearRect(0, 0, W, H);
-      if (ps.length < 110 && Math.random() < 0.5) spawn();
+      if (ps.length < 70 && Math.random() < 0.35) spawn();
+      const C = sampleCircle();
       for (const p of ps) {
         const dx = p.x - M.x, dy = p.y - M.y, d2 = dx * dx + dy * dy;
         if (d2 < 22500) { const f = (1 - d2 / 22500) * 0.5; p.vy += (dy > 0 ? f : -f); }  // field deflection
         p.vy *= 0.96;
         p.x += p.vx; p.y += p.vy;
+        // sample interaction: 40% scatter at the rim, the rest transmit behind the photo
+        if (C && !p.hit) {
+          const cx = p.x - C.x, cy = p.y - C.y;
+          if (Math.hypot(cx, cy) < C.r + p.r) {
+            p.hit = true;
+            if (p.scat) {
+              const n = Math.atan2(cy, cx);                       // outward normal at impact
+              const th = n + (Math.random() - 0.5) * Math.PI * 1.2; // randomized outgoing direction
+              const sp = Math.hypot(p.vx, p.vy) * (0.7 + Math.random() * 0.5);
+              p.vx = Math.cos(th) * sp;
+              p.vy = Math.sin(th) * sp;
+              p.x = C.x + Math.cos(n) * (C.r + p.r + 1);
+              p.y = C.y + Math.sin(n) * (C.r + p.r + 1);
+              glow = Math.min(1, glow + 0.35);
+            }
+          }
+        }
         const c = p.lam < 0.33 ? '79,217,236' : p.lam < 0.66 ? '139,122,247' : '242,104,142';
-        bctx.beginPath();
-        bctx.moveTo(p.x - p.vx * 6, p.y - p.vy * 6);
-        bctx.lineTo(p.x, p.y);
-        bctx.strokeStyle = `rgba(${c},0.28)`;
-        bctx.lineWidth = p.r;
-        bctx.stroke();
-        bctx.beginPath();
-        bctx.arc(p.x, p.y, p.r, 0, 7);
-        bctx.fillStyle = `rgba(${c},0.75)`;
-        bctx.fill();
+        drawNeutron(p, c);
       }
-      ps = ps.filter(p => p.x < W + 20 && p.y > -20 && p.y < H + 20);
+      ps = ps.filter(p => p.x > -40 && p.x < W + 40 && p.y > -40 && p.y < H + 40);
+      // frame glow: brief flash on each scattering event, exponential decay
+      if (wrap) {
+        if (glow > 0.015) {
+          wrap.style.boxShadow =
+            `0 0 ${60 + glow * 50}px rgba(79,217,236,${(0.22 + glow * 0.45).toFixed(3)}), ` +
+            `0 0 ${120 + glow * 60}px rgba(139,122,247,${(0.14 + glow * 0.30).toFixed(3)})`;
+          glow *= 0.94;
+        } else if (glow !== 0) { glow = 0; wrap.style.boxShadow = ''; }
+      }
     }
-    new IntersectionObserver(e => {
-      const v = e[0].isIntersecting;
-      if (v && !run) { run = true; size(); frame(); }
-      if (!v) run = false;
-    }).observe(bc.parentElement);
+    // rAF drives the loop directly (auto-pauses in background tabs); the
+    // in-frame visibility check replaces the old IntersectionObserver, whose
+    // initial entry never fired in some embedded contexts
+    size();
+    requestAnimationFrame(frame);
     bc.parentElement.addEventListener('mousemove', e => {
       const r = bc.getBoundingClientRect();
       M.x = e.clientX - r.left; M.y = e.clientY - r.top;

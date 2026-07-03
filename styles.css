@@ -1480,7 +1480,7 @@ body::after {
 .beamstats { padding: 10px 0 56px; }
 .stats-grid {
     display: grid;
-    grid-template-columns: repeat(4, 1fr);
+    grid-template-columns: repeat(3, 1fr);
     gap: 1.4rem;
     background: var(--glass-card);
     border: 1px solid var(--border);
@@ -1513,7 +1513,8 @@ body::after {
     color: var(--text-dim);
     margin-top: 0.5rem;
 }
-@media (max-width: 900px) { .stats-grid { grid-template-columns: repeat(2, 1fr); } }
+@media (max-width: 900px) { .stats-grid { grid-template-columns: repeat(3, 1fr); } }
+@media (max-width: 600px) { .stats-grid { grid-template-columns: 1fr; gap: 1.1rem; } }
 
 /* ── 3D tilt cards ────────────────────────────── */
 .tilt { transform-style: preserve-3d; will-change: transform; }
