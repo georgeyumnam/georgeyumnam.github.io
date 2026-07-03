@@ -29,16 +29,43 @@
         .selector-section { padding: 0 24px 32px; position: relative; z-index: 1; }
         .inst-grid { display: grid; grid-template-columns: repeat(5,1fr); gap: 0.75rem; }
         .inst-card {
-            background: var(--glass-card); border: 2px solid var(--border); border-radius: 16px;
-            padding: 1rem 0.75rem; cursor: pointer; transition: var(--transition);
+            position: relative; overflow: hidden;
+            background: var(--glass-card); border: 1px solid var(--border); border-radius: 18px;
+            padding: 1.15rem 0.85rem 1.05rem; cursor: pointer; transition: var(--transition);
             backdrop-filter: blur(14px); -webkit-backdrop-filter: blur(14px);
             text-align: center; user-select: none;
         }
-        .inst-card:hover { border-color: rgba(79,217,236,0.55); transform: translateY(-3px); box-shadow: var(--shadow-md); }
-        .inst-card.active { border-color: var(--teal); background: rgba(79,217,236,0.10); box-shadow: 0 0 0 3px rgba(79,217,236,0.18),var(--shadow-md); }
-        .inst-icon { font-size: 1.8rem; color: var(--teal); margin-bottom: 0.4rem; }
-        .inst-name { font-size: 1.326rem; font-weight: 700; color: var(--white); margin-bottom: 0.2rem; line-height: 1.3; }
-        .inst-hint { font-size: 1.1rem; color: var(--text-dim); line-height: 1.4; }
+        .inst-card::before {
+            content: ''; position: absolute; top: 0; left: 0; right: 0; height: 3px;
+            background: linear-gradient(120deg,#4fd9ec,#8b7af7 55%,#f2688e);
+            opacity: 0; transition: opacity 0.3s ease;
+        }
+        .inst-card:hover { border-color: rgba(79,217,236,0.45); transform: translateY(-4px); box-shadow: var(--shadow-md); }
+        .inst-card:hover::before { opacity: 0.7; }
+        .inst-card.active {
+            border-color: rgba(79,217,236,0.65); background: rgba(79,217,236,0.08);
+            box-shadow: 0 0 0 1px rgba(79,217,236,0.35), 0 0 26px rgba(79,217,236,0.18), var(--shadow-md);
+        }
+        .inst-card.active::before { opacity: 1; }
+        .inst-icon {
+            font-size: 1.8rem; margin-bottom: 0.45rem;
+            background: linear-gradient(120deg,#4fd9ec,#8b7af7);
+            -webkit-background-clip: text; background-clip: text; color: transparent;
+        }
+        .inst-name { font-family: var(--font-display); font-size: 1.326rem; font-weight: 700; color: var(--white); margin-bottom: 0.25rem; line-height: 1.3; letter-spacing: -0.2px; }
+        .inst-hint { font-family: var(--font-mono); font-size: 0.98rem; color: var(--text-dim); line-height: 1.45; letter-spacing: 0.01em; }
+        /* My work — publications & APS talks per instrument */
+        .inst-pubs { margin-top: 1.2rem; padding-top: 1rem; border-top: 1px solid var(--border); }
+        .inst-pubs-label { font-family: var(--font-mono); font-size: 0.95rem; font-weight: 600; letter-spacing: 0.16em; text-transform: uppercase; color: var(--teal); margin-bottom: 0.7rem; }
+        .inst-pub { display: flex; gap: 0.7rem; align-items: flex-start; padding: 0.65rem 0.75rem; border-radius: 10px; border: 1px solid transparent; transition: var(--transition); text-decoration: none; }
+        .inst-pub + .inst-pub { margin-top: 0.4rem; }
+        a.inst-pub:hover { background: rgba(79,217,236,0.07); border-color: rgba(79,217,236,0.30); }
+        .inst-pub-badge { flex: none; font-family: var(--font-mono); font-size: 0.82rem; font-weight: 600; letter-spacing: 0.06em; color: #041018; background: linear-gradient(120deg,#4fd9ec,#7cc8f8); border-radius: 6px; padding: 2px 8px; margin-top: 2px; }
+        .inst-pub-badge.talk { color: var(--white); background: linear-gradient(120deg,#8b7af7,#f2688e); }
+        .inst-pub-body { display: flex; flex-direction: column; gap: 2px; }
+        .inst-pub-title { font-size: 1.18rem; font-weight: 600; color: var(--text); line-height: 1.45; }
+        a.inst-pub:hover .inst-pub-title { color: var(--teal-dark); }
+        .inst-pub-meta { font-family: var(--font-mono); font-size: 0.95rem; color: var(--text-dim); line-height: 1.5; }
         .demo-section { padding: 0 24px 48px; position: relative; z-index: 1; }
         .demo-wrap { display: grid; grid-template-columns: 1fr; grid-template-rows: auto auto auto; gap: 1.5rem; align-items: start; }
         .canvas-shell { grid-column:1; grid-row:1; }
@@ -1972,12 +1999,74 @@
     requestAnimationFrame(loop);
 
     // ── Instrument selection ───────────────────────────────────────────────────
+
+    // ── My work per instrument — publications & APS talks (source: Google Scholar export) ──
+    const MY_WORK = {
+        powgen: [
+            { type: 'talk', title: 'Magnetic and lattice thermodynamics in bulk rock salt high-entropy oxides',
+              meta: 'APS March Meeting Abstracts 2024, Z22.008' }
+        ],
+        sequoia: [
+            { type: 'paper', title: 'Magnon gap tuning in lithium-doped MnTe',
+              meta: 'Physical Review B 109, 214434 (2024)',
+              url: 'https://doi.org/10.1103/PhysRevB.109.214434' },
+            { type: 'paper', title: 'Constraints on magnetism and correlations in RuO₂ from lattice dynamics and Mössbauer spectroscopy',
+              meta: 'Cell Reports Physical Science 6 (2025)',
+              url: 'https://www.cell.com/cell-reports-physical-science/fulltext/S2666-3864(25)00451-5' },
+            { type: 'talk', title: 'Antiferromagnetic magnon gap opening and spin-reorientation in Li-doped MnTe',
+              meta: 'APS March Meeting Abstracts 2024, Y61.013' }
+        ],
+        hyspec: [
+            { type: 'talk', title: 'Resilient spin dynamics in Y-doped TbSb near percolation limits',
+              meta: 'APS Global Physics Summit 2025' },
+            { type: 'talk', title: 'Interplay of anisotropic paramagnons and polarons in altermagnetic MnTe',
+              meta: 'APS Global Physics Summit 2025' },
+            { type: 'talk', title: 'Chiral Splitting of Magnons and Paramagnon Coupling in MnTe',
+              meta: 'APS Global Physics Summit 2026' }
+        ],
+        magref: [
+            { type: 'paper', title: 'Quantum disordered state of magnetic charges in nanoengineered honeycomb lattice',
+              meta: 'Advanced Science 8, 2004103 (2021)',
+              url: 'https://doi.org/10.1002/advs.202004103' },
+            { type: 'paper', title: 'Magnetic charge and geometry confluence for ultra-low forward voltage diode in artificial honeycomb lattice',
+              meta: 'Materials Today Physics 22, 100574 (2022)',
+              url: 'https://doi.org/10.1016/j.mtphys.2021.100574' },
+            { type: 'talk', title: 'Emergence of dominant liquid state in artificial honeycomb spin ice',
+              meta: 'APS March Meeting Abstracts 2024, K22.006' },
+            { type: 'talk', title: 'Quantum mechanical nature of magnetic charge dynamics in artificial honeycomb ice',
+              meta: 'APS March Meeting Abstracts 2023, M57.005' }
+        ],
+        nse: [
+            { type: 'paper', title: "Magnetic charge's relaxation propelled electricity in two-dimensional magnetic honeycomb lattice",
+              meta: 'iScience 24, 102206 (2021)',
+              url: 'https://doi.org/10.1016/j.isci.2021.102206' },
+            { type: 'talk', title: "Magnetic charge's relaxation propelled electricity in a two-dimensional magnetic honeycomb lattice",
+              meta: 'APS March Meeting Abstracts 2022, M54.004' }
+        ]
+    };
+
+    function myWorkHTML(key) {
+        const items = MY_WORK[key];
+        if (!items || !items.length) return '';
+        return '<div class="inst-pubs"><div class="inst-pubs-label">My work · papers &amp; APS talks</div>'
+            + items.map(function (it) {
+                const inner = '<span class="inst-pub-badge' + (it.type === 'talk' ? ' talk' : '') + '">'
+                    + (it.type === 'talk' ? 'Talk' : 'Paper') + '</span>'
+                    + '<span class="inst-pub-body"><span class="inst-pub-title">' + it.title + '</span>'
+                    + '<span class="inst-pub-meta">' + it.meta + '</span></span>';
+                return it.url
+                    ? '<a class="inst-pub" href="' + it.url + '" target="_blank" rel="noopener noreferrer">' + inner + '</a>'
+                    : '<div class="inst-pub">' + inner + '</div>';
+            }).join('')
+            + '</div>';
+    }
+
     function selectInstrument(key) {
         activeKey = key;
         prevT = null;
         state = INSTRUMENTS[key].init();
         placeholder.style.display = 'none';
-        infoPanel.innerHTML = INSTRUMENTS[key].info;
+        infoPanel.innerHTML = INSTRUMENTS[key].info + myWorkHTML(key);
         resize();
         document.querySelectorAll('.inst-card').forEach(function (c) { c.classList.toggle('active', c.dataset.inst === key); });
         const wrap = document.getElementById('pol-toggle-wrap');
