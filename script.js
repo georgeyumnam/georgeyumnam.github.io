@@ -620,8 +620,6 @@ window.addEventListener('scroll', onScroll); onScroll();
       { k: 'Section', t: 'Current Research', u: 'index.html#projects' },
       { k: 'Section', t: 'Past Research', u: 'past-research.html' },
       { k: 'Section', t: 'Selected Publications', u: 'index.html#publications' },
-      { k: 'Page', t: 'All Publications', u: 'publications.html' },
-      { k: 'Page', t: 'Research Blog', u: 'blog.html' },
       { k: 'Section', t: 'Teaching & Mentoring', u: 'index.html#teaching' },
       { k: 'Section', t: 'MitSna Foundation', u: 'index.html#mitsna' },
       { k: 'Section', t: 'Contact', u: 'index.html#contact' },
