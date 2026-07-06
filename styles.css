@@ -719,6 +719,56 @@ section { padding: 84px 0; position: relative; z-index: 1; }
     .past-cta p { font-size: 1.02rem; }
 }
 
+/* ── Research blog ────────────────────────────── */
+.blog-list {
+    max-width: 960px;
+    margin: 0 auto;
+    display: flex;
+    flex-direction: column;
+    gap: 1.8rem;
+}
+.blog-post {
+    background: var(--glass-card);
+    border: 1px solid var(--border);
+    border-radius: 20px;
+    padding: 2rem 2.3rem;
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    box-shadow: var(--glow);
+    transition: var(--transition);
+}
+.blog-post:hover { border-color: rgba(79, 217, 236, 0.35); }
+.blog-post p.blog-post-date {
+    font-family: var(--font-mono);
+    font-size: 1.05rem;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--teal);
+    margin-bottom: 0.5rem;
+}
+.blog-post-title {
+    font-size: 2rem;
+    font-weight: 700;
+    color: var(--white);
+    letter-spacing: -0.4px;
+    line-height: 1.3;
+    margin-bottom: 1rem;
+}
+.blog-post p {
+    font-size: 1.42rem;
+    color: var(--text-dim);
+    line-height: 1.8;
+    margin-bottom: 1rem;
+}
+.blog-post p:last-of-type { margin-bottom: 0; }
+.blog-post .project-tech { margin-top: 1.2rem; }
+@media (max-width: 600px) {
+    .blog-post { padding: 1.4rem 1.3rem; }
+    .blog-post-title { font-size: 1.3rem; }
+    .blog-post p { font-size: 1.02rem; line-height: 1.7; }
+    .blog-post-date { font-size: 0.8rem; }
+}
+
 /* ── Case-study "See" links + scholar note ────── */
 .case-see {
     font-size: 1.32rem !important;
