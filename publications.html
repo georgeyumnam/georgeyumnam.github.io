@@ -12,9 +12,10 @@
     <style>
         .pub-list {
             list-style: decimal;
+            list-style-position: inside;
             max-width: 960px;
             margin: 0 auto;
-            padding-left: 3.4rem;
+            padding-left: 0;
         }
         .pub-list li {
             background: var(--glass-card);
@@ -30,7 +31,10 @@
             font-family: var(--font-mono);
             font-size: 1.25rem;
             color: var(--teal);
+            content: counter(list-item) "  ";
         }
+        .pub-list li .pub-card-title { display: inline; }
+        .pub-list li .pub-authors { margin-top: 0.8rem; }
         .pub-list .pub-journal { margin-bottom: 0.6rem; }
     </style>
 </head>
