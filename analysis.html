@@ -1,0 +1,673 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Quick Data Analysis &ndash; George Yumnam</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Figtree:wght@300;400;500;600;700;800&family=Space+Grotesk:wght@500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="styles.css?v=13">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <script src="https://cdn.plot.ly/plotly-2.35.2.min.js" charset="utf-8"></script>
+    <style>
+        .tool-hero { padding: 64px 24px 40px; position: relative; z-index: 1; }
+        .tool-hero-panel {
+            background: var(--glass-card); backdrop-filter: blur(28px);
+            -webkit-backdrop-filter: blur(28px); border: 1px solid var(--border);
+            border-radius: 20px; padding: 2rem 2.5rem; box-shadow: var(--glow);
+        }
+        .tool-title { font-size: 3.4rem; font-weight: 800; color: var(--white); letter-spacing: -0.8px; margin-bottom: 0.4rem; }
+        .tool-sub   { font-size: 1.7rem; color: var(--teal); font-weight: 600; margin-bottom: 0.75rem; }
+        .tool-desc  { font-size: 1.615rem; color: var(--text-dim); line-height: 1.75; }
+
+        .analysis-section { padding: 0 24px 56px; position: relative; z-index: 1; }
+        .analysis-panel {
+            background: var(--glass-card); border: 1px solid var(--border); border-radius: 20px;
+            padding: 2rem 2.3rem; backdrop-filter: blur(14px); -webkit-backdrop-filter: blur(14px);
+            box-shadow: var(--glow); margin-bottom: 2rem;
+        }
+        .analysis-panel h2 {
+            font-size: 2.2rem; font-weight: 700; color: var(--white); letter-spacing: -0.5px;
+            margin-bottom: 0.6rem; padding-bottom: 0.7rem; border-bottom: 1px solid var(--border);
+        }
+        .analysis-panel > p { font-size: 1.4rem; color: var(--text-dim); line-height: 1.75; margin: 0.9rem 0 1.2rem; }
+        .privacy-note { font-family: var(--font-mono); font-size: 1.02rem; color: var(--teal); letter-spacing: 0.03em; }
+
+        .dropzone {
+            border: 2px dashed rgba(148,171,255,0.35); border-radius: 16px;
+            padding: 2.2rem 1.5rem; text-align: center; cursor: pointer;
+            transition: var(--transition); margin-bottom: 1.2rem;
+        }
+        .dropzone:hover, .dropzone.drag {
+            border-color: var(--teal); background: rgba(79,217,236,0.06);
+        }
+        .dropzone i { font-size: 2.2rem; color: var(--teal); margin-bottom: 0.6rem; display: block; }
+        .dropzone p { font-size: 1.4rem; color: var(--text); margin: 0; }
+        .dropzone small { font-size: 1.05rem; color: var(--text-dim); display: block; margin-top: 0.35rem; }
+        #file-input { display: none; }
+
+        .file-chips { display: flex; flex-wrap: wrap; gap: 0.6rem; margin-bottom: 1.2rem; }
+        .file-chip {
+            display: inline-flex; align-items: center; gap: 0.6rem;
+            font-family: var(--font-mono); font-size: 1.05rem; color: var(--text);
+            background: rgba(79,217,236,0.08); border: 1px solid rgba(79,217,236,0.3);
+            border-radius: 999px; padding: 5px 8px 5px 14px;
+        }
+        .file-chip .pts { color: var(--text-dim); }
+        .file-chip button {
+            background: none; border: none; cursor: pointer; color: var(--rose);
+            font-size: 1.15rem; line-height: 1; padding: 3px 6px; border-radius: 50%;
+        }
+        .file-chip button:hover { background: rgba(242,104,142,0.15); }
+
+        .plot-controls { display: flex; flex-wrap: wrap; align-items: center; gap: 1.4rem; margin-bottom: 1rem; }
+        .plot-controls label {
+            display: inline-flex; align-items: center; gap: 0.5rem;
+            font-size: 1.25rem; color: var(--text); cursor: pointer; user-select: none;
+        }
+        .plot-controls input[type="checkbox"] { accent-color: #4fd9ec; width: 15px; height: 15px; cursor: pointer; }
+        .btn-clear {
+            font-family: var(--font-display); font-size: 1.15rem; font-weight: 600;
+            color: var(--rose); background: rgba(242,104,142,0.08);
+            border: 1px solid rgba(242,104,142,0.35); border-radius: 9px;
+            padding: 6px 14px; cursor: pointer; transition: var(--transition);
+        }
+        .btn-clear:hover { background: rgba(242,104,142,0.18); }
+
+        #rt-plot, #vsm-plot { margin: 0 auto; border-radius: 14px; overflow: hidden; }
+        .axis-note {
+            font-family: var(--font-mono); font-size: 1.02rem; color: var(--teal);
+            letter-spacing: 0.03em; margin-left: auto; padding-right: 1rem;
+        }
+        #rt-empty, #vsm-empty {
+            display: flex; flex-direction: column; align-items: center; justify-content: center;
+            height: 300px; color: var(--text-dim); font-size: 1.3rem; gap: 0.6rem;
+            border: 1px solid var(--border); border-radius: 14px; background: rgba(17,26,46,0.4);
+        }
+        #rt-empty i, #vsm-empty i { font-size: 2rem; color: var(--violet); }
+        .parse-error {
+            font-family: var(--font-mono); font-size: 1.05rem; color: var(--rose);
+            margin-bottom: 0.8rem; display: none;
+        }
+        @media (max-width: 600px) {
+            .tool-title { font-size: 1.9rem; }
+            .tool-sub { font-size: 1.05rem; } .tool-desc { font-size: 1rem; }
+            .analysis-panel { padding: 1.3rem 1.2rem; }
+            #rt-plot { height: 380px; }
+        }
+    </style>
+</head>
+<body>
+
+    <nav class="navbar">
+        <div class="container">
+            <div class="nav-wrapper">
+                <a href="index.html" class="logo">George Yumnam</a>
+                <ul class="nav-menu">
+                    <li><a href="index.html#about" class="nav-link">About</a></li>
+                    <li><a href="index.html#projects" class="nav-link">Research</a></li>
+                    <li><a href="index.html#publications" class="nav-link">Publications</a></li>
+                    <li><a href="index.html#contact" class="nav-link">Contact</a></li>
+                    <li class="nav-dropdown">
+                        <a href="#" class="nav-link">More <i class="fas fa-chevron-down" style="font-size:0.65em;margin-left:3px;"></i></a>
+                        <div class="nav-dropdown-menu">
+                            <a href="index.html#teaching">Teaching &amp; Mentoring</a>
+                            <a href="index.html#mitsna">MitSna Foundation</a>
+                            <a href="publications.html">All Publications</a>
+                            <a href="blog.html">Blog: My Odyssey</a>
+                            <div class="nav-dropdown-label">Experiments</div>
+                            <a href="neutron-scattering.html" target="_blank" rel="noopener noreferrer">Neutron Scattering</a>
+                            <a href="mossbauer.html" target="_blank" rel="noopener noreferrer">M&ouml;ssbauer Spectroscopy</a>
+                            <div class="nav-dropdown-label">Tools</div>
+                            <a href="analysis.html" class="active">Quick Data Analysis</a>
+                            <a href="neutron-analysis.html">Neutron Cuts &amp; Slices</a>
+                        </div>
+                    </li>
+                </ul>
+                <div class="hamburger"><span></span><span></span><span></span></div>
+            </div>
+        </div>
+    </nav>
+
+    <div class="tool-hero">
+        <div class="container">
+            <div class="tool-hero-panel">
+                <h1 class="tool-title">Quick Data Analysis</h1>
+                <p class="tool-sub">Small browser tools for everyday measurement files</p>
+                <p class="tool-desc">Drop in raw data files and get an interactive plot in seconds. <span class="privacy-note">All processing happens locally in your browser; no data leaves your computer.</span></p>
+            </div>
+        </div>
+    </div>
+
+    <section class="analysis-section">
+        <div class="container">
+
+            <div class="analysis-panel" id="ppms-rt">
+                <h2>PPMS: Electrical Transport</h2>
+                <p>Upload one or more Quantum Design PPMS data files (.dat from the Resistivity or ETO options, or any delimited text file with the same column structure). The tool reads the [Data] block and plots three stacked panels: resistance, phase angle, and the resistance standard deviation. The x axis is chosen automatically for each file: a temperature sweep is plotted against temperature, and a field sweep at fixed temperature is plotted against magnetic field. Curves from every file are overlaid with the file names as legend entries, and clicking a legend entry hides that dataset in all three panels.</p>
+
+                <div class="dropzone" id="dropzone">
+                    <i class="fas fa-file-arrow-up"></i>
+                    <p>Drop PPMS .dat files here, or click to browse</p>
+                    <small>Multiple files supported &middot; .dat, .txt, .csv</small>
+                </div>
+                <input type="file" id="file-input" multiple accept=".dat,.txt,.csv">
+
+                <p class="parse-error" id="parse-error"></p>
+                <div class="file-chips" id="file-chips"></div>
+
+                <div class="plot-controls" id="plot-controls" style="display:none;">
+                    <label><input type="checkbox" id="logy"> log R</label>
+                    <label><input type="checkbox" id="logx"> log x</label>
+                    <label><input type="checkbox" id="markers"> show points</label>
+                    <span class="axis-note" id="axis-note"></span>
+                    <button class="btn-clear" id="clear-all" type="button">Clear all</button>
+                </div>
+
+                <div id="rt-empty">
+                    <i class="fas fa-chart-line"></i>
+                    <span>Resistance, phase angle, and standard deviation panels will appear here</span>
+                </div>
+                <div id="rt-plot" style="display:none;"></div>
+            </div>
+
+            <div class="analysis-panel" id="ppms-vsm">
+                <h2>PPMS: VSM Magnetometry</h2>
+                <p>Upload one or more Quantum Design VSM or MPMS data files (.dat). The tool detects the moment and moment error columns and plots two stacked panels: magnetic moment and its standard error. The x axis is chosen automatically for each file: a temperature sweep (M vs T) is plotted against temperature, and a field sweep (M vs H hysteresis loop) is plotted against magnetic field. Curves from every file are overlaid with the file names as legend entries.</p>
+
+                <div class="dropzone" id="vsm-dropzone">
+                    <i class="fas fa-magnet"></i>
+                    <p>Drop VSM .dat files here, or click to browse</p>
+                    <small>Multiple files supported &middot; .dat, .txt, .csv</small>
+                </div>
+                <input type="file" id="vsm-file-input" multiple accept=".dat,.txt,.csv">
+
+                <p class="parse-error" id="vsm-parse-error"></p>
+                <div class="file-chips" id="vsm-file-chips"></div>
+
+                <div class="plot-controls" id="vsm-plot-controls" style="display:none;">
+                    <label><input type="checkbox" id="vsm-logy"> log |M|</label>
+                    <label><input type="checkbox" id="vsm-logx"> log x</label>
+                    <label><input type="checkbox" id="vsm-markers"> show points</label>
+                    <span class="axis-note" id="vsm-axis-note"></span>
+                    <button class="btn-clear" id="vsm-clear-all" type="button">Clear all</button>
+                </div>
+
+                <div id="vsm-empty">
+                    <i class="fas fa-wave-square"></i>
+                    <span>Moment and moment error panels will appear here</span>
+                </div>
+                <div id="vsm-plot" style="display:none;"></div>
+            </div>
+
+        </div>
+    </section>
+
+    <footer class="footer">
+        <div class="container">
+            <p>&copy; 2026 George Yumnam &middot; Stewart Blusson Quantum Matter Institute, UBC</p>
+            <div class="footer-social">
+                <a href="https://scholar.google.com/citations?user=D3v8UV4AAAAJ&hl=en" target="_blank" rel="noopener noreferrer"><i class="fas fa-book-open"></i></a>
+                <a href="https://www.linkedin.com/in/george-yumnam/" target="_blank" rel="noopener noreferrer"><i class="fab fa-linkedin"></i></a>
+                <a href="mailto:georgeyumnam@gmail.com"><i class="fas fa-envelope"></i></a>
+            </div>
+        </div>
+    </footer>
+
+    <script src="script.js?v=15"></script>
+    <script>
+    (function () {
+        const datasets = new Map();   // filename -> array of traces
+        const dropzone = document.getElementById('dropzone');
+        const input = document.getElementById('file-input');
+        const chips = document.getElementById('file-chips');
+        const errEl = document.getElementById('parse-error');
+        const plotDiv = document.getElementById('rt-plot');
+        const emptyEl = document.getElementById('rt-empty');
+        const controls = document.getElementById('plot-controls');
+
+        // ── PPMS MultiVu parser ────────────────────────────────────────────
+        // Reads the [Data] section (or the first line for plain delimited
+        // files), groups columns by channel (Ch1/Ch2 or Bridge N), and returns
+        // per-channel resistance, phase angle, and standard deviation series,
+        // each against both temperature and field. The swept variable is
+        // detected from which of the two actually varies.
+        function parsePPMS(text, filename) {
+            const lines = text.split(/\r?\n/);
+            let hi = lines.findIndex(l => l.trim().toLowerCase() === '[data]');
+            if (hi >= 0) { hi += 1; } else { hi = 0; }
+            while (hi < lines.length && !lines[hi].trim()) hi++;
+            if (hi >= lines.length) throw new Error('file appears to be empty');
+            const cols = lines[hi].split(',').map(s => s.trim());
+
+            const tIdx = cols.findIndex(c => /temp/i.test(c));
+            const hIdx = cols.findIndex(c => /field/i.test(c));
+            if (tIdx < 0 && hIdx < 0) throw new Error('no temperature or field column found');
+
+            // group data columns by channel token (Ch1, Bridge 2, ...)
+            const chanKey = c => {
+                const m = c.match(/ch(?:annel)?\.?\s*(\d+)|bridge\s*(\d+)/i);
+                return m ? 'Ch' + (m[1] || m[2]) : 'Ch1';
+            };
+            const channels = {};
+            const chan = key => channels[key] || (channels[key] = { r: -1, ph: -1, sd: -1 });
+            cols.forEach(function (c, i) {
+                if (/resist/i.test(c) && /std|dev/i.test(c)) { chan(chanKey(c)).sd = i; }
+                else if (/resist/i.test(c)) { chan(chanKey(c)).r = i; }
+                else if (/phase/i.test(c)) { chan(chanKey(c)).ph = i; }
+                else if (/std|dev/i.test(c) && /ch|bridge/i.test(c)) { const k = chanKey(c); if (chan(k).sd < 0) chan(k).sd = i; }
+            });
+            const chKeys = Object.keys(channels).filter(k => channels[k].r >= 0);
+            if (!chKeys.length) throw new Error('no resistance or resistivity column found');
+
+            const rows = { T: [], H: [] };
+            const data = {};
+            chKeys.forEach(k => { data[k] = { r: [], ph: [], sd: [] }; });
+            for (let k = hi + 1; k < lines.length; k++) {
+                if (!lines[k].trim()) continue;
+                const row = lines[k].split(',');
+                const T = tIdx >= 0 ? parseFloat(row[tIdx]) : NaN;
+                const H = hIdx >= 0 ? parseFloat(row[hIdx]) : NaN;
+                if (!isFinite(T) && !isFinite(H)) continue;
+                rows.T.push(T); rows.H.push(H);
+                chKeys.forEach(function (ck) {
+                    const c = channels[ck];
+                    data[ck].r.push(parseFloat(row[c.r]));
+                    data[ck].ph.push(c.ph >= 0 ? parseFloat(row[c.ph]) : NaN);
+                    data[ck].sd.push(c.sd >= 0 ? parseFloat(row[c.sd]) : NaN);
+                });
+            }
+            if (!rows.T.length) throw new Error('no numeric data rows found');
+
+            // sweep detection: compare spans against typical stability windows
+            const span = a => {
+                let lo = Infinity, up = -Infinity;
+                a.forEach(v => { if (isFinite(v)) { if (v < lo) lo = v; if (v > up) up = v; } });
+                return isFinite(up - lo) ? up - lo : 0;
+            };
+            const rT = span(rows.T) / 2;      // 2 K counts as a real T sweep
+            const rH = span(rows.H) / 50;     // 50 Oe counts as a real H sweep
+            const xType = (rH > rT) ? 'H' : 'T';
+
+            const series = chKeys.map(function (ck) {
+                const d = data[ck];
+                const pick = arr => {
+                    const x = [], y = [];
+                    const xs = xType === 'H' ? rows.H : rows.T;
+                    for (let i = 0; i < xs.length; i++) {
+                        if (isFinite(xs[i]) && isFinite(arr[i])) { x.push(xs[i]); y.push(arr[i]); }
+                    }
+                    return { x: x, y: y };
+                };
+                return { channel: ck, r: pick(d.r), ph: pick(d.ph), sd: pick(d.sd) };
+            }).filter(s => s.r.x.length > 0);
+            if (!series.length) throw new Error('no numeric resistance data found');
+            return { xType: xType, series: series, filename: filename };
+        }
+
+        // exposed for testing and for scripted use
+        window.ppmsAddData = function (text, filename) {
+            const parsed = parsePPMS(text, filename);
+            datasets.set(filename, parsed);
+            render();
+            return { xType: parsed.xType, points: parsed.series.map(s => s.r.x.length) };
+        };
+
+        function showError(msg) {
+            errEl.textContent = msg;
+            errEl.style.display = 'block';
+            setTimeout(function () { errEl.style.display = 'none'; }, 6000);
+        }
+
+        function handleFiles(fileList) {
+            Array.from(fileList).forEach(function (f) {
+                const reader = new FileReader();
+                reader.onload = function () {
+                    try { window.ppmsAddData(reader.result, f.name); }
+                    catch (e) { showError(f.name + ': ' + e.message); }
+                };
+                reader.readAsText(f);
+            });
+        }
+
+        function render() {
+            // chips: file name, sweep type, and point count
+            chips.innerHTML = '';
+            datasets.forEach(function (parsed, name) {
+                const pts = parsed.series.reduce(function (a, s) { return a + s.r.x.length; }, 0);
+                const chip = document.createElement('span');
+                chip.className = 'file-chip';
+                chip.innerHTML = '<span>' + name + '</span><span class="pts">'
+                    + (parsed.xType === 'H' ? 'H sweep' : 'T sweep') + ' · ' + pts + ' pts</span>';
+                const btn = document.createElement('button');
+                btn.type = 'button';
+                btn.setAttribute('aria-label', 'Remove ' + name);
+                btn.textContent = '×';
+                btn.addEventListener('click', function () { datasets.delete(name); render(); });
+                chip.appendChild(btn);
+                chips.appendChild(chip);
+            });
+
+            if (!datasets.size) {
+                plotDiv.style.display = 'none';
+                emptyEl.style.display = 'flex';
+                controls.style.display = 'none';
+                Plotly.purge(plotDiv);
+                return;
+            }
+
+            // shared x axis: majority sweep type wins; mismatched files are skipped
+            let nT = 0, nH = 0;
+            datasets.forEach(p => { if (p.xType === 'H') nH++; else nT++; });
+            const xType = nH > nT ? 'H' : 'T';
+            const skipped = [];
+            const palette = ['#4fd9ec', '#f2688e', '#8b7af7', '#7ce8b8', '#f5c26b', '#6bb3f5', '#e879f9', '#a3e635'];
+            const mode = document.getElementById('markers').checked ? 'lines+markers' : 'lines';
+
+            // WebGL traces only for very large datasets: SVG renders reliably
+            // across stacked subplots and stays inspectable
+            let totalPts = 0;
+            datasets.forEach(function (p) { if (p.xType === xType) p.series.forEach(s => { totalPts += s.r.x.length; }); });
+            const traceType = totalPts > 30000 ? 'scattergl' : 'scatter';
+
+            const traces = [];
+            let ci = 0;
+            datasets.forEach(function (parsed, name) {
+                if (parsed.xType !== xType) { skipped.push(name); return; }
+                const multi = parsed.series.length > 1;
+                parsed.series.forEach(function (s) {
+                    const label = multi ? name + ' · ' + s.channel : name;
+                    const color = palette[ci % palette.length]; ci++;
+                    const base = {
+                        type: traceType, mode: mode, legendgroup: label,
+                        marker: { size: 4, color: color }, line: { width: 2, color: color }
+                    };
+                    traces.push(Object.assign({}, base, { x: s.r.x, y: s.r.y, name: label, showlegend: true, xaxis: 'x', yaxis: 'y' }));
+                    if (s.ph.x.length) traces.push(Object.assign({}, base, { x: s.ph.x, y: s.ph.y, name: label, showlegend: false, xaxis: 'x', yaxis: 'y2' }));
+                    if (s.sd.x.length) traces.push(Object.assign({}, base, { x: s.sd.x, y: s.sd.y, name: label, showlegend: false, xaxis: 'x', yaxis: 'y3' }));
+                });
+            });
+
+            const note = document.getElementById('axis-note');
+            note.textContent = 'x: ' + (xType === 'H' ? 'Magnetic Field (Oe)' : 'Temperature (K)')
+                + (skipped.length ? ' · skipped (other sweep type): ' + skipped.join(', ') : '');
+
+            emptyEl.style.display = 'none';
+            plotDiv.style.display = 'block';
+            controls.style.display = 'flex';
+
+            // square subplots: pick a side length from the available width and
+            // size the figure explicitly so each panel is side x side pixels
+            const mL = 84, mR = 26, mT = 86, mB = 58, gap = 30;
+            const avail = (plotDiv.parentElement.clientWidth || 800);
+            const side = Math.max(260, Math.min(560, avail - mL - mR));
+            const plotH = 3 * side + 2 * gap;
+            const figW = side + mL + mR;
+            const figH = plotH + mT + mB;
+            const d = side / plotH, g = gap / plotH;
+
+            const grid = 'rgba(148,171,255,0.14)', zero = 'rgba(148,171,255,0.25)';
+            const logR = document.getElementById('logy').checked ? 'log' : 'linear';
+            const layout = {
+                width: figW, height: figH,
+                paper_bgcolor: 'rgba(0,0,0,0)',
+                plot_bgcolor: 'rgba(15,23,42,0.55)',
+                font: { family: 'Figtree, system-ui, sans-serif', color: '#e2e8fa', size: 14 },
+                xaxis: {
+                    title: { text: xType === 'H' ? 'Magnetic Field (Oe)' : 'Temperature (K)' },
+                    type: document.getElementById('logx').checked ? 'log' : 'linear',
+                    gridcolor: grid, zerolinecolor: zero, anchor: 'y3'
+                },
+                yaxis:  { title: { text: 'Resistance (Ω)' }, domain: [2 * (d + g), 1], type: logR, anchor: 'x',
+                          gridcolor: grid, zerolinecolor: zero, exponentformat: 'power' },
+                yaxis2: { title: { text: 'Phase Angle (deg)' }, domain: [d + g, 2 * d + g], anchor: 'x',
+                          gridcolor: grid, zerolinecolor: zero },
+                yaxis3: { title: { text: 'Std. Dev. (Ω)' }, domain: [0, d], type: logR, anchor: 'x',
+                          gridcolor: grid, zerolinecolor: zero, exponentformat: 'power' },
+                legend: {
+                    orientation: 'h', x: 0, y: 1.005, yanchor: 'bottom',
+                    bgcolor: 'rgba(21,30,55,0.75)', bordercolor: 'rgba(148,171,255,0.22)',
+                    borderwidth: 1, font: { size: 13 }
+                },
+                margin: { t: mT, r: mR, b: mB, l: mL },
+                hovermode: 'closest'
+            };
+            plotDiv.style.width = figW + 'px';
+            plotDiv.style.height = figH + 'px';
+            Plotly.react(plotDiv, traces, layout, { responsive: false, displaylogo: false });
+        }
+
+        let rzTimer = null;
+        window.addEventListener('resize', function () {
+            clearTimeout(rzTimer);
+            rzTimer = setTimeout(function () { if (datasets.size) render(); }, 200);
+        });
+
+        dropzone.addEventListener('click', function () { input.click(); });
+        input.addEventListener('change', function () { handleFiles(input.files); input.value = ''; });
+        ['dragenter', 'dragover'].forEach(function (ev) {
+            dropzone.addEventListener(ev, function (e) { e.preventDefault(); dropzone.classList.add('drag'); });
+        });
+        ['dragleave', 'drop'].forEach(function (ev) {
+            dropzone.addEventListener(ev, function (e) { e.preventDefault(); dropzone.classList.remove('drag'); });
+        });
+        dropzone.addEventListener('drop', function (e) { if (e.dataTransfer.files.length) handleFiles(e.dataTransfer.files); });
+
+        ['logy', 'logx', 'markers'].forEach(function (id) {
+            document.getElementById(id).addEventListener('change', render);
+        });
+        document.getElementById('clear-all').addEventListener('click', function () { datasets.clear(); render(); });
+    })();
+
+    // ── VSM magnetometry: M vs H / M vs T with auto x detection ─────────────
+    (function () {
+        const datasets = new Map();
+        const dropzone = document.getElementById('vsm-dropzone');
+        const input = document.getElementById('vsm-file-input');
+        const chips = document.getElementById('vsm-file-chips');
+        const errEl = document.getElementById('vsm-parse-error');
+        const plotDiv = document.getElementById('vsm-plot');
+        const emptyEl = document.getElementById('vsm-empty');
+        const controls = document.getElementById('vsm-plot-controls');
+
+        // moment column priority: VSM "Moment (emu)" first, then MPMS DC fits
+        function pickMomentColumns(cols) {
+            const isErr = c => /std|err/i.test(c);
+            const cand = [
+                c => /^moment\s*\(emu\)$/i.test(c),
+                c => /dc moment free ctr/i.test(c) && !isErr(c),
+                c => /dc moment fixed ctr/i.test(c) && !isErr(c),
+                c => /moment/i.test(c) && !isErr(c) && !/quad/i.test(c)
+            ];
+            for (const test of cand) {
+                const mi = cols.findIndex(test);
+                if (mi >= 0) {
+                    let ei = -1;
+                    if (/free/i.test(cols[mi])) ei = cols.findIndex(c => /err/i.test(c) && /free/i.test(c));
+                    else if (/fixed/i.test(cols[mi])) ei = cols.findIndex(c => /err/i.test(c) && /fixed/i.test(c));
+                    if (ei < 0) ei = cols.findIndex(c => /std\.?\s*err/i.test(c) && !/free|fixed/i.test(c));
+                    return { m: mi, e: ei };
+                }
+            }
+            return null;
+        }
+
+        function parseVSM(text) {
+            const lines = text.split(/\r?\n/);
+            let hi = lines.findIndex(l => l.trim().toLowerCase() === '[data]');
+            if (hi >= 0) { hi += 1; } else { hi = 0; }
+            while (hi < lines.length && !lines[hi].trim()) hi++;
+            if (hi >= lines.length) throw new Error('file appears to be empty');
+            const cols = lines[hi].split(',').map(s => s.trim());
+            const tIdx = cols.findIndex(c => /temp/i.test(c) && !/min|max|motor|chamber/i.test(c));
+            const hIdx = cols.findIndex(c => /field/i.test(c) && !/min|max/i.test(c));
+            if (tIdx < 0 && hIdx < 0) throw new Error('no temperature or field column found');
+            const mc = pickMomentColumns(cols);
+            if (!mc) throw new Error('no moment column found');
+
+            const T = [], H = [], M = [], E = [];
+            for (let k = hi + 1; k < lines.length; k++) {
+                if (!lines[k].trim()) continue;
+                const row = lines[k].split(',');
+                const t = tIdx >= 0 ? parseFloat(row[tIdx]) : NaN;
+                const h = hIdx >= 0 ? parseFloat(row[hIdx]) : NaN;
+                const m = parseFloat(row[mc.m]);
+                if (!isFinite(m) || (!isFinite(t) && !isFinite(h))) continue;
+                T.push(t); H.push(h); M.push(m);
+                E.push(mc.e >= 0 ? parseFloat(row[mc.e]) : NaN);
+            }
+            if (!M.length) throw new Error('no numeric moment data found');
+
+            const span = a => {
+                let lo = Infinity, up = -Infinity;
+                a.forEach(v => { if (isFinite(v)) { if (v < lo) lo = v; if (v > up) up = v; } });
+                return isFinite(up - lo) ? up - lo : 0;
+            };
+            const xType = (span(H) / 50 > span(T) / 2) ? 'H' : 'T';
+            const xs = xType === 'H' ? H : T;
+            const x = [], y = [], err = [];
+            for (let i = 0; i < M.length; i++) {
+                if (isFinite(xs[i])) { x.push(xs[i]); y.push(M[i]); err.push(E[i]); }
+            }
+            return { xType: xType, x: x, y: y, err: err, momentCol: cols[mc.m] };
+        }
+
+        window.vsmAddData = function (text, filename) {
+            const parsed = parseVSM(text);
+            datasets.set(filename, parsed);
+            render();
+            return { xType: parsed.xType, points: parsed.x.length, momentCol: parsed.momentCol };
+        };
+
+        function showError(msg) {
+            errEl.textContent = msg;
+            errEl.style.display = 'block';
+            setTimeout(function () { errEl.style.display = 'none'; }, 6000);
+        }
+
+        function handleFiles(fileList) {
+            Array.from(fileList).forEach(function (f) {
+                const reader = new FileReader();
+                reader.onload = function () {
+                    try { window.vsmAddData(reader.result, f.name); }
+                    catch (e) { showError(f.name + ': ' + e.message); }
+                };
+                reader.readAsText(f);
+            });
+        }
+
+        function render() {
+            chips.innerHTML = '';
+            datasets.forEach(function (parsed, name) {
+                const chip = document.createElement('span');
+                chip.className = 'file-chip';
+                chip.innerHTML = '<span>' + name + '</span><span class="pts">'
+                    + (parsed.xType === 'H' ? 'M vs H' : 'M vs T') + ' · ' + parsed.x.length + ' pts</span>';
+                const btn = document.createElement('button');
+                btn.type = 'button';
+                btn.setAttribute('aria-label', 'Remove ' + name);
+                btn.textContent = '×';
+                btn.addEventListener('click', function () { datasets.delete(name); render(); });
+                chip.appendChild(btn);
+                chips.appendChild(chip);
+            });
+
+            if (!datasets.size) {
+                plotDiv.style.display = 'none';
+                emptyEl.style.display = 'flex';
+                controls.style.display = 'none';
+                Plotly.purge(plotDiv);
+                return;
+            }
+
+            let nT = 0, nH = 0;
+            datasets.forEach(p => { if (p.xType === 'H') nH++; else nT++; });
+            const xType = nH > nT ? 'H' : 'T';
+            const skipped = [];
+            const palette = ['#4fd9ec', '#f2688e', '#8b7af7', '#7ce8b8', '#f5c26b', '#6bb3f5', '#e879f9', '#a3e635'];
+            const mode = document.getElementById('vsm-markers').checked ? 'lines+markers' : 'lines';
+            const logM = document.getElementById('vsm-logy').checked;
+
+            let totalPts = 0;
+            datasets.forEach(function (p) { if (p.xType === xType) totalPts += p.x.length; });
+            const traceType = totalPts > 30000 ? 'scattergl' : 'scatter';
+
+            const traces = [];
+            let ci = 0;
+            datasets.forEach(function (parsed, name) {
+                if (parsed.xType !== xType) { skipped.push(name); return; }
+                const color = palette[ci % palette.length]; ci++;
+                const yM = logM ? parsed.y.map(v => Math.abs(v)) : parsed.y;
+                const base = {
+                    type: traceType, mode: mode, legendgroup: name,
+                    marker: { size: 4, color: color }, line: { width: 2, color: color }
+                };
+                traces.push(Object.assign({}, base, { x: parsed.x, y: yM, name: name, showlegend: true, xaxis: 'x', yaxis: 'y' }));
+                if (parsed.err.some(isFinite)) {
+                    traces.push(Object.assign({}, base, { x: parsed.x, y: parsed.err, name: name, showlegend: false, xaxis: 'x', yaxis: 'y2' }));
+                }
+            });
+
+            document.getElementById('vsm-axis-note').textContent =
+                'x: ' + (xType === 'H' ? 'Magnetic Field (Oe)' : 'Temperature (K)')
+                + (skipped.length ? ' · skipped (other sweep type): ' + skipped.join(', ') : '');
+
+            emptyEl.style.display = 'none';
+            plotDiv.style.display = 'block';
+            controls.style.display = 'flex';
+
+            const mL = 90, mR = 26, mT = 86, mB = 58, gap = 30;
+            const avail = (plotDiv.parentElement.clientWidth || 800);
+            const side = Math.max(260, Math.min(560, avail - mL - mR));
+            const plotH = 2 * side + gap;
+            const figW = side + mL + mR;
+            const figH = plotH + mT + mB;
+            const d = side / plotH, g = gap / plotH;
+
+            const grid = 'rgba(148,171,255,0.14)', zero = 'rgba(148,171,255,0.25)';
+            const layout = {
+                width: figW, height: figH,
+                paper_bgcolor: 'rgba(0,0,0,0)',
+                plot_bgcolor: 'rgba(15,23,42,0.55)',
+                font: { family: 'Figtree, system-ui, sans-serif', color: '#e2e8fa', size: 14 },
+                xaxis: {
+                    title: { text: xType === 'H' ? 'Magnetic Field (Oe)' : 'Temperature (K)' },
+                    type: document.getElementById('vsm-logx').checked ? 'log' : 'linear',
+                    gridcolor: grid, zerolinecolor: zero, anchor: 'y2'
+                },
+                yaxis:  { title: { text: logM ? '|Moment| (emu)' : 'Moment (emu)' }, domain: [d + g, 1],
+                          type: logM ? 'log' : 'linear', anchor: 'x',
+                          gridcolor: grid, zerolinecolor: zero, exponentformat: 'power' },
+                yaxis2: { title: { text: 'M. Std. Err. (emu)' }, domain: [0, d], anchor: 'x',
+                          type: logM ? 'log' : 'linear',
+                          gridcolor: grid, zerolinecolor: zero, exponentformat: 'power' },
+                legend: {
+                    orientation: 'h', x: 0, y: 1.005, yanchor: 'bottom',
+                    bgcolor: 'rgba(21,30,55,0.75)', bordercolor: 'rgba(148,171,255,0.22)',
+                    borderwidth: 1, font: { size: 13 }
+                },
+                margin: { t: mT, r: mR, b: mB, l: mL },
+                hovermode: 'closest'
+            };
+            plotDiv.style.width = figW + 'px';
+            plotDiv.style.height = figH + 'px';
+            Plotly.react(plotDiv, traces, layout, { responsive: false, displaylogo: false });
+        }
+
+        dropzone.addEventListener('click', function () { input.click(); });
+        input.addEventListener('change', function () { handleFiles(input.files); input.value = ''; });
+        ['dragenter', 'dragover'].forEach(ev => dropzone.addEventListener(ev, e => { e.preventDefault(); dropzone.classList.add('drag'); }));
+        ['dragleave', 'drop'].forEach(ev => dropzone.addEventListener(ev, e => { e.preventDefault(); dropzone.classList.remove('drag'); }));
+        dropzone.addEventListener('drop', function (e) { if (e.dataTransfer.files.length) handleFiles(e.dataTransfer.files); });
+        ['vsm-logy', 'vsm-logx', 'vsm-markers'].forEach(id => document.getElementById(id).addEventListener('change', render));
+        document.getElementById('vsm-clear-all').addEventListener('click', function () { datasets.clear(); render(); });
+        let rz = null;
+        window.addEventListener('resize', function () {
+            clearTimeout(rz);
+            rz = setTimeout(function () { if (datasets.size) render(); }, 200);
+        });
+    })();
+    </script>
+</body>
+</html>

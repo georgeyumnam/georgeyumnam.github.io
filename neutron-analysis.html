@@ -1,0 +1,621 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Neutron Cuts &amp; Slices &ndash; George Yumnam</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Figtree:wght@300;400;500;600;700;800&family=Space+Grotesk:wght@500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="styles.css?v=13">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <script src="https://cdn.plot.ly/plotly-2.35.2.min.js" charset="utf-8"></script>
+    <style>
+        .tool-hero { padding: 64px 24px 40px; position: relative; z-index: 1; }
+        .tool-hero-panel {
+            background: var(--glass-card); backdrop-filter: blur(28px);
+            -webkit-backdrop-filter: blur(28px); border: 1px solid var(--border);
+            border-radius: 20px; padding: 2rem 2.5rem; box-shadow: var(--glow);
+        }
+        .tool-title { font-size: 3.4rem; font-weight: 800; color: var(--white); letter-spacing: -0.8px; margin-bottom: 0.4rem; }
+        .tool-sub   { font-size: 1.7rem; color: var(--teal); font-weight: 600; margin-bottom: 0.75rem; }
+        .tool-desc  { font-size: 1.615rem; color: var(--text-dim); line-height: 1.75; }
+        .privacy-note { font-family: var(--font-mono); font-size: 1.02rem; color: var(--teal); letter-spacing: 0.03em; }
+
+        .analysis-section { padding: 0 24px 56px; position: relative; z-index: 1; }
+        .analysis-panel {
+            background: var(--glass-card); border: 1px solid var(--border); border-radius: 20px;
+            padding: 2rem 2.3rem; backdrop-filter: blur(14px); -webkit-backdrop-filter: blur(14px);
+            box-shadow: var(--glow); margin-bottom: 2rem;
+        }
+        .analysis-panel h2 {
+            font-size: 2.2rem; font-weight: 700; color: var(--white); letter-spacing: -0.5px;
+            margin-bottom: 0.6rem; padding-bottom: 0.7rem; border-bottom: 1px solid var(--border);
+        }
+        .analysis-panel > p { font-size: 1.4rem; color: var(--text-dim); line-height: 1.75; margin: 0.9rem 0 1.2rem; }
+
+        .dropzone {
+            border: 2px dashed rgba(148,171,255,0.35); border-radius: 16px;
+            padding: 2.2rem 1.5rem; text-align: center; cursor: pointer;
+            transition: var(--transition); margin-bottom: 1.2rem;
+        }
+        .dropzone:hover, .dropzone.drag { border-color: var(--teal); background: rgba(79,217,236,0.06); }
+        .dropzone i { font-size: 2.2rem; color: var(--teal); margin-bottom: 0.6rem; display: block; }
+        .dropzone p { font-size: 1.4rem; color: var(--text); margin: 0; }
+        .dropzone small { font-size: 1.05rem; color: var(--text-dim); display: block; margin-top: 0.35rem; }
+        #file-input { display: none; }
+
+        .file-info {
+            font-family: var(--font-mono); font-size: 1.05rem; color: var(--text-dim);
+            line-height: 1.8; background: rgba(17,26,46,0.5); border: 1px solid var(--border);
+            border-radius: 12px; padding: 0.9rem 1.2rem; margin-bottom: 1.2rem; display: none;
+        }
+        .file-info strong { color: var(--teal); font-weight: 600; }
+
+        .ctl {
+            display: none; flex-wrap: wrap; gap: 1rem 1.6rem; align-items: flex-end;
+            margin-bottom: 1.1rem;
+        }
+        .ctl-group { display: flex; flex-direction: column; gap: 0.3rem; }
+        .ctl-group > label {
+            font-family: var(--font-mono); font-size: 0.95rem; letter-spacing: 0.08em;
+            text-transform: uppercase; color: var(--text-dim);
+        }
+        .ctl select, .ctl input[type="number"] {
+            background: rgba(17,26,46,0.75); color: var(--text);
+            border: 1px solid var(--border); border-radius: 8px;
+            font-family: var(--font-body); font-size: 1.2rem; padding: 6px 10px;
+        }
+        .ctl input[type="number"] { width: 108px; }
+        .ctl select:focus, .ctl input:focus { outline: none; border-color: var(--teal); }
+        .mode-btns { display: inline-flex; border: 1px solid var(--border); border-radius: 10px; overflow: hidden; }
+        .mode-btns button {
+            background: transparent; border: none; color: var(--text-dim); cursor: pointer;
+            font-family: var(--font-display); font-size: 1.25rem; font-weight: 600; padding: 7px 18px;
+            transition: var(--transition);
+        }
+        .mode-btns button.on { background: rgba(79,217,236,0.15); color: var(--teal); }
+        .chk { display: inline-flex; align-items: center; gap: 0.5rem; font-size: 1.2rem; color: var(--text); cursor: pointer; padding-bottom: 6px; }
+        .chk input { accent-color: #4fd9ec; width: 15px; height: 15px; cursor: pointer; }
+        .btn-mini {
+            font-family: var(--font-display); font-size: 1.1rem; font-weight: 600;
+            color: var(--teal); background: rgba(79,217,236,0.08);
+            border: 1px solid rgba(79,217,236,0.35); border-radius: 8px;
+            padding: 6px 14px; cursor: pointer; transition: var(--transition);
+        }
+        .btn-mini:hover { background: rgba(79,217,236,0.18); }
+        .range-pair { display: flex; align-items: center; gap: 0.4rem; }
+        .range-pair span { color: var(--text-dim); font-size: 1.1rem; }
+
+        #nplot { margin: 0 auto; border-radius: 14px; overflow: hidden; display: none; }
+        #nempty {
+            display: flex; flex-direction: column; align-items: center; justify-content: center;
+            height: 300px; color: var(--text-dim); font-size: 1.3rem; gap: 0.6rem;
+            border: 1px solid var(--border); border-radius: 14px; background: rgba(17,26,46,0.4);
+        }
+        #nempty i { font-size: 2rem; color: var(--violet); }
+        .parse-error {
+            font-family: var(--font-mono); font-size: 1.05rem; color: var(--rose);
+            margin-bottom: 0.8rem; display: none;
+        }
+        .busy { color: var(--teal) !important; }
+        @media (max-width: 600px) {
+            .tool-title { font-size: 1.9rem; }
+            .tool-sub { font-size: 1.05rem; } .tool-desc { font-size: 1rem; }
+            .analysis-panel { padding: 1.3rem 1.2rem; }
+        }
+    </style>
+</head>
+<body>
+
+    <nav class="navbar">
+        <div class="container">
+            <div class="nav-wrapper">
+                <a href="index.html" class="logo">George Yumnam</a>
+                <ul class="nav-menu">
+                    <li><a href="index.html#about" class="nav-link">About</a></li>
+                    <li><a href="index.html#projects" class="nav-link">Research</a></li>
+                    <li><a href="index.html#publications" class="nav-link">Publications</a></li>
+                    <li><a href="index.html#contact" class="nav-link">Contact</a></li>
+                    <li class="nav-dropdown">
+                        <a href="#" class="nav-link">More <i class="fas fa-chevron-down" style="font-size:0.65em;margin-left:3px;"></i></a>
+                        <div class="nav-dropdown-menu">
+                            <a href="index.html#teaching">Teaching &amp; Mentoring</a>
+                            <a href="index.html#mitsna">MitSna Foundation</a>
+                            <a href="publications.html">All Publications</a>
+                            <a href="blog.html">Blog: My Odyssey</a>
+                            <div class="nav-dropdown-label">Experiments</div>
+                            <a href="neutron-scattering.html" target="_blank" rel="noopener noreferrer">Neutron Scattering</a>
+                            <a href="mossbauer.html" target="_blank" rel="noopener noreferrer">M&ouml;ssbauer Spectroscopy</a>
+                            <div class="nav-dropdown-label">Tools</div>
+                            <a href="analysis.html">Quick Data Analysis</a>
+                            <a href="neutron-analysis.html" class="active">Neutron Cuts &amp; Slices</a>
+                        </div>
+                    </li>
+                </ul>
+                <div class="hamburger"><span></span><span></span><span></span></div>
+            </div>
+        </div>
+    </nav>
+
+    <div class="tool-hero">
+        <div class="container">
+            <div class="tool-hero-panel">
+                <h1 class="tool-title">Neutron Cuts &amp; Slices</h1>
+                <p class="tool-sub">Interactive S(Q, E) explorer for 3D inelastic data</p>
+                <p class="tool-desc">Load a gridded ASCII export of a 3D dataset (Q1, Q2, energy) and take 2D slices or 1D cuts with adjustable integration ranges. <span class="privacy-note">All processing happens locally in your browser; no data leaves your computer.</span></p>
+            </div>
+        </div>
+    </div>
+
+    <section class="analysis-section">
+        <div class="container">
+
+            <div class="analysis-panel" id="sqe-tool">
+                <h2>S(Q, E) Cuts and Slices</h2>
+                <p>Upload a Mantid or Horace style ASCII export: a header line naming the Intensity, Error, and axis columns, a shape line, and one whitespace-separated row per grid point. Axes with a single bin are treated as already integrated. Slice mode shows a 2D color map of any two axes with the third integrated over a chosen window. Cut mode integrates two axes over chosen windows and plots intensity along the third, with propagated error bars and optional rebinning.</p>
+
+                <div class="dropzone" id="dropzone">
+                    <i class="fas fa-cube"></i>
+                    <p id="dz-label">Drop a 3D .dat file here, or click to browse</p>
+                    <small>Single file &middot; whitespace-delimited ASCII with # header</small>
+                </div>
+                <input type="file" id="file-input" accept=".dat,.txt,.csv,.ascii">
+                <p class="parse-error" id="parse-error"></p>
+                <div class="file-info" id="file-info"></div>
+
+                <div class="ctl" id="ctl-main">
+                    <div class="ctl-group">
+                        <label>Mode</label>
+                        <div class="mode-btns">
+                            <button type="button" id="mode-slice" class="on">Slice</button>
+                            <button type="button" id="mode-cut">Cut</button>
+                        </div>
+                    </div>
+                    <div class="ctl-group">
+                        <label id="lbl-x">X axis</label>
+                        <select id="sel-x"></select>
+                    </div>
+                    <div class="ctl-group" id="grp-y">
+                        <label>Y axis</label>
+                        <select id="sel-y"></select>
+                    </div>
+                    <div id="ranges" style="display:contents;"></div>
+                    <div class="ctl-group" id="grp-cmap">
+                        <label>Colormap</label>
+                        <select id="cmap">
+                            <option>Viridis</option><option>Inferno</option><option>Plasma</option>
+                            <option>Magma</option><option>Jet</option><option>RdBu</option><option>Hot</option>
+                        </select>
+                    </div>
+                    <div class="ctl-group" id="grp-clim">
+                        <label>Color limits</label>
+                        <div class="range-pair">
+                            <input type="number" id="clim-min" step="any">
+                            <span>to</span>
+                            <input type="number" id="clim-max" step="any">
+                            <button class="btn-mini" id="clim-auto" type="button">Auto</button>
+                        </div>
+                    </div>
+                    <div class="ctl-group" id="grp-rebin" style="display:none;">
+                        <label>Rebin (x native)</label>
+                        <input type="number" id="rebin" min="1" max="50" step="1" value="1">
+                    </div>
+                    <label class="chk"><input type="checkbox" id="logI"> log intensity</label>
+                    <label class="chk" id="grp-ebars" style="display:none;"><input type="checkbox" id="ebars" checked> error bars</label>
+                    <button class="btn-mini" id="dl-cut" type="button" style="display:none;">Download cut (CSV)</button>
+                </div>
+
+                <div id="nempty">
+                    <i class="fas fa-layer-group"></i>
+                    <span>Slices and cuts will appear here</span>
+                </div>
+                <div id="nplot"></div>
+            </div>
+
+        </div>
+    </section>
+
+    <footer class="footer">
+        <div class="container">
+            <p>&copy; 2026 George Yumnam &middot; Stewart Blusson Quantum Matter Institute, UBC</p>
+            <div class="footer-social">
+                <a href="https://scholar.google.com/citations?user=D3v8UV4AAAAJ&hl=en" target="_blank" rel="noopener noreferrer"><i class="fas fa-book-open"></i></a>
+                <a href="https://www.linkedin.com/in/george-yumnam/" target="_blank" rel="noopener noreferrer"><i class="fab fa-linkedin"></i></a>
+                <a href="mailto:georgeyumnam@gmail.com"><i class="fas fa-envelope"></i></a>
+            </div>
+        </div>
+    </footer>
+
+    <script src="script.js?v=15"></script>
+    <script>
+    (function () {
+        let vol = null;   // { axes:[{name,values,label}], I: Float64Array, E: Float64Array, dims:[...] }
+        let mode = 'slice';
+        let defaultsDone = { slice: false, cut: false };
+
+        const $id = id => document.getElementById(id);
+        const dropzone = $id('dropzone'), input = $id('file-input'), dzLabel = $id('dz-label');
+        const errEl = $id('parse-error'), infoEl = $id('file-info');
+        const ctl = $id('ctl-main'), plotDiv = $id('nplot'), emptyEl = $id('nempty');
+
+        const axisLabel = name => name === 'DeltaE' ? 'ΔE (meV)' : (/^\[.*\]$/.test(name) ? name + ' (r.l.u.)' : name);
+
+        // ── parser: header + shape + whitespace rows ─────────────────────────
+        function parse3D(text) {
+            const nl = text.indexOf('\n');
+            const l1 = text.slice(0, nl).trim();
+            if (!l1.startsWith('#')) throw new Error('missing # header line with column names');
+            const tokens = l1.replace(/^#\s*/, '').split(/\s+/);
+            if (!/intensity/i.test(tokens[0] || '') || !/error/i.test(tokens[1] || ''))
+                throw new Error('header must start with Intensity and Error columns');
+            const axNames = tokens.slice(2);
+
+            const nl2 = text.indexOf('\n', nl + 1);
+            const l2 = text.slice(nl + 1, nl2);
+            const shapeM = l2.match(/shape:\s*([0-9x]+)/i);
+            const dims = shapeM ? shapeM[1].split('x').map(Number) : null;
+
+            // collect unique coordinate tokens per axis, then values per row
+            const nAx = axNames.length;
+            const uniq = axNames.map(() => new Map());
+            const rowsI = [], rowsE = [], rowsIdx = [];
+            const lines = text.split('\n');
+            for (let li = 0; li < lines.length; li++) {
+                const ln = lines[li];
+                if (!ln || ln.charCodeAt(0) === 35) continue;   // skip # lines
+                const p = ln.trim().split(/\s+/);
+                if (p.length < 2 + nAx) continue;
+                rowsI.push(parseFloat(p[0]));
+                rowsE.push(parseFloat(p[1]));
+                const idx = new Array(nAx);
+                for (let a = 0; a < nAx; a++) {
+                    const tok = p[2 + a];
+                    let m = uniq[a].get(tok);
+                    if (m === undefined) { m = uniq[a].size; uniq[a].set(tok, m); }
+                    idx[a] = m;
+                }
+                rowsIdx.push(idx);
+            }
+            if (!rowsI.length) throw new Error('no data rows found');
+
+            // sorted axis values + remap of token order to sorted order
+            const axes = axNames.map(function (name, a) {
+                const pairs = [...uniq[a].entries()].map(o => ({ tok: o[0], v: parseFloat(o[0]), old: o[1] }));
+                pairs.sort((p1, p2) => p1.v - p2.v);
+                const remap = new Array(pairs.length);
+                pairs.forEach((p, ni) => { remap[p.old] = ni; });
+                return { name: name, label: axisLabel(name), values: pairs.map(p => p.v), remap: remap };
+            });
+
+            // keep only non-singleton axes for the interactive volume
+            const keep = [];
+            axes.forEach((ax, a) => { if (ax.values.length > 1) keep.push(a); });
+            if (keep.length < 2) throw new Error('need at least two axes with more than one bin');
+            if (keep.length > 3) throw new Error('more than three varying axes are not supported');
+
+            const kAxes = keep.map(a => axes[a]);
+            const kd = kAxes.map(ax => ax.values.length);
+            const n = kd.reduce((x, y) => x * y, 1);
+            const I = new Float64Array(n).fill(NaN);
+            const E = new Float64Array(n).fill(NaN);
+            const stride = kd.map((_, i) => kd.slice(i + 1).reduce((x, y) => x * y, 1));
+
+            for (let r = 0; r < rowsI.length; r++) {
+                let off = 0;
+                for (let j = 0; j < keep.length; j++) {
+                    const a = keep[j];
+                    off += axes[a].remap[rowsIdx[r][a]] * stride[j];
+                }
+                I[off] = rowsI[r];
+                E[off] = rowsE[r];
+            }
+
+            const singles = axes.filter(ax => ax.values.length === 1)
+                                .map(ax => ax.name + ' = ' + ax.values[0]);
+            let finite = 0;
+            for (let i = 0; i < n; i++) if (isFinite(I[i])) finite++;
+            return { axes: kAxes, dims: kd, stride: stride, I: I, E: E,
+                     singles: singles, nRows: rowsI.length, finite: finite };
+        }
+
+        // ── slice: average over the integration axis window ─────────────────
+        function computeSlice(xA, yA, intA, lo, hi) {
+            const d = vol.dims, s = vol.stride;
+            const nx = d[xA], ny = d[yA];
+            const sum = new Float64Array(nx * ny), cnt = new Float64Array(nx * ny);
+            const iv = vol.axes[intA].values;
+            const idx = [0, 0, 0];
+            for (idx[0] = 0; idx[0] < d[0]; idx[0]++)
+            for (idx[1] = 0; idx[1] < d[1]; idx[1]++)
+            for (idx[2] = 0; idx[2] < (d[2] || 1); idx[2]++) {
+                const vI = vol.I[idx[0] * s[0] + idx[1] * s[1] + (s[2] !== undefined ? idx[2] * s[2] : 0)];
+                if (!isFinite(vI)) continue;
+                const c = iv[idx[intA]];
+                if (c < lo || c > hi) continue;
+                const k = idx[yA] * nx + idx[xA];
+                sum[k] += vI; cnt[k]++;
+            }
+            const z = [];
+            for (let j = 0; j < ny; j++) {
+                const row = new Array(nx);
+                for (let i = 0; i < nx; i++) {
+                    const k = j * nx + i;
+                    row[i] = cnt[k] ? sum[k] / cnt[k] : null;
+                }
+                z.push(row);
+            }
+            return z;
+        }
+
+        // ── cut: average over two windows, intensity along the cut axis ─────
+        function computeCut(cA, winA, loA, hiA, winB, loB, hiB) {
+            const d = vol.dims, s = vol.stride;
+            const nC = d[cA];
+            const sum = new Float64Array(nC), e2 = new Float64Array(nC), cnt = new Float64Array(nC);
+            const vA = vol.axes[winA].values, vB = vol.axes[winB].values;
+            const idx = [0, 0, 0];
+            for (idx[0] = 0; idx[0] < d[0]; idx[0]++)
+            for (idx[1] = 0; idx[1] < d[1]; idx[1]++)
+            for (idx[2] = 0; idx[2] < (d[2] || 1); idx[2]++) {
+                const off = idx[0] * s[0] + idx[1] * s[1] + (s[2] !== undefined ? idx[2] * s[2] : 0);
+                const vI = vol.I[off];
+                if (!isFinite(vI)) continue;
+                const a = vA[idx[winA]], b = vB[idx[winB]];
+                if (a < loA || a > hiA || b < loB || b > hiB) continue;
+                const k = idx[cA];
+                sum[k] += vI; cnt[k]++;
+                const er = vol.E[off];
+                if (isFinite(er)) e2[k] += er * er;
+            }
+            const x = [], y = [], err = [];
+            const cv = vol.axes[cA].values;
+            for (let k = 0; k < nC; k++) {
+                if (!cnt[k]) continue;
+                x.push(cv[k]);
+                y.push(sum[k] / cnt[k]);
+                err.push(Math.sqrt(e2[k]) / cnt[k]);
+            }
+            // optional rebin by integer factor
+            const f = Math.max(1, Math.round(parseFloat($id('rebin').value) || 1));
+            if (f <= 1) return { x: x, y: y, err: err };
+            const rx = [], ry = [], re = [];
+            for (let i = 0; i < x.length; i += f) {
+                let sx = 0, sy = 0, se2 = 0, m = 0;
+                for (let j = i; j < Math.min(i + f, x.length); j++) { sx += x[j]; sy += y[j]; se2 += err[j] * err[j]; m++; }
+                rx.push(sx / m); ry.push(sy / m); re.push(Math.sqrt(se2) / m);
+            }
+            return { x: rx, y: ry, err: re };
+        }
+
+        // ── controls ─────────────────────────────────────────────────────────
+        function fillAxisSelect(sel, exclude) {
+            const cur = sel.value;
+            sel.innerHTML = '';
+            vol.axes.forEach(function (ax, i) {
+                if (exclude.includes(i)) return;
+                const o = document.createElement('option');
+                o.value = i; o.textContent = ax.name;
+                sel.appendChild(o);
+            });
+            if ([...sel.options].some(o => o.value === cur)) sel.value = cur;
+        }
+
+        function updateControls() {
+            const selX = $id('sel-x'), selY = $id('sel-y');
+            const eIdx = vol.axes.findIndex(a => /deltae|energy/i.test(a.name));
+            if (mode === 'slice') {
+                fillAxisSelect(selX, []);
+                if (selX.selectedIndex < 0) selX.value = 0;
+                // first time in slice mode: default to the classic Q-E map
+                if (!defaultsDone.slice && eIdx >= 0) {
+                    const qIdx = vol.axes.findIndex((a, i) => i !== eIdx);
+                    if (qIdx >= 0) selX.value = String(qIdx);
+                }
+                fillAxisSelect(selY, [parseInt(selX.value)]);
+                if (!defaultsDone.slice && eIdx >= 0 && eIdx !== parseInt(selX.value)) {
+                    selY.value = String(eIdx);
+                }
+                if (![...selY.options].some(o => o.value === selY.value)) {
+                    selY.value = selY.options[0].value;
+                }
+                defaultsDone.slice = true;
+            } else {
+                fillAxisSelect(selX, []);
+                if (selX.selectedIndex < 0) selX.value = 0;
+                // first time in cut mode: default to a constant-Q energy cut
+                if (!defaultsDone.cut && eIdx >= 0) selX.value = String(eIdx);
+                defaultsDone.cut = true;
+            }
+            $id('grp-y').style.display = mode === 'slice' ? 'flex' : 'none';
+            $id('grp-cmap').style.display = mode === 'slice' ? 'flex' : 'none';
+            $id('grp-clim').style.display = mode === 'slice' ? 'flex' : 'none';
+            $id('grp-rebin').style.display = mode === 'cut' ? 'flex' : 'none';
+            $id('grp-ebars').style.display = mode === 'cut' ? 'inline-flex' : 'none';
+            $id('dl-cut').style.display = mode === 'cut' ? 'inline-block' : 'none';
+            $id('lbl-x').textContent = mode === 'slice' ? 'X axis' : 'Cut along';
+
+            // integration range inputs for every axis not displayed
+            const shown = mode === 'slice'
+                ? [parseInt(selX.value), parseInt(selY.value)]
+                : [parseInt(selX.value)];
+            const holder = $id('ranges');
+            holder.innerHTML = '';
+            vol.axes.forEach(function (ax, i) {
+                if (shown.includes(i)) return;
+                const v = ax.values, step = v.length > 1 ? (v[1] - v[0]) : 0;
+                const g = document.createElement('div');
+                g.className = 'ctl-group';
+                g.innerHTML = '<label>' + ax.name + ' range (step ' + step.toPrecision(2) + ')</label>'
+                    + '<div class="range-pair">'
+                    + '<input type="number" step="any" data-ax="' + i + '" data-side="lo" value="' + v[0] + '">'
+                    + '<span>to</span>'
+                    + '<input type="number" step="any" data-ax="' + i + '" data-side="hi" value="' + v[v.length - 1] + '">'
+                    + '</div>';
+                holder.appendChild(g);
+            });
+            holder.querySelectorAll('input').forEach(inp => inp.addEventListener('change', draw));
+        }
+
+        function rangeOf(axIdx) {
+            const lo = parseFloat(document.querySelector('#ranges input[data-ax="' + axIdx + '"][data-side="lo"]').value);
+            const hi = parseFloat(document.querySelector('#ranges input[data-ax="' + axIdx + '"][data-side="hi"]').value);
+            return [Math.min(lo, hi), Math.max(lo, hi)];
+        }
+
+        function percentiles(z) {
+            const flat = [];
+            z.forEach(r => r.forEach(v => { if (v !== null && isFinite(v)) flat.push(v); }));
+            flat.sort((a, b) => a - b);
+            if (!flat.length) return [0, 1];
+            return [flat[Math.floor(flat.length * 0.01)], flat[Math.min(flat.length - 1, Math.floor(flat.length * 0.99))]];
+        }
+
+        let lastCut = null;
+        function draw() {
+            if (!vol) return;
+            emptyEl.style.display = 'none';
+            plotDiv.style.display = 'block';
+
+            const logI = $id('logI').checked;
+            const baseLayout = {
+                paper_bgcolor: 'rgba(0,0,0,0)',
+                plot_bgcolor: 'rgba(15,23,42,0.55)',
+                font: { family: 'Figtree, system-ui, sans-serif', color: '#e2e8fa', size: 14 },
+                margin: { t: 30, r: 30, b: 62, l: 86 }
+            };
+            const gridc = 'rgba(148,171,255,0.14)';
+
+            if (mode === 'slice') {
+                const xA = parseInt($id('sel-x').value), yA = parseInt($id('sel-y').value);
+                const intA = [0, 1, 2].filter(i => i < vol.axes.length && i !== xA && i !== yA)[0];
+                let z = computeSlice(xA, yA, intA, ...(intA !== undefined ? rangeOf(intA) : [-Infinity, Infinity]));
+                if (logI) z = z.map(r => r.map(v => (v !== null && v > 0) ? Math.log10(v) : null));
+
+                // auto color limits from 1-99 percentiles unless user edited
+                let [p1, p99] = percentiles(z);
+                const cmin = $id('clim-min'), cmax = $id('clim-max');
+                if (cmin.dataset.user !== '1') cmin.value = Number(p1.toPrecision(4));
+                if (cmax.dataset.user !== '1') cmax.value = Number(p99.toPrecision(4));
+
+                const avail = plotDiv.parentElement.clientWidth || 800;
+                const side = Math.max(300, Math.min(620, avail - 200));
+                const trace = {
+                    type: 'heatmap',
+                    x: vol.axes[xA].values, y: vol.axes[yA].values, z: z,
+                    colorscale: $id('cmap').value,
+                    zmin: parseFloat(cmin.value), zmax: parseFloat(cmax.value),
+                    colorbar: { title: { text: logI ? 'log₁₀ I' : 'Intensity', side: 'right' },
+                                outlinecolor: 'rgba(148,171,255,0.25)', tickfont: { size: 12 } },
+                    hoverongaps: false
+                };
+                const layout = Object.assign({}, baseLayout, {
+                    width: side + 200, height: side + 100,
+                    xaxis: { title: { text: vol.axes[xA].label }, gridcolor: gridc },
+                    yaxis: { title: { text: vol.axes[yA].label }, gridcolor: gridc }
+                });
+                plotDiv.style.width = layout.width + 'px'; plotDiv.style.height = layout.height + 'px';
+                Plotly.react(plotDiv, [trace], layout, { responsive: false, displaylogo: false });
+            } else {
+                const cA = parseInt($id('sel-x').value);
+                const others = [0, 1, 2].filter(i => i < vol.axes.length && i !== cA);
+                const [loA, hiA] = rangeOf(others[0]);
+                const [loB, hiB] = others[1] !== undefined ? rangeOf(others[1]) : [-Infinity, Infinity];
+                const cut = computeCut(cA, others[0], loA, hiA, others[1] !== undefined ? others[1] : others[0], loB, hiB);
+                lastCut = { cut: cut, axis: vol.axes[cA] };
+
+                const trace = {
+                    type: 'scatter', mode: 'lines+markers',
+                    x: cut.x, y: cut.y,
+                    marker: { size: 6, color: '#4fd9ec' }, line: { width: 2, color: '#4fd9ec' },
+                    error_y: $id('ebars').checked
+                        ? { type: 'data', array: cut.err, visible: true, color: 'rgba(79,217,236,0.5)', thickness: 1.2, width: 2 }
+                        : { visible: false },
+                    name: 'cut'
+                };
+                const avail = plotDiv.parentElement.clientWidth || 800;
+                const w = Math.max(420, Math.min(860, avail - 40));
+                const layout = Object.assign({}, baseLayout, {
+                    width: w, height: Math.round(w * 0.62),
+                    xaxis: { title: { text: vol.axes[cA].label }, gridcolor: gridc },
+                    yaxis: { title: { text: 'Intensity (arb. units)' }, gridcolor: gridc,
+                             type: logI ? 'log' : 'linear', exponentformat: 'power' },
+                    showlegend: false
+                });
+                plotDiv.style.width = layout.width + 'px'; plotDiv.style.height = layout.height + 'px';
+                Plotly.react(plotDiv, [trace], layout, { responsive: false, displaylogo: false });
+            }
+        }
+
+        // ── file plumbing ────────────────────────────────────────────────────
+        function showError(msg) {
+            errEl.textContent = msg;
+            errEl.style.display = 'block';
+            setTimeout(function () { errEl.style.display = 'none'; }, 8000);
+        }
+
+        window.neutronLoadText = function (text, filename) {
+            vol = parse3D(text);
+            infoEl.innerHTML = '<strong>' + filename + '</strong> · '
+                + vol.axes.map(ax => '<strong>' + ax.name + '</strong>: ' + ax.values.length + ' bins, '
+                    + ax.values[0].toPrecision(4) + ' to ' + ax.values[ax.values.length - 1].toPrecision(4)).join(' · ')
+                + (vol.singles.length ? ' · integrated: ' + vol.singles.join(', ') : '')
+                + ' · ' + vol.nRows.toLocaleString() + ' points (' + Math.round(100 * vol.finite / vol.I.length) + '% populated)';
+            infoEl.style.display = 'block';
+            ctl.style.display = 'flex';
+            $id('clim-min').dataset.user = ''; $id('clim-max').dataset.user = '';
+            defaultsDone = { slice: false, cut: false };
+            updateControls();
+            draw();
+            return { dims: vol.dims, axes: vol.axes.map(a => a.name) };
+        };
+
+        function handleFile(f) {
+            dzLabel.textContent = 'Parsing ' + (f.size / 1048576).toFixed(1) + ' MB ...';
+            dzLabel.classList.add('busy');
+            const reader = new FileReader();
+            reader.onload = function () {
+                setTimeout(function () {
+                    try { window.neutronLoadText(reader.result, f.name); }
+                    catch (e) { showError(f.name + ': ' + e.message); }
+                    dzLabel.textContent = 'Drop a 3D .dat file here, or click to browse';
+                    dzLabel.classList.remove('busy');
+                }, 30);
+            };
+            reader.readAsText(f);
+        }
+
+        dropzone.addEventListener('click', function () { input.click(); });
+        input.addEventListener('change', function () { if (input.files.length) handleFile(input.files[0]); input.value = ''; });
+        ['dragenter', 'dragover'].forEach(ev => dropzone.addEventListener(ev, e => { e.preventDefault(); dropzone.classList.add('drag'); }));
+        ['dragleave', 'drop'].forEach(ev => dropzone.addEventListener(ev, e => { e.preventDefault(); dropzone.classList.remove('drag'); }));
+        dropzone.addEventListener('drop', function (e) { if (e.dataTransfer.files.length) handleFile(e.dataTransfer.files[0]); });
+
+        $id('mode-slice').addEventListener('click', function () {
+            mode = 'slice'; this.classList.add('on'); $id('mode-cut').classList.remove('on');
+            if (vol) { updateControls(); draw(); }
+        });
+        $id('mode-cut').addEventListener('click', function () {
+            mode = 'cut'; this.classList.add('on'); $id('mode-slice').classList.remove('on');
+            if (vol) { updateControls(); draw(); }
+        });
+        ['sel-x', 'sel-y'].forEach(id => $id(id).addEventListener('change', function () { updateControls(); draw(); }));
+        ['cmap', 'logI', 'ebars', 'rebin'].forEach(id => $id(id).addEventListener('change', draw));
+        ['clim-min', 'clim-max'].forEach(id => $id(id).addEventListener('change', function () { this.dataset.user = '1'; draw(); }));
+        $id('clim-auto').addEventListener('click', function () {
+            $id('clim-min').dataset.user = ''; $id('clim-max').dataset.user = ''; draw();
+        });
+        $id('dl-cut').addEventListener('click', function () {
+            if (!lastCut) return;
+            let csv = lastCut.axis.name + ',Intensity,Error\n';
+            lastCut.cut.x.forEach((x, i) => { csv += x + ',' + lastCut.cut.y[i] + ',' + lastCut.cut.err[i] + '\n'; });
+            const a = document.createElement('a');
+            a.href = URL.createObjectURL(new Blob([csv], { type: 'text/csv' }));
+            a.download = 'cut_' + lastCut.axis.name.replace(/[^\w-]/g, '') + '.csv';
+            a.click();
+            URL.revokeObjectURL(a.href);
+        });
+    })();
+    </script>
+</body>
+</html>

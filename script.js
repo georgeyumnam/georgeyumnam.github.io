@@ -622,6 +622,8 @@ window.addEventListener('scroll', onScroll); onScroll();
       { k: 'Section', t: 'Selected Publications', u: 'index.html#publications' },
       { k: 'Page', t: 'All Publications', u: 'publications.html' },
       { k: 'Page', t: 'Blog: My Odyssey', u: 'blog.html' },
+      { k: 'Tools', t: 'Quick Data Analysis · PPMS R(T)', u: 'analysis.html' },
+      { k: 'Tools', t: 'Neutron Cuts & Slices · S(Q,E)', u: 'neutron-analysis.html' },
       { k: 'Section', t: 'Teaching & Mentoring', u: 'index.html#teaching' },
       { k: 'Section', t: 'MitSna Foundation', u: 'index.html#mitsna' },
       { k: 'Section', t: 'Contact', u: 'index.html#contact' },
