@@ -719,6 +719,122 @@ section { padding: 84px 0; position: relative; z-index: 1; }
     .past-cta p { font-size: 1.02rem; }
 }
 
+/* ── Research blog ────────────────────────────── */
+.blog-list {
+    max-width: 960px;
+    margin: 0 auto;
+    display: flex;
+    flex-direction: column;
+    gap: 1.8rem;
+}
+.blog-post {
+    background: var(--glass-card);
+    border: 1px solid var(--border);
+    border-radius: 20px;
+    padding: 2rem 2.3rem;
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    box-shadow: var(--glow);
+    transition: var(--transition);
+}
+.blog-post:hover { border-color: rgba(79, 217, 236, 0.35); }
+.blog-post p.blog-post-date {
+    font-family: var(--font-mono);
+    font-size: 1.05rem;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--teal);
+    margin-bottom: 0.5rem;
+}
+.blog-post-title {
+    font-size: 2rem;
+    font-weight: 700;
+    color: var(--white);
+    letter-spacing: -0.4px;
+    line-height: 1.3;
+    margin-bottom: 1rem;
+}
+.blog-post p {
+    font-size: 1.42rem;
+    color: var(--text-dim);
+    line-height: 1.8;
+    margin-bottom: 1rem;
+}
+.blog-post p:last-of-type { margin-bottom: 0; }
+.blog-post .project-tech { margin-top: 1.2rem; }
+
+/* list cards: title + first three lines, each card links to its own page */
+a.blog-post { display: block; cursor: pointer; }
+a.blog-post:hover { transform: translateY(-3px); box-shadow: var(--shadow-md); }
+.blog-post .blog-post-body {
+    display: -webkit-box;
+    -webkit-line-clamp: 3;
+    line-clamp: 3;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+}
+.blog-toggle {
+    display: inline-block;
+    margin-top: 1.1rem;
+    font-family: var(--font-display);
+    font-size: 1.3rem;
+    font-weight: 600;
+    color: var(--teal);
+    transition: var(--transition);
+}
+a.blog-post:hover .blog-toggle { color: var(--teal-dark); }
+
+/* individual post pages */
+.blog-article {
+    max-width: 900px;
+    margin: 0 auto;
+    background: var(--glass-card);
+    border: 1px solid var(--border);
+    border-radius: 20px;
+    padding: 2.6rem 2.9rem;
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    box-shadow: var(--glow);
+}
+.blog-article .research-back { margin-bottom: 1.2rem; }
+.blog-article .blog-post-date { margin-top: 0.4rem; }
+.blog-article-title {
+    font-size: 2.7rem;
+    font-weight: 700;
+    color: var(--white);
+    letter-spacing: -0.6px;
+    line-height: 1.25;
+    margin-bottom: 1.4rem;
+    padding-bottom: 1rem;
+    border-bottom: 1px solid var(--border);
+}
+.blog-article p {
+    font-size: 1.45rem;
+    color: var(--text-dim);
+    line-height: 1.85;
+    margin-bottom: 1.1rem;
+}
+.blog-article p.blog-post-date {
+    font-family: var(--font-mono);
+    font-size: 1.05rem;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--teal);
+    margin-bottom: 0.5rem;
+}
+.blog-article .project-tech { margin-top: 1.4rem; }
+@media (max-width: 600px) {
+    .blog-article { padding: 1.5rem 1.35rem; }
+    .blog-article-title { font-size: 1.5rem; }
+    .blog-article p { font-size: 1.02rem; line-height: 1.75; }
+}
+@media (max-width: 600px) {
+    .blog-post { padding: 1.4rem 1.3rem; }
+    .blog-post-title { font-size: 1.3rem; }
+    .blog-post p { font-size: 1.02rem; line-height: 1.7; }
+    .blog-post-date { font-size: 0.8rem; }
+}
+
 /* ── Case-study "See" links + scholar note ────── */
 .case-see {
     font-size: 1.32rem !important;
