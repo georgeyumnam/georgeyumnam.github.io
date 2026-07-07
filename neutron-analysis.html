@@ -153,12 +153,12 @@
 
             <div class="analysis-panel" id="sqe-tool">
                 <h2>S(Q, E) Cuts and Slices</h2>
-                <p>Upload a Mantid or Horace style ASCII export: a header line naming the Intensity, Error, and axis columns, a shape line, and one whitespace-separated row per grid point. Axes with a single bin are treated as already integrated. Slice mode shows a 2D color map of any two axes with the third integrated over a chosen window. Cut mode integrates two axes over chosen windows and plots intensity along the third, with propagated error bars and optional rebinning.</p>
+                <p>Upload a Mantid or Horace style ASCII export: a header line naming the Intensity, Error, and axis columns, a shape line, and one whitespace-separated row per grid point. For example, in Shiver at the SNS, make a 3D slice (two Q axes and energy) of your reduced data and save it as an ASCII file; that exported .dat file loads here directly. Axes with a single bin are treated as already integrated. Slice mode shows a 2D color map of any two axes with the third integrated over a chosen window. Cut mode integrates two axes over chosen windows and plots intensity along the third, with propagated error bars and optional rebinning.</p>
 
                 <div class="dropzone" id="dropzone">
                     <i class="fas fa-cube"></i>
                     <p id="dz-label">Drop a 3D .dat file here, or click to browse</p>
-                    <small>Single file &middot; whitespace-delimited ASCII with # header</small>
+                    <small>Single file &middot; whitespace-delimited ASCII with # header &middot; e.g. a 3D slice exported from Shiver</small>
                 </div>
                 <input type="file" id="file-input" accept=".dat,.txt,.csv,.ascii">
                 <p class="parse-error" id="parse-error"></p>

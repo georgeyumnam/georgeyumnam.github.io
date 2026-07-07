@@ -67,6 +67,11 @@
             font-size: 1.25rem; color: var(--text); cursor: pointer; user-select: none;
         }
         .plot-controls input[type="checkbox"] { accent-color: #4fd9ec; width: 15px; height: 15px; cursor: pointer; }
+        .plot-controls input[type="number"] {
+            width: 72px; background: rgba(17,26,46,0.75); color: var(--text);
+            border: 1px solid var(--border); border-radius: 8px;
+            font-family: var(--font-body); font-size: 1.15rem; padding: 4px 8px;
+        }
         .btn-clear {
             font-family: var(--font-display); font-size: 1.15rem; font-weight: 600;
             color: var(--rose); background: rgba(242,104,142,0.08);
@@ -161,6 +166,7 @@
                     <label><input type="checkbox" id="logy"> log R</label>
                     <label><input type="checkbox" id="logx"> log x</label>
                     <label><input type="checkbox" id="markers"> show points</label>
+                    <label>running avg n <input type="number" id="avgn" min="1" max="500" step="1" value="1"></label>
                     <span class="axis-note" id="axis-note"></span>
                     <button class="btn-clear" id="clear-all" type="button">Clear all</button>
                 </div>
@@ -190,6 +196,7 @@
                     <label><input type="checkbox" id="vsm-logy"> log |M|</label>
                     <label><input type="checkbox" id="vsm-logx"> log x</label>
                     <label><input type="checkbox" id="vsm-markers"> show points</label>
+                    <label>running avg n <input type="number" id="vsm-avgn" min="1" max="500" step="1" value="1"></label>
                     <span class="axis-note" id="vsm-axis-note"></span>
                     <button class="btn-clear" id="vsm-clear-all" type="button">Clear all</button>
                 </div>
@@ -374,6 +381,21 @@
             datasets.forEach(function (p) { if (p.xType === xType) p.series.forEach(s => { totalPts += s.r.x.length; }); });
             const traceType = totalPts > 30000 ? 'scattergl' : 'scatter';
 
+            // centered running average over n points (n = 1 disables)
+            const avgN = Math.max(1, Math.round(parseFloat(document.getElementById('avgn').value) || 1));
+            const runavg = function (y) {
+                if (avgN <= 1) return y;
+                const half = Math.floor(avgN / 2), out = new Array(y.length);
+                for (let i = 0; i < y.length; i++) {
+                    let s = 0, c = 0;
+                    for (let j = Math.max(0, i - half); j <= Math.min(y.length - 1, i + half); j++) {
+                        if (isFinite(y[j])) { s += y[j]; c++; }
+                    }
+                    out[i] = c ? s / c : NaN;
+                }
+                return out;
+            };
+
             const traces = [];
             let ci = 0;
             datasets.forEach(function (parsed, name) {
@@ -386,9 +408,9 @@
                         type: traceType, mode: mode, legendgroup: label,
                         marker: { size: 4, color: color }, line: { width: 2, color: color }
                     };
-                    traces.push(Object.assign({}, base, { x: s.r.x, y: s.r.y, name: label, showlegend: true, xaxis: 'x', yaxis: 'y' }));
-                    if (s.ph.x.length) traces.push(Object.assign({}, base, { x: s.ph.x, y: s.ph.y, name: label, showlegend: false, xaxis: 'x', yaxis: 'y2' }));
-                    if (s.sd.x.length) traces.push(Object.assign({}, base, { x: s.sd.x, y: s.sd.y, name: label, showlegend: false, xaxis: 'x', yaxis: 'y3' }));
+                    traces.push(Object.assign({}, base, { x: s.r.x, y: runavg(s.r.y), name: label, showlegend: true, xaxis: 'x', yaxis: 'y' }));
+                    if (s.ph.x.length) traces.push(Object.assign({}, base, { x: s.ph.x, y: runavg(s.ph.y), name: label, showlegend: false, xaxis: 'x', yaxis: 'y2' }));
+                    if (s.sd.x.length) traces.push(Object.assign({}, base, { x: s.sd.x, y: runavg(s.sd.y), name: label, showlegend: false, xaxis: 'x', yaxis: 'y3' }));
                 });
             });
 
@@ -469,7 +491,7 @@
         });
         dropzone.addEventListener('drop', function (e) { if (e.dataTransfer.files.length) handleFiles(e.dataTransfer.files); });
 
-        ['logy', 'logx', 'markers'].forEach(function (id) {
+        ['logy', 'logx', 'markers', 'avgn'].forEach(function (id) {
             document.getElementById(id).addEventListener('change', render);
         });
         document.getElementById('clear-all').addEventListener('click', function () { datasets.clear(); render(); });
@@ -608,19 +630,34 @@
             datasets.forEach(function (p) { if (p.xType === xType) totalPts += p.x.length; });
             const traceType = totalPts > 30000 ? 'scattergl' : 'scatter';
 
+            // centered running average over n points (n = 1 disables)
+            const avgN = Math.max(1, Math.round(parseFloat(document.getElementById('vsm-avgn').value) || 1));
+            const runavg = function (y) {
+                if (avgN <= 1) return y;
+                const half = Math.floor(avgN / 2), out = new Array(y.length);
+                for (let i = 0; i < y.length; i++) {
+                    let s = 0, c = 0;
+                    for (let j = Math.max(0, i - half); j <= Math.min(y.length - 1, i + half); j++) {
+                        if (isFinite(y[j])) { s += y[j]; c++; }
+                    }
+                    out[i] = c ? s / c : NaN;
+                }
+                return out;
+            };
+
             const traces = [];
             let ci = 0;
             datasets.forEach(function (parsed, name) {
                 if (parsed.xType !== xType) { skipped.push(name); return; }
                 const color = palette[ci % palette.length]; ci++;
-                const yM = logM ? parsed.y.map(v => Math.abs(v)) : parsed.y;
+                const yM = runavg(logM ? parsed.y.map(v => Math.abs(v)) : parsed.y);
                 const base = {
                     type: traceType, mode: mode, legendgroup: name,
                     marker: { size: 4, color: color }, line: { width: 2, color: color }
                 };
                 traces.push(Object.assign({}, base, { x: parsed.x, y: yM, name: name, showlegend: true, xaxis: 'x', yaxis: 'y' }));
                 if (parsed.err.some(isFinite)) {
-                    traces.push(Object.assign({}, base, { x: parsed.x, y: parsed.err, name: name, showlegend: false, xaxis: 'x', yaxis: 'y2' }));
+                    traces.push(Object.assign({}, base, { x: parsed.x, y: runavg(parsed.err), name: name, showlegend: false, xaxis: 'x', yaxis: 'y2' }));
                 }
             });
 
@@ -675,7 +712,7 @@
         ['dragenter', 'dragover'].forEach(ev => dropzone.addEventListener(ev, e => { e.preventDefault(); dropzone.classList.add('drag'); }));
         ['dragleave', 'drop'].forEach(ev => dropzone.addEventListener(ev, e => { e.preventDefault(); dropzone.classList.remove('drag'); }));
         dropzone.addEventListener('drop', function (e) { if (e.dataTransfer.files.length) handleFiles(e.dataTransfer.files); });
-        ['vsm-logy', 'vsm-logx', 'vsm-markers'].forEach(id => document.getElementById(id).addEventListener('change', render));
+        ['vsm-logy', 'vsm-logx', 'vsm-markers', 'vsm-avgn'].forEach(id => document.getElementById(id).addEventListener('change', render));
         document.getElementById('vsm-clear-all').addEventListener('click', function () { datasets.clear(); render(); });
         let rz = null;
         window.addEventListener('resize', function () {
