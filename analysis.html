@@ -252,10 +252,13 @@
             };
             const channels = {};
             const chan = key => channels[key] || (channels[key] = { r: -1, ph: -1, sd: -1 });
+            // first match wins: ETO files also carry "In Phase Current" and
+            // "In Phase Voltage" columns that must not shadow "Phase Angle",
+            // and Resistivity files carry both Resistance and Resistivity
             cols.forEach(function (c, i) {
-                if (/resist/i.test(c) && /std|dev/i.test(c)) { chan(chanKey(c)).sd = i; }
-                else if (/resist/i.test(c)) { chan(chanKey(c)).r = i; }
-                else if (/phase/i.test(c)) { chan(chanKey(c)).ph = i; }
+                if (/resist/i.test(c) && /std|dev/i.test(c)) { const k = chanKey(c); if (chan(k).sd < 0) chan(k).sd = i; }
+                else if (/resist/i.test(c)) { const k = chanKey(c); if (chan(k).r < 0) chan(k).r = i; }
+                else if (/phase\s*angle/i.test(c)) { const k = chanKey(c); if (chan(k).ph < 0) chan(k).ph = i; }
                 else if (/std|dev/i.test(c) && /ch|bridge/i.test(c)) { const k = chanKey(c); if (chan(k).sd < 0) chan(k).sd = i; }
             });
             const chKeys = Object.keys(channels).filter(k => channels[k].r >= 0);
@@ -389,6 +392,13 @@
                 });
             });
 
+            // keep the phase panel visible even when no file carries phase data
+            const hasPhase = traces.some(t => t.yaxis === 'y2');
+            if (!hasPhase) {
+                traces.push({ x: [null], y: [null], xaxis: 'x', yaxis: 'y2',
+                              type: 'scatter', mode: 'markers', showlegend: false, hoverinfo: 'skip' });
+            }
+
             const note = document.getElementById('axis-note');
             note.textContent = 'x: ' + (xType === 'H' ? 'Magnetic Field (Oe)' : 'Temperature (K)')
                 + (skipped.length ? ' · skipped (other sweep type): ' + skipped.join(', ') : '');
@@ -431,7 +441,12 @@
                     borderwidth: 1, font: { size: 13 }
                 },
                 margin: { t: mT, r: mR, b: mB, l: mL },
-                hovermode: 'closest'
+                hovermode: 'closest',
+                annotations: hasPhase ? [] : [{
+                    text: 'no phase angle data in the loaded files',
+                    xref: 'paper', yref: 'paper', x: 0.5, y: d + g + d / 2,
+                    showarrow: false, font: { size: 14, color: '#aab6d8' }
+                }]
             };
             plotDiv.style.width = figW + 'px';
             plotDiv.style.height = figH + 'px';
