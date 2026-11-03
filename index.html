@@ -9,7 +9,7 @@
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Figtree:wght@300;400;500;600;700;800&family=Space+Grotesk:wght@500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="styles.css?v=13">
+    <link rel="stylesheet" href="styles.css?v=23">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" integrity="sha512-iecdLmaskl7CVkqkXNQ/ZH/XLlvWZOJyj7Yy7tcenmpD1ypASozpmT/E0iPtmFIB46ZmdtAc9eNBvH0H/ZpiBw==" crossorigin="anonymous" referrerpolicy="no-referrer">
 </head>
 <body>
@@ -79,7 +79,10 @@
         <div class="container">
             <div class="hero-content">
                 <div class="hero-photo-wrap">
-                    <img src="images/profile.jpg" alt="George Yumnam" class="hero-photo">
+                    <picture>
+                        <source type="image/webp" srcset="images/profile-400.webp 400w, images/profile-800.webp 800w" sizes="(max-width: 600px) 160px, (max-width: 900px) 220px, 300px">
+                        <img src="images/profile-800.jpg" srcset="images/profile-400.jpg 400w, images/profile-800.jpg 800w" sizes="(max-width: 600px) 160px, (max-width: 900px) 220px, 300px" width="800" height="800" alt="George Yumnam" class="hero-photo" fetchpriority="high">
+                    </picture>
                 </div>
                 <div class="hero-text">
                     <span class="hero-badge">Experimental Condensed Matter Physics</span>
@@ -113,7 +116,10 @@
                     <p>My work centers on collective excitations: how they emerge in ordered and unconventional magnets, why they hybridize, and how external tuning reshapes the magnetic spectrum. By constraining models directly with scattering data, I aim to identify the organizing principles that govern magnetic behavior in complex quantum materials.</p>
                 </div>
                 <div class="about-photo-wrap">
-                    <img src="images/profile2.jpg" alt="George Yumnam at a neutron scattering beamline" class="about-photo">
+                    <picture>
+                        <source type="image/webp" srcset="images/profile2-1040.webp">
+                        <img src="images/profile2-1040.jpg" width="1040" height="780" alt="George Yumnam at a neutron scattering beamline" class="about-photo" loading="lazy" decoding="async">
+                    </picture>
                     <p class="about-photo-caption">At the NSE beamline for our Magnetic charge dynamics work (2019)</p>
                 </div>
             </div>
@@ -173,7 +179,10 @@
                 <article class="research-row">
                     <div class="research-row-body">
                         <div class="research-row-fig">
-                            <img src="images/quantum-magnetism.png" alt="Itinerant Magnets and Quantum Information Science">
+                            <picture>
+                                <source type="image/webp" srcset="images/quantum-magnetism-640.webp 640w, images/quantum-magnetism-1280.webp 1280w, images/quantum-magnetism-1920.webp 1920w, images/quantum-magnetism-2456.webp 2456w" sizes="(max-width: 900px) 80vw, (max-width: 1240px) 1080px, 960px">
+                                <img src="images/quantum-magnetism-1280.jpg" srcset="images/quantum-magnetism-640.jpg 640w, images/quantum-magnetism-1280.jpg 1280w, images/quantum-magnetism-1920.jpg 1920w, images/quantum-magnetism-2456.jpg 2456w" sizes="(max-width: 900px) 80vw, (max-width: 1240px) 1080px, 960px" width="1280" height="791" alt="Itinerant Magnets and Quantum Information Science" loading="lazy" decoding="async">
+                            </picture>
                         </div>
                         <div class="research-row-text">
                             <h3 class="research-row-title">Itinerant Magnets &amp; Quantum Information Science</h3>
@@ -191,7 +200,10 @@
                 <article class="research-row rev">
                     <div class="research-row-body">
                         <div class="research-row-fig">
-                            <img src="images/magnon-phonon.png" alt="Altermagnetism and Magnon-Phonon Coupling">
+                            <picture>
+                                <source type="image/webp" srcset="images/magnon-phonon-640.webp 640w, images/magnon-phonon-1280.webp 1280w, images/magnon-phonon-1920.webp 1920w, images/magnon-phonon-2560.webp 2560w" sizes="(max-width: 900px) 80vw, (max-width: 1240px) 1080px, 960px">
+                                <img src="images/magnon-phonon-1280.jpg" srcset="images/magnon-phonon-640.jpg 640w, images/magnon-phonon-1280.jpg 1280w, images/magnon-phonon-1920.jpg 1920w, images/magnon-phonon-2560.jpg 2560w" sizes="(max-width: 900px) 80vw, (max-width: 1240px) 1080px, 960px" width="1280" height="759" alt="Altermagnetism and Magnon-Phonon Coupling" loading="lazy" decoding="async">
+                            </picture>
                         </div>
                         <div class="research-row-text">
                             <h3 class="research-row-title">Altermagnetism &amp; Magnon-Phonon Coupling</h3>
@@ -209,7 +221,10 @@
                 <article class="research-row">
                     <div class="research-row-body">
                         <div class="research-row-fig">
-                            <img src="images/high-entropy.png" alt="Hybrid Magnon Excitations and Crystal Fields">
+                            <picture>
+                                <source type="image/webp" srcset="images/high-entropy-640.webp 640w, images/high-entropy-1280.webp 1280w, images/high-entropy-1920.webp 1920w, images/high-entropy-2560.webp 2560w" sizes="(max-width: 900px) 80vw, (max-width: 1240px) 1080px, 960px">
+                                <img src="images/high-entropy-1280.jpg" srcset="images/high-entropy-640.jpg 640w, images/high-entropy-1280.jpg 1280w, images/high-entropy-1920.jpg 1920w, images/high-entropy-2560.jpg 2560w" sizes="(max-width: 900px) 80vw, (max-width: 1240px) 1080px, 960px" width="1280" height="674" alt="Hybrid Magnon Excitations and Crystal Fields" loading="lazy" decoding="async">
+                            </picture>
                         </div>
                         <div class="research-row-text">
                             <h3 class="research-row-title">Hybrid Magnon Excitations: Crystal Fields &amp; High-Entropy Oxides</h3>

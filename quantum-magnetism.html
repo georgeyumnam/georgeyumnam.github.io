@@ -9,7 +9,7 @@
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Figtree:wght@300;400;500;600;700;800&family=Space+Grotesk:wght@500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="styles.css?v=13">
+    <link rel="stylesheet" href="styles.css?v=23">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" integrity="sha512-iecdLmaskl7CVkqkXNQ/ZH/XLlvWZOJyj7Yy7tcenmpD1ypASozpmT/E0iPtmFIB46ZmdtAc9eNBvH0H/ZpiBw==" crossorigin="anonymous" referrerpolicy="no-referrer">
 </head>
 <body>
@@ -45,7 +45,10 @@
     </nav>
 
     <div class="research-hero">
-        <img src="images/quantum-magnetism.png" alt="Itinerant Magnets and Quantum Information" class="research-hero-img">
+        <picture>
+            <source type="image/webp" srcset="images/quantum-magnetism-640.webp 640w, images/quantum-magnetism-1280.webp 1280w, images/quantum-magnetism-1920.webp 1920w, images/quantum-magnetism-2456.webp 2456w" sizes="(max-width: 900px) 90vw, (max-width: 1500px) 78vw, 1350px">
+            <img src="images/quantum-magnetism-1280.jpg" srcset="images/quantum-magnetism-640.jpg 640w, images/quantum-magnetism-1280.jpg 1280w, images/quantum-magnetism-1920.jpg 1920w, images/quantum-magnetism-2456.jpg 2456w" sizes="(max-width: 900px) 90vw, (max-width: 1500px) 78vw, 1350px" width="1280" height="791" alt="Itinerant Magnets and Quantum Information" class="research-hero-img">
+        </picture>
         <div class="research-hero-overlay">
             <a href="index.html#projects" class="research-back">← Back to Research</a>
             <h1 class="research-hero-title">Itinerant Magnets &amp; Quantum Information</h1>

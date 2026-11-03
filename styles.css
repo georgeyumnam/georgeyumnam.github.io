@@ -52,6 +52,9 @@ body {
     z-index: 1;
 }
 
+/* <picture> wrappers only pick the file; the <img> inside lays out as before */
+picture { display: contents; }
+
 ::selection { background: rgba(79, 217, 236, 0.28); color: var(--white); }
 
 ::-webkit-scrollbar { width: 10px; }
@@ -446,6 +449,7 @@ section { padding: 84px 0; position: relative; z-index: 1; }
 
 .about-photo {
     width: 100%;
+    height: auto;
     border-radius: 20px;
     border: 1px solid var(--border);
     box-shadow: var(--shadow-lg);
