@@ -69,11 +69,13 @@
             font-size: 1.25rem; color: var(--text); cursor: pointer; user-select: none;
         }
         .plot-controls input[type="checkbox"] { accent-color: #4fd9ec; width: 15px; height: 15px; cursor: pointer; }
-        .plot-controls input[type="number"] {
+        .plot-controls input[type="number"],
+        .plot-controls select {
             width: 72px; background: rgba(17,26,46,0.75); color: var(--text);
             border: 1px solid var(--border); border-radius: 8px;
             font-family: var(--font-body); font-size: 1.15rem; padding: 4px 8px;
         }
+        .plot-controls select { width: auto; cursor: pointer; }
         .btn-clear {
             font-family: var(--font-display); font-size: 1.15rem; font-weight: 600;
             color: var(--rose); background: rgba(242,104,142,0.08);
@@ -182,7 +184,7 @@
 
             <div class="analysis-panel" id="ppms-vsm">
                 <h2>PPMS: VSM Magnetometry</h2>
-                <p>Upload one or more Quantum Design VSM or MPMS data files (.dat). The tool detects the moment and moment error columns and plots two stacked panels: magnetic moment and its standard error. The x axis is chosen automatically for each file: a temperature sweep (M vs T) is plotted against temperature, and a field sweep (M vs H hysteresis loop) is plotted against magnetic field. Curves from every file are overlaid with the file names as legend entries.</p>
+                <p>Upload one or more Quantum Design VSM or MPMS data files (.dat). The tool detects the moment and moment error columns and plots two stacked panels: magnetic moment and its standard error. Use the moment selector to switch between the VSM moment and the MPMS3 DC scan moment (free or fixed center fit); auto uses VSM data when present and falls back to DC. The x axis is chosen automatically for each file: a temperature sweep (M vs T) is plotted against temperature, and a field sweep (M vs H hysteresis loop) is plotted against magnetic field. Curves from every file are overlaid with the file names as legend entries.</p>
 
                 <div class="dropzone" id="vsm-dropzone">
                     <i class="fas fa-magnet"></i>
@@ -195,6 +197,14 @@
                 <div class="file-chips" id="vsm-file-chips"></div>
 
                 <div class="plot-controls" id="vsm-plot-controls" style="display:none;">
+                    <label>moment
+                        <select id="vsm-source">
+                            <option value="auto">auto</option>
+                            <option value="vsm">VSM</option>
+                            <option value="free">DC (free center)</option>
+                            <option value="fixed">DC (fixed center)</option>
+                        </select>
+                    </label>
                     <label><input type="checkbox" id="vsm-logy"> log |M|</label>
                     <label><input type="checkbox" id="vsm-logx"> log x</label>
                     <label><input type="checkbox" id="vsm-markers"> show points</label>
@@ -225,6 +235,6 @@
     </footer>
 
     <script src="script.js?v=15"></script>
-    <script src="analysis.js?v=1"></script>
+    <script src="analysis.js?v=2"></script>
 </body>
 </html>

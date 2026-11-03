@@ -283,26 +283,29 @@
     const emptyEl = document.getElementById('vsm-empty');
     const controls = document.getElementById('vsm-plot-controls');
 
-    // moment column priority: VSM "Moment (emu)" first, then MPMS DC fits
-    function pickMomentColumns(cols) {
+    // moment sources, in auto-pick order: VSM "Moment (emu)", then the MPMS3
+    // DC scan fits. MPMS3 files carry every column, so each row fills only
+    // the columns of the measurement that produced it.
+    const SOURCE_ORDER = ['vsm', 'free', 'fixed'];
+    const SOURCE_TITLE = {
+        vsm:   { m: 'Moment (emu)',    e: 'M. Std. Err. (emu)' },
+        free:  { m: 'DC Moment (emu)', e: 'DC Moment Err. (emu)' },
+        fixed: { m: 'DC Moment (emu)', e: 'DC Moment Err. (emu)' }
+    };
+
+    function findMomentColumns(cols) {
         const isErr = c => /std|err/i.test(c);
-        const cand = [
-            c => /^moment\s*\(emu\)$/i.test(c),
-            c => /dc moment free ctr/i.test(c) && !isErr(c),
-            c => /dc moment fixed ctr/i.test(c) && !isErr(c),
-            c => /moment/i.test(c) && !isErr(c) && !/quad/i.test(c)
-        ];
-        for (const test of cand) {
-            const mi = cols.findIndex(test);
-            if (mi >= 0) {
-                let ei = -1;
-                if (/free/i.test(cols[mi])) ei = cols.findIndex(c => /err/i.test(c) && /free/i.test(c));
-                else if (/fixed/i.test(cols[mi])) ei = cols.findIndex(c => /err/i.test(c) && /fixed/i.test(c));
-                if (ei < 0) ei = cols.findIndex(c => /std\.?\s*err/i.test(c) && !/free|fixed/i.test(c));
-                return { m: mi, e: ei };
-            }
-        }
-        return null;
+        let vsm = cols.findIndex(c => /^moment\s*\(emu\)$/i.test(c));
+        if (vsm < 0) vsm = cols.findIndex(c => /moment/i.test(c) && !isErr(c) && !/quad|dc/i.test(c));
+        const found = {
+            vsm:   { m: vsm, e: cols.findIndex(c => /std\.?\s*err/i.test(c) && !/free|fixed|dc/i.test(c)) },
+            free:  { m: cols.findIndex(c => /dc moment free ctr/i.test(c) && !isErr(c)),
+                     e: cols.findIndex(c => /err/i.test(c) && /free/i.test(c)) },
+            fixed: { m: cols.findIndex(c => /dc moment fixed ctr/i.test(c) && !isErr(c)),
+                     e: cols.findIndex(c => /err/i.test(c) && /fixed/i.test(c)) }
+        };
+        SOURCE_ORDER.forEach(k => { if (found[k].m < 0) delete found[k]; });
+        return found;
     }
 
     function parseVSM(text) {
@@ -315,41 +318,61 @@
         const tIdx = cols.findIndex(c => /temp/i.test(c) && !/min|max|motor|chamber/i.test(c));
         const hIdx = cols.findIndex(c => /field/i.test(c) && !/min|max/i.test(c));
         if (tIdx < 0 && hIdx < 0) throw new Error('no temperature or field column found');
-        const mc = pickMomentColumns(cols);
-        if (!mc) throw new Error('no moment column found');
+        const found = findMomentColumns(cols);
+        if (!Object.keys(found).length) throw new Error('no moment column found');
 
-        const T = [], H = [], M = [], E = [];
+        const rows = [];
         for (let k = hi + 1; k < lines.length; k++) {
-            if (!lines[k].trim()) continue;
-            const row = lines[k].split(',');
-            const t = tIdx >= 0 ? parseFloat(row[tIdx]) : NaN;
-            const h = hIdx >= 0 ? parseFloat(row[hIdx]) : NaN;
-            const m = parseFloat(row[mc.m]);
-            if (!isFinite(m) || (!isFinite(t) && !isFinite(h))) continue;
-            T.push(t); H.push(h); M.push(m);
-            E.push(mc.e >= 0 ? parseFloat(row[mc.e]) : NaN);
+            if (lines[k].trim()) rows.push(lines[k].split(','));
         }
-        if (!M.length) throw new Error('no numeric moment data found');
-
         const span = a => {
             let lo = Infinity, up = -Infinity;
             a.forEach(v => { if (isFinite(v)) { if (v < lo) lo = v; if (v > up) up = v; } });
             return isFinite(up - lo) ? up - lo : 0;
         };
-        const xType = (span(H) / 50 > span(T) / 2) ? 'H' : 'T';
-        const xs = xType === 'H' ? H : T;
-        const x = [], y = [], err = [];
-        for (let i = 0; i < M.length; i++) {
-            if (isFinite(xs[i])) { x.push(xs[i]); y.push(M[i]); err.push(E[i]); }
-        }
-        return { xType: xType, x: x, y: y, err: err, momentCol: cols[mc.m] };
+
+        // one series per moment source that has numeric data
+        const sources = {};
+        SOURCE_ORDER.forEach(function (key) {
+            const mc = found[key];
+            if (!mc) return;
+            const T = [], H = [], M = [], E = [];
+            rows.forEach(function (row) {
+                const t = tIdx >= 0 ? parseFloat(row[tIdx]) : NaN;
+                const h = hIdx >= 0 ? parseFloat(row[hIdx]) : NaN;
+                const m = parseFloat(row[mc.m]);
+                if (!isFinite(m) || (!isFinite(t) && !isFinite(h))) return;
+                T.push(t); H.push(h); M.push(m);
+                E.push(mc.e >= 0 ? parseFloat(row[mc.e]) : NaN);
+            });
+            if (!M.length) return;
+            const xType = (span(H) / 50 > span(T) / 2) ? 'H' : 'T';
+            const xs = xType === 'H' ? H : T;
+            const x = [], y = [], err = [];
+            for (let i = 0; i < M.length; i++) {
+                if (isFinite(xs[i])) { x.push(xs[i]); y.push(M[i]); err.push(E[i]); }
+            }
+            if (x.length) sources[key] = { xType: xType, x: x, y: y, err: err, momentCol: cols[mc.m] };
+        });
+        if (!Object.keys(sources).length) throw new Error('no numeric moment data found');
+        return { sources: sources };
+    }
+
+    // series for the selected moment source; auto takes the first one present
+    function pickSeries(parsed) {
+        const src = document.getElementById('vsm-source').value;
+        if (src !== 'auto') return parsed.sources[src] ? { key: src, s: parsed.sources[src] } : null;
+        const key = SOURCE_ORDER.find(k => parsed.sources[k]);
+        return { key: key, s: parsed.sources[key] };
     }
 
     window.vsmAddData = function (text, filename) {
         const parsed = parseVSM(text);
         datasets.set(filename, parsed);
         render();
-        return { xType: parsed.xType, points: parsed.x.length, momentCol: parsed.momentCol };
+        const pick = pickSeries(parsed);
+        return { sources: Object.keys(parsed.sources),
+                 xType: pick && pick.s.xType, points: pick ? pick.s.x.length : 0, momentCol: pick && pick.s.momentCol };
     };
 
     function showError(msg) {
@@ -372,10 +395,13 @@
     function render() {
         chips.innerHTML = '';
         datasets.forEach(function (parsed, name) {
+            const pick = pickSeries(parsed);
             const chip = document.createElement('span');
             chip.className = 'file-chip';
             chip.innerHTML = '<span></span><span class="pts">'
-                + (parsed.xType === 'H' ? 'M vs H' : 'M vs T') + ' · ' + parsed.x.length + ' pts</span>';
+                + (!pick ? 'no data for this moment'
+                   : (pick.key === 'vsm' ? '' : 'DC · ') + (pick.s.xType === 'H' ? 'M vs H' : 'M vs T')
+                     + ' · ' + pick.s.x.length + ' pts') + '</span>';
             chip.firstChild.textContent = name;   // file names are untrusted: never parse as HTML
             const btn = document.createElement('button');
             btn.type = 'button';
@@ -394,16 +420,23 @@
             return;
         }
 
+        const picked = new Map(), missing = [];
+        datasets.forEach(function (parsed, name) {
+            const pick = pickSeries(parsed);
+            if (pick) picked.set(name, pick); else missing.push(name);
+        });
         let nT = 0, nH = 0;
-        datasets.forEach(p => { if (p.xType === 'H') nH++; else nT++; });
+        picked.forEach(p => { if (p.s.xType === 'H') nH++; else nT++; });
         const xType = nH > nT ? 'H' : 'T';
         const skipped = [];
+        const keys = new Set([...picked.values()].map(p => p.key));
+        const titles = keys.size === 1 ? SOURCE_TITLE[[...keys][0]] : { m: 'Moment (emu)', e: 'Moment Err. (emu)' };
         const palette = ['#4fd9ec', '#f2688e', '#8b7af7', '#7ce8b8', '#f5c26b', '#6bb3f5', '#e879f9', '#a3e635'];
         const mode = document.getElementById('vsm-markers').checked ? 'lines+markers' : 'lines';
         const logM = document.getElementById('vsm-logy').checked;
 
         let totalPts = 0;
-        datasets.forEach(function (p) { if (p.xType === xType) totalPts += p.x.length; });
+        picked.forEach(function (p) { if (p.s.xType === xType) totalPts += p.s.x.length; });
         const traceType = totalPts > 30000 ? 'scattergl' : 'scatter';
 
         // centered running average over n points (n = 1 disables)
@@ -423,7 +456,8 @@
 
         const traces = [];
         let ci = 0;
-        datasets.forEach(function (parsed, name) {
+        picked.forEach(function (pick, name) {
+            const parsed = pick.s;
             if (parsed.xType !== xType) { skipped.push(name); return; }
             const color = palette[ci % palette.length]; ci++;
             const yM = runavg(logM ? parsed.y.map(v => Math.abs(v)) : parsed.y);
@@ -439,7 +473,8 @@
 
         document.getElementById('vsm-axis-note').textContent =
             'x: ' + (xType === 'H' ? 'Magnetic Field (Oe)' : 'Temperature (K)')
-            + (skipped.length ? ' · skipped (other sweep type): ' + skipped.join(', ') : '');
+            + (skipped.length ? ' · skipped (other sweep type): ' + skipped.join(', ') : '')
+            + (missing.length ? ' · no data for this moment: ' + missing.join(', ') : '');
 
         emptyEl.style.display = 'none';
         plotDiv.style.display = 'block';
@@ -464,10 +499,10 @@
                 type: document.getElementById('vsm-logx').checked ? 'log' : 'linear',
                 gridcolor: grid, zerolinecolor: zero, anchor: 'y2'
             },
-            yaxis:  { title: { text: logM ? '|Moment| (emu)' : 'Moment (emu)' }, domain: [d + g, 1],
+            yaxis:  { title: { text: logM ? '|' + titles.m.replace(' (emu)', '') + '| (emu)' : titles.m }, domain: [d + g, 1],
                       type: logM ? 'log' : 'linear', anchor: 'x',
                       gridcolor: grid, zerolinecolor: zero, exponentformat: 'power' },
-            yaxis2: { title: { text: 'M. Std. Err. (emu)' }, domain: [0, d], anchor: 'x',
+            yaxis2: { title: { text: titles.e }, domain: [0, d], anchor: 'x',
                       type: logM ? 'log' : 'linear',
                       gridcolor: grid, zerolinecolor: zero, exponentformat: 'power' },
             legend: {
@@ -488,7 +523,7 @@
     ['dragenter', 'dragover'].forEach(ev => dropzone.addEventListener(ev, e => { e.preventDefault(); dropzone.classList.add('drag'); }));
     ['dragleave', 'drop'].forEach(ev => dropzone.addEventListener(ev, e => { e.preventDefault(); dropzone.classList.remove('drag'); }));
     dropzone.addEventListener('drop', function (e) { if (e.dataTransfer.files.length) handleFiles(e.dataTransfer.files); });
-    ['vsm-logy', 'vsm-logx', 'vsm-markers', 'vsm-avgn'].forEach(id => document.getElementById(id).addEventListener('change', render));
+    ['vsm-source', 'vsm-logy', 'vsm-logx', 'vsm-markers', 'vsm-avgn'].forEach(id => document.getElementById(id).addEventListener('change', render));
     document.getElementById('vsm-clear-all').addEventListener('click', function () { datasets.clear(); render(); });
     let rz = null;
     window.addEventListener('resize', function () {
